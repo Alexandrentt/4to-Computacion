@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Tabla: usuarios
 -- ============================================
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email TEXT UNIQUE NOT NULL,
     full_name TEXT,
     avatar_url TEXT,
@@ -31,9 +31,6 @@ CREATE TABLE user_settings (
     end_date DATE,
     block_duration INTEGER, -- duración en minutos
     schedule_status TEXT DEFAULT 'Pendiente de confirmar', -- 'Pendiente de confirmar' | 'Confirmado'
-    classroom_access_token TEXT, -- token OAuth para Google Classroom
-    classroom_refresh_token TEXT,
-    classroom_token_expires TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(user_id)
@@ -172,7 +169,10 @@ ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
 -- Política: usuarios solo pueden ver/editar sus propios datos
 CREATE POLICY "Users can view own data" ON users
-    FOR SELECT USING (auth.uid()::text = id::text);
+    FOR SELECT TO authenticated USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own data" ON users
+    FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Users can update own data" ON users
     FOR UPDATE USING (auth.uid()::text = id::text);
@@ -223,12 +223,11 @@ CREATE POLICY "Users can delete own units" ON units
 
 -- Política: temas (heredan seguridad del curso vía unidad)
 CREATE POLICY "Users can view own topics" ON topics
-    FOR SELECT USING (
+    FOR SELECT TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM topics t
-            JOIN units u ON u.id = t.unit_id
+            SELECT 1 FROM units u
             JOIN courses c ON c.id = u.course_id
-            WHERE t.id = topics.id AND c.user_id::text = auth.uid()::text
+            WHERE u.id = topics.unit_id AND c.user_id = auth.uid()
         )
     );
 
@@ -242,22 +241,26 @@ CREATE POLICY "Users can insert own topics" ON topics
     );
 
 CREATE POLICY "Users can update own topics" ON topics
-    FOR UPDATE USING (
+    FOR UPDATE TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM topics t
-            JOIN units u ON u.id = t.unit_id
+            SELECT 1 FROM units u
             JOIN courses c ON c.id = u.course_id
-            WHERE t.id = topics.id AND c.user_id::text = auth.uid()::text
+            WHERE u.id = topics.unit_id AND c.user_id = auth.uid()
+        )
+    ) WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM units u
+            JOIN courses c ON c.id = u.course_id
+            WHERE u.id = topics.unit_id AND c.user_id = auth.uid()
         )
     );
 
 CREATE POLICY "Users can delete own topics" ON topics
-    FOR DELETE USING (
+    FOR DELETE TO authenticated USING (
         EXISTS (
-            SELECT 1 FROM topics t
-            JOIN units u ON u.id = t.unit_id
+            SELECT 1 FROM units u
             JOIN courses c ON c.id = u.course_id
-            WHERE t.id = topics.id AND c.user_id::text = auth.uid()::text
+            WHERE u.id = topics.unit_id AND c.user_id = auth.uid()
         )
     );
 
@@ -335,3 +338,34 @@ CREATE TRIGGER update_resources_updated_at BEFORE UPDATE ON resources
 
 CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON tasks
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+
+-- Crear automáticamente el perfil público después del registro en Supabase Auth.
+-- Los tokens OAuth de Google Classroom no se almacenan en esta base de datos;
+-- la primera versión usa enlaces y seguimiento manual.
+CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+    INSERT INTO public.users (id, email, full_name, avatar_url)
+    VALUES (
+        NEW.id,
+        NEW.email,
+        COALESCE(NEW.raw_user_meta_data ->> 'full_name', ''),
+        NEW.raw_user_meta_data ->> 'avatar_url'
+    )
+    ON CONFLICT (id) DO UPDATE
+      SET email = EXCLUDED.email,
+          full_name = COALESCE(NULLIF(EXCLUDED.full_name, ''), public.users.full_name),
+          avatar_url = COALESCE(EXCLUDED.avatar_url, public.users.avatar_url);
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created_profile ON auth.users;
+CREATE TRIGGER on_auth_user_created_profile
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE FUNCTION public.handle_new_auth_user();
