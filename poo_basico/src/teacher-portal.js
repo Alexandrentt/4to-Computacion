@@ -10,6 +10,19 @@ async function refresh(){
  const [cr,co]=await Promise.all([supabase.from('learning_classes').select('id,name,course_id').eq('teacher_id',user.id),supabase.from('courses').select('id,name').eq('user_id',user.id).order('name')])
  if(cr.error)throw cr.error;if(co.error)throw co.error
  classes=cr.data||[];courses=co.data||[]
+ // Una cuenta docente nueva no siempre tiene los cursos locales sincronizados aún.
+ // Solo si no tiene ninguno, crear la malla inicial acordada para este proyecto.
+ if(courses.length===0){
+  const defaults=[
+   {name:'Programación I / Laboratorio 1',level:'4.º Bachillerato',area:'Programación',color:'blue',description:'Pensamiento algorítmico, fundamentos de Python, control y colecciones, programación modular.'},
+   {name:'Sistemas e Instalación de Software',level:'4.º Bachillerato',area:'Sistemas',color:'green',description:'Computación básica, redes, archivos, sistemas operativos, instalación y virtualización.'},
+   {name:'Mantenimiento y Reparación',level:'4.º Bachillerato',area:'Hardware',color:'amber',description:'Electricidad y seguridad, multímetro, componentes electrónicos, diagnóstico y reparación.'},
+   {name:'Laboratorio 2',level:'4.º Bachillerato',area:'Programación orientada a objetos',color:'red',description:'Clases y objetos, diseño de objetos, reutilización y proyecto integrador.'}
+  ].map(c=>({...c,user_id:user.id}))
+  const seeded=await supabase.from('courses').insert(defaults).select('id,name')
+  if(seeded.error)throw seeded.error
+  courses=seeded.data||[]
+ }
  $('#authPanel').classList.add('hidden');$('#teacherArea').classList.remove('hidden');$('#logoutBtn').classList.remove('hidden')
  $('#courseId').innerHTML=courses.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join('')
  const options=classes.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join('')
