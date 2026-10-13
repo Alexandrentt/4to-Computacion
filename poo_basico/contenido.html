@@ -43,7 +43,7 @@ let currentLesson=null
 const $=s=>document.querySelector(s)
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 function readDb(){
-  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.courses))const merged={...createDefaultDb(),...saved}; merged.sessions=Array.isArray(merged.sessions)?merged.sessions:[]; merged.resources=Array.isArray(merged.resources)?merged.resources:[]; merged.tasks=Array.isArray(merged.tasks)?merged.tasks:[]; return merged}
+  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.courses)){const merged={...createDefaultDb(),...saved}; merged.sessions=Array.isArray(merged.sessions)?merged.sessions:[]; merged.resources=Array.isArray(merged.resources)?merged.resources:[]; merged.tasks=Array.isArray(merged.tasks)?merged.tasks:[]; return merged}}
   catch(e){}
   const fresh=createDefaultDb()
   localStorage.setItem(KEY,JSON.stringify(fresh))
