@@ -150,7 +150,7 @@ $('#authForm').onsubmit = async e => {
   e.preventDefault(); clearSay()
   if (!supabase) { say('Supabase no está configurado. Define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.', 'error'); return }
   const loginValue = $('#email').value.trim(), password = $('#password').value, fullName = $('#fullName').value.trim()
-  const email = mode === 'login' && !loginValue.includes('@') ? loginValue.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9._-]/g, '') + '@alumnos.4to-computacion.test' : loginValue
+  const email = mode === 'login' && !loginValue.includes('@') ? loginValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9._-]/g, '') + '@alumnos.4to-computacion.test' : loginValue
   if (mode === 'register' && fullName.length < 2) { say('Escribe tu nombre completo.', 'error'); return }
   if (password.length < 8) { say('La contraseña debe tener al menos 8 caracteres.', 'error'); return }
   const btn = $('#authSubmit'); btn.disabled = true
@@ -166,18 +166,6 @@ $('#authForm').onsubmit = async e => {
       signedIn(data.user); say('Sesión iniciada.', 'success')
     }
   } catch (err) { say(err.message || 'No se pudo autenticar.', 'error') }
-  finally { btn.disabled = false }
-}
-$('#joinForm').onsubmit = async e => {
-  e.preventDefault(); clearSay()
-  if (!user) return say('Inicia sesión primero.', 'error')
-  const btn = $('#joinBtn'); btn.disabled = true
-  try {
-    const {data, error} = await supabase.rpc('join_class_with_code', {p_code:$('#classCode').value.trim()})
-    if (error) throw error
-    if (!data?.ok) throw new Error(data?.message || 'No se pudo usar el código.')
-    $('#classCode').value = ''; await loadClasses(); say('Te inscribiste correctamente.', 'success')
-  } catch (err) { say(err.message || 'No se pudo usar el código.', 'error') }
   finally { btn.disabled = false }
 }
 $('#passwordForm').onsubmit = async e => {
