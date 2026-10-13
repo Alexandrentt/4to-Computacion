@@ -70,7 +70,8 @@ export async function loadPlannerFromCloud(userId, currentDb) {
       start: settings?.start_date || '',
       end: settings?.end_date || '',
       block: settings?.block_duration || '',
-      schedule: settings?.schedule_status || 'Pendiente de confirmar'
+      schedule: settings?.schedule_status || 'Pendiente de confirmar',
+      classroomCourseMap: settings?.classroom_course_map || {}
     }
   }
 }
@@ -186,7 +187,8 @@ export async function savePlannerToCloud(userId, db) {
   const { error: settingsError } = await supabase.from('user_settings').upsert({
     user_id: userId, school_year: clean(db.settings?.year), start_date: clean(db.settings?.start),
     end_date: clean(db.settings?.end), block_duration: db.settings?.block ? Number(db.settings.block) : null,
-    schedule_status: db.settings?.schedule === 'Confirmado' ? 'Confirmado' : 'Pendiente de confirmar'
+    schedule_status: db.settings?.schedule === 'Confirmado' ? 'Confirmado' : 'Pendiente de confirmar',
+    classroom_course_map: db.settings?.classroomCourseMap || {}
   }, { onConflict: 'user_id' })
   if (settingsError) throw new Error('Guardar configuración: ' + settingsError.message)
 
