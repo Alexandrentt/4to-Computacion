@@ -248,11 +248,11 @@ create policy attempts_teacher_select on public.exercise_attempts
 -- La inscripción solo puede ejecutarse con una sesión autenticada y correo confirmado.
 -- El código se compara en forma normalizada y jamás se devuelve desde la base de datos.
 create or replace function public.join_class_with_code(p_code text)
-returns uuid
+returns jsonb
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $
 declare
   v_uid uuid := auth.uid();
   v_email_confirmed timestamptz;
@@ -293,7 +293,7 @@ begin
     update public.class_join_attempts set attempts = attempts + 1,
       blocked_until = case when attempts + 1 >= 10 then now() + interval '1 hour' else blocked_until end
       where student_id = v_uid;
-    raise exception 'El código no es válido.' using errcode = 'P0001';
+    return jsonb_build_object('ok', false, 'message', 'El código no es válido.');
   end if;
 
   v_normalized := upper(regexp_replace(trim(p_code), '[^A-Z0-9]', '', 'g'));
@@ -309,7 +309,7 @@ begin
     update public.class_join_attempts set attempts = attempts + 1,
       blocked_until = case when attempts + 1 >= 10 then now() + interval '1 hour' else blocked_until end
       where student_id = v_uid;
-    raise exception 'El código no es válido o ha expirado.' using errcode = 'P0001';
+    return jsonb_build_object('ok', false, 'message', 'El código no es válido o ha expirado.');
   end if;
 
   if exists (select 1 from public.class_memberships m
@@ -332,9 +332,9 @@ begin
   update public.class_join_attempts set attempts = 0, window_started_at = now(), blocked_until = null
   where student_id = v_uid;
 
-  return v_class_id;
+  return jsonb_build_object('ok', true, 'class_id', v_class_id);
 end;
-$$;
+$;
 
 revoke all on function public.join_class_with_code(text) from public, anon;
 grant execute on function public.join_class_with_code(text) to authenticated;
