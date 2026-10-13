@@ -129,7 +129,7 @@ El portal educativo se separa del planificador docente:
 
 - `alumnos.html`: inicio de sesión, registro con correo, inscripción por código de clase, lecciones publicadas y progreso individual.
 - `docente-portal.html`: acceso docente, creación de clases vinculadas a los cursos existentes, códigos de inscripción, publicación de lecciones y seguimiento.
-- `supabase/migrations/20261013160000_student_portal.sql`: tablas nuevas, funciones de inscripción y políticas RLS para aislar los datos por estudiante y docente.
+- `supabase/migrations/20261013175104_student_portal_enrollment_and_progress.sql` y `supabase/migrations/20261013175151_student_portal_indexes.sql`: tablas nuevas, funciones de inscripción y políticas RLS para aislar los datos por estudiante y docente.
 
 ### Activación segura
 
