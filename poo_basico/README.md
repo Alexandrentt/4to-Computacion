@@ -121,3 +121,26 @@ Todos los cursos tienen exactamente **4 unidades**:
 - **Laboratorio 2:** clases y objetos; diseño de objetos; reutilización; proyecto integrador.
 
 La malla se aplica al abrir el planificador y al cargar datos desde Supabase. Las 21 referencias de Computación Básica y las 20 de electricidad/electrónica se registran como sesiones de referencia; los primeros seis videos de Computación Básica quedan marcados como completados según la indicación docente. Las duraciones y títulos proporcionados se conservan en las notas; los enlaces específicos deben agregarse cuando se disponga de ellos y no se generan URL supuestas.
+
+
+## 🎓 Portal de alumnos (en implementación)
+
+El portal educativo se separa del planificador docente:
+
+- `alumnos.html`: inicio de sesión, registro con correo, inscripción por código de clase, lecciones publicadas y progreso individual.
+- `docente-portal.html`: acceso docente, creación de clases vinculadas a los cursos existentes, códigos de inscripción, publicación de lecciones y seguimiento.
+- `supabase/migrations/20261013160000_student_portal.sql`: tablas nuevas, funciones de inscripción y políticas RLS para aislar los datos por estudiante y docente.
+
+### Activación segura
+
+1. Configura Supabase Auth con registro por correo y confirmación de correo habilitada.
+2. Revisa la migración y el esquema existente antes de ejecutarla en **SQL Editor**. No es una migración automática ni se ha aplicado a producción desde este repositorio.
+3. Después de ejecutar la migración, crea la cuenta docente en Supabase Auth y habilítala insertando su UUID en `public.teacher_profiles` desde el SQL Editor administrativo. No habilites esta operación desde el navegador.
+4. En el portal docente, inicia sesión con esa cuenta. Crea una clase, genera el código y entrégalo a tus alumnos.
+5. Los alumnos crean su propia cuenta, confirman el correo, inician sesión y usan el código para inscribirse.
+
+Los códigos se generan aleatoriamente en el navegador, pero la base de datos almacena únicamente su hash. La función de inscripción valida correo confirmado, vigencia, cupo e intentos. No publiques la migración sin revisar primero las políticas RLS en tu proyecto real. Nunca pongas una clave `service_role` en una variable `VITE_*`.
+
+### Estado y límites de esta primera versión
+
+El portal permite leer lecciones de texto, marcar progreso y ver un resumen por alumno. El editor/laboratorio que ejecute Python en el navegador y la analítica detallada de intentos todavía son pasos posteriores. La puntuación enviada por un navegador no debe usarse como evidencia inviolable en evaluaciones de alto impacto.
