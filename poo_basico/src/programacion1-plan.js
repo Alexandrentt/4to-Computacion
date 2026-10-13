@@ -1,3 +1,5 @@
+import { systemsUnits, maintenanceUnits } from './selected-curriculum.js'
+
 export const PLAYLIST_ID = 'PLyvsggKtwbLW1j0d5yaCkRF9Axpdlhsxz'
 export const PLAYLIST_URL = 'https://www.youtube.com/playlist?list=' + PLAYLIST_ID
 
@@ -27,6 +29,12 @@ export const starterCourses = [
     ['Unidad 4 · Proyecto integrador',['Problema y requisitos','Diseño de clases','Implementación incremental','Validación de entradas','Pruebas normales y límites','Documentación técnica','Demostración y retrospectiva']]
   ]}
 ]
+
+// Mantener la misma malla seleccionada en el planificador y en el editor de clases.
+const systemsCourse = starterCourses.find(course => course.id === 'sistemas')
+const maintenanceCourse = starterCourses.find(course => course.id === 'mantenimiento')
+if (systemsCourse) systemsCourse.units = systemsUnits.map(([name, topics]) => [name, [...topics]])
+if (maintenanceCourse) maintenanceCourse.units = maintenanceUnits.map(([name, topics]) => [name, [...topics]])
 
 const lesson = (unit, title, objective, prior, explanation, code, guided, exercises, homework, videoIndex, material='') => ({
   unit,title,objective,prior,explanation,code,guided,exercises,homework,videoIndex,
