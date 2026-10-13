@@ -1,8 +1,4 @@
 import { getCurrentUser, onAuthStateChange, signOut, signIn, signUp } from './auth/auth.js'
-import { getCourses, createCourse, updateCourse, deleteCourse } from './api/courses.js'
-import { getSessions, createSession, updateSession, deleteSession } from './api/sessions.js'
-import { getResources, createResource, updateResource, deleteResource } from './api/resources.js'
-import { getTasks, createTask, updateTask, deleteTask } from './api/tasks.js'
 import { loadPlannerFromCloud, savePlannerToCloud } from './db/cloudSync.js'
 
 // Datos iniciales de cursos
@@ -327,6 +323,7 @@ $("#form").onsubmit = async (e) => {
       db[kind].push(data)
     }
   }
+  save()
   closeModal()
   render()
   msg("Guardado")
