@@ -20,6 +20,7 @@ async function must(query, label) {
 }
 
 export async function loadPlannerFromCloud(userId, currentDb) {
+  if (!supabase) throw new Error('Supabase no está configurado.')
   if (!userId) throw new Error('Debes iniciar sesión.')
 
   const [settingsRows, coursesRows, sessionsRows, resourcesRows, tasksRows] = await Promise.all([
@@ -75,6 +76,7 @@ export async function loadPlannerFromCloud(userId, currentDb) {
 }
 
 export async function savePlannerToCloud(userId, db) {
+  if (!supabase) throw new Error('Supabase no está configurado.')
   if (!userId) throw new Error('Debes iniciar sesión.')
 
   const report = { courses: 0, units: 0, topics: 0, sessions: 0, resources: 0, tasks: 0, skippedResources: 0 }
@@ -128,6 +130,15 @@ export async function savePlannerToCloud(userId, db) {
   }
 
   const mappedCourse = id => courseIds.get(String(id)) || (isUuid(id) ? id : null)
+
+  // Remapear las referencias locales (courseId) a los IDs remotos. Sin esto,
+  // tras el primer guardado los cursos pasan a tener UUID pero las sesiones,
+  // recursos y tareas conservan el id local, perdiendo la relación y
+  // duplicando registros en el siguiente guardado.
+  for (const item of [...(db.sessions || []), ...(db.resources || []), ...(db.tasks || [])]) {
+    if (item.courseId) item.courseId = mappedCourse(item.courseId) || item.courseId
+  }
+
   const remoteSessions = await must(supabase.from('sessions').select('*').eq('user_id', userId), 'Leer sesiones')
   for (const item of db.sessions || []) {
     const courseId = mappedCourse(item.courseId)

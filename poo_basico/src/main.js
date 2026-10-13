@@ -1,5 +1,6 @@
 import { getCurrentUser, onAuthStateChange, signOut, signIn, signUp } from './auth/auth.js'
 import { loadPlannerFromCloud, savePlannerToCloud } from './db/cloudSync.js'
+import { isSupabaseConfigured } from './config/supabase.js'
 
 // Datos iniciales de cursos
 const starterCourses = [
@@ -110,6 +111,21 @@ function courseOptions(id) {
   return db.courses.map(c => `<option value="${c.id}" ${c.id === id ? 'selected' : ''}>${esc(c.name)}</option>`).join("")
 }
 
+function unitsToText(units) {
+  return (units || []).map(u => Array.isArray(u)
+    ? `${u[0]} | ${(u[1] || []).join("; ")}`
+    : `${u.name || ""} | ${(u.topics || []).join("; ")}`
+  ).join("\n")
+}
+
+function textToUnits(text) {
+  return String(text || "").split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+    const [name, topicsPart] = line.split("|")
+    const topics = String(topicsPart || "").split(";").map(t => t.trim()).filter(Boolean)
+    return [String(name || "").trim(), topics]
+  })
+}
+
 // Navegación
 function setPage(p) {
   page = p
@@ -174,7 +190,7 @@ function tablePage(k) {
 
 function settingsPage() {
   return head("Preferencias", "Configuración", "Define el ciclo y la duración solo cuando tengas confirmación del centro.") +
-    `<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="${esc(db.settings.year)}" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="${esc(db.settings.start)}"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="${esc(db.settings.end)}"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="${esc(db.settings.block)}" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option ${db.settings.schedule === "Confirmado" ? 'selected' : ''}>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Usuario</h2><p class="sub">${currentUser ? `Autenticado como: ${currentUser.email}` : "No autenticado - usando localStorage"}</p>${currentUser ? '<button class="btn danger" id="logout">Cerrar sesión</button><button class="btn" id="syncFromCloud">⇩ Cargar desde la nube</button><button class="btn" id="syncToCloud">⇧ Guardar en la nube</button>' : '<button class="btn primary" id="login">Iniciar sesión</button>'}</section><section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">${currentUser ? "Los datos se sincronizan con Supabase cuando estás autenticado." : "Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos."}</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button></section></div>`
+    `<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="${esc(db.settings.year)}" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="${esc(db.settings.start)}"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="${esc(db.settings.end)}"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="${esc(db.settings.block)}" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option ${db.settings.schedule === "Confirmado" ? 'selected' : ''}>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Usuario</h2>${!isSupabaseConfigured ? '<div class="notice warn">La nube está desactivada. Define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en <code>.env.local</code> y reinicia para activar la sincronización.</div>' : currentUser ? `<p class="sub">Autenticado como: ${esc(currentUser.email)}</p><button class="btn danger" id="logout">Cerrar sesión</button><button class="btn" id="syncFromCloud">⇩ Cargar desde la nube</button><button class="btn" id="syncToCloud">⇧ Guardar en la nube</button>` : '<p class="sub">No autenticado: los datos se guardan solo en este navegador.</p><button class="btn primary" id="login">Iniciar sesión</button>'}</section><section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">${currentUser ? "Los datos se sincronizan con Supabase cuando estás autenticado." : "Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos."}</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button></section></div>`
 }
 
 // Event binding
@@ -307,12 +323,12 @@ function bind() {
   $("#authModal").onclick = (e) => {
     if (e.target === $("#authModal")) closeAuthModal()
   }
+  if ($("#export2")) $("#export2").onclick = exportData
+  if ($("#import2")) $("#import2").onclick = () => $("#importFile").click()
+}
 
 function closeAuthModal() {
   $("#authModal").classList.remove("show")
-}
-  if ($("#export2")) $("#export2").onclick = exportData
-  if ($("#import2")) $("#import2").onclick = () => $("#importFile").click()
 }
 
 // Formularios
@@ -329,7 +345,7 @@ function openForm(k, id = null) {
   let fields = ""
   if (k === "course") {
     let c = db.courses.find(x => x.id === id)
-    fields = `<div class="field"><label>Nombre del curso</label><input name="name" value="${c ? esc(c.name) : ""}"></div><div class="field"><label>Grado</label><input name="grade" value="${c ? esc(c.grade) : ""}"></div><div class="field"><label>Descripción</label><textarea name="desc">${c ? esc(c.desc) : ""}</textarea></div><div class="field"><label>Color</label><select name="color">${["blue", "green", "amber", "purple", "red"].map(x => `<option ${c && c.color === x ? 'selected' : ''}>${x}</option>`).join("")}</select></div>`
+    fields = `<div class="field"><label>Nombre del curso</label><input name="name" value="${c ? esc(c.name) : ""}"></div><div class="field"><label>Grado</label><input name="grade" value="${c ? esc(c.grade) : ""}"></div><div class="field"><label>Descripción</label><textarea name="desc">${c ? esc(c.desc) : ""}</textarea></div><div class="field"><label>Color</label><select name="color">${["blue", "green", "amber", "purple", "red"].map(x => `<option ${c && c.color === x ? 'selected' : ''}>${x}</option>`).join("")}</select></div><div class="field"><label>Unidades y temas</label><textarea name="unitsText" placeholder="Unidad 1 · Título | Tema 1; Tema 2; Tema 3">${c ? esc(unitsToText(c.units)) : ""}</textarea><small style="display:block;color:var(--muted);font-size:11px;margin-top:4px">Una unidad por línea con el formato <b>nombre | tema 1; tema 2</b>.</small></div>`
   } else if (k === "sessions") {
     let s = db.sessions.find(x => x.id === id)
     fields = `<div class="field"><label>Título</label><input name="title" value="${s ? esc(s.title) : ""}"></div><div class="field"><label>Curso</label><select name="courseId">${courseOptions(s ? s.courseId : "")}</select></div><div class="field"><label>Objetivo</label><textarea name="objective">${s ? esc(s.objective || "") : ""}</textarea></div><div class="formgrid"><div class="field"><label>Fecha (opcional)</label><input name="date" type="date" value="${s ? esc(s.date || "") : ""}"></div><div class="field"><label>Duración min (opcional)</label><input name="duration" type="number" value="${s ? esc(s.duration || "") : ""}"></div></div><div class="field"><label>Estado</label><select name="status">${["Borrador", "Preparada", "Completada"].map(x => `<option ${s && s.status === x ? 'selected' : ''}>${x}</option>`).join("")}</select></div>`
@@ -351,13 +367,15 @@ $("#form").onsubmit = async (e) => {
   let fd = new FormData(e.target)
   let data = Object.fromEntries(fd)
   if (kind === "course") {
+    const { unitsText, ...rest } = data
+    const units = textToUnits(unitsText)
     if (editing) {
       let c = db.courses.find(x => x.id === editing)
-      Object.assign(c, data)
+      Object.assign(c, rest, { units })
     } else {
-      data.id = "c" + Date.now()
-      data.units = []
-      db.courses.push(data)
+      rest.id = "c" + Date.now()
+      rest.units = units
+      db.courses.push(rest)
     }
   } else {
     data.id = editing || kind.charAt(0) + Date.now()

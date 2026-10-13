@@ -1,9 +1,13 @@
 import { supabase } from '../config/supabase.js'
 
+const NOT_CONFIGURED = new Error('Supabase no está configurado. Revisa .env.local')
+
 /**
  * Registro de usuario con email y contraseña
  */
 export async function signUp(email, password, fullName) {
+  if (!supabase) return { data: null, error: NOT_CONFIGURED }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -30,6 +34,8 @@ export async function signUp(email, password, fullName) {
  * Inicio de sesión con email y contraseña
  */
 export async function signIn(email, password) {
+  if (!supabase) return { data: null, error: NOT_CONFIGURED }
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -46,6 +52,8 @@ export async function signIn(email, password) {
  * Inicio de sesión con Google OAuth
  */
 export async function signInWithGoogle() {
+  if (!supabase) return { data: null, error: NOT_CONFIGURED }
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -68,6 +76,8 @@ export async function signInWithGoogle() {
  * Cerrar sesión
  */
 export async function signOut() {
+  if (!supabase) return { error: null }
+
   const { error } = await supabase.auth.signOut()
 
   if (error) {
@@ -81,6 +91,8 @@ export async function signOut() {
  * Obtener usuario actual
  */
 export async function getCurrentUser() {
+  if (!supabase) return null
+
   const { data: { user }, error } = await supabase.auth.getUser()
 
   if (error) {
@@ -95,6 +107,8 @@ export async function getCurrentUser() {
  * Escuchar cambios de autenticación
  */
 export function onAuthStateChange(callback) {
+  if (!supabase) return { data: { subscription: { unsubscribe() {} } } }
+
   return supabase.auth.onAuthStateChange((event, session) => {
     callback(event, session)
   })
@@ -104,6 +118,8 @@ export function onAuthStateChange(callback) {
  * Restablecer contraseña
  */
 export async function resetPassword(email) {
+  if (!supabase) return { data: null, error: NOT_CONFIGURED }
+
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/reset-password`
   })
@@ -119,6 +135,8 @@ export async function resetPassword(email) {
  * Actualizar contraseña
  */
 export async function updatePassword(newPassword) {
+  if (!supabase) return { data: null, error: NOT_CONFIGURED }
+
   const { data, error } = await supabase.auth.updateUser({
     password: newPassword
   })

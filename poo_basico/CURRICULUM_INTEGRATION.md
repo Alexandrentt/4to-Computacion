@@ -365,7 +365,7 @@ El curriculum puede personalizarse según:
 
 Para dudas sobre:
 - **Contenido del curriculum**: Revisar los archivos JSON
-- **Uso del planificador**: Consultar IMPLEMENTATION_GUIDE.md
+- **Uso del planificador**: Consultar README.md
 - **Integración técnica**: Ver documentación de Supabase y Classroom API
 - **Personalización**: Adaptar según necesidades específicas
 

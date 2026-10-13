@@ -1,173 +1,93 @@
-# Aula Planner v2 - Planificador Docente Profesional
+# Aula Planner v2 - Planificador Docente
 
-Sistema de planificación docente con contenido estructurado para cada clase. Disponible en dos modos: **Standalone** (sin instalación) y **Completo** (con sincronización en la nube).
+Aplicación web para planificar clases, organizar cursos/unidades/temas, guardar recursos y hacer seguimiento manual de tareas de Classroom. Funciona con **Vite** y puede usarse solo con almacenamiento local o sincronizar en la nube con **Supabase**.
 
 ## 🚀 Características
 
-- ✅ **Planificación de sesiones** con plantillas estructuradas (objetivo, introducción, desarrollo, actividades, cierre, evaluación)
-- ✅ **Gestión de cursos, unidades y temas** curriculares
+- ✅ **Planificación de sesiones** con objetivo, fecha y duración opcionales
+- ✅ **Gestión de cursos, unidades y temas** curriculares (edición incluida)
 - ✅ **Biblioteca de recursos** con enlaces a Drive, OneDrive, YouTube
 - ✅ **Seguimiento de tareas** con estado manual y enlace a Classroom
 - ✅ **Exportación/Importación** de datos en JSON para respaldos
-- ✅ **Interfaz responsiva** que funciona en móvil y escritorio
-- 🔄 **Sincronización en la nube** (modo completo, pendiente de implementación)
-- 🔐 **Autenticación con Supabase** (modo completo, pendiente de implementación)
+- ✅ **Interfaz responsiva** (móvil y escritorio)
+- ✅ **Autenticación y sincronización** opcional con Supabase
+- ✅ **Funciona sin nube**: si no configuras Supabase, usa solo `localStorage`
 
-## 📦 Modos de uso
+## 📦 Requisitos
 
-### Modo 1: Standalone (Recomendado para empezar)
+- Node.js 18 o superior
+- (Opcional) Cuenta de [Supabase](https://supabase.com)
 
-**Sin instalación** - Solo abre el archivo HTML en tu navegador.
+> La aplicación se sirve con Vite; no se abre directamente el `index.html` desde el sistema de archivos.
 
-**Uso:**
-1. Descarga o clona el repositorio
-2. Abre `index.html` directamente en tu navegador (doble clic)
-3. Los datos se guardan en `localStorage` del navegador
-4. Exporta respaldos JSON regularmente para no perder datos
+## 🛠️ Instalación
 
-**Ventajas:**
-- No requiere instalación
-- Funciona offline
-- Datos privados (se quedan en tu navegador)
-
-**Limitaciones:**
-- Los datos no se sincronizan entre dispositivos
-- Si borras los datos del navegador, pierdes la planificación
-- No hay autenticación multi-usuario
-
-### Modo 2: Completo (Con sincronización en la nube)
-
-**Requiere Node.js y configuración** - Para sincronización entre dispositivos.
-
-**Instalación:**
 ```bash
-git clone <repository-url>
-cd poo_basico
 npm install
 ```
 
-**Configuración:**
-1. Copia `.env.example` a `.env.local`
-2. Configura las credenciales de Supabase:
+## ⚙️ Variables de entorno
+
+Para activar la nube, crea un archivo `.env.local` en la raíz con:
+
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-publishable-key
 ```
 
-3. Ejecuta el esquema de base de datos en Supabase:
-   - Crea un proyecto en [supabase.com](https://supabase.com)
-   - Ve al SQL Editor y ejecuta `supabase_schema.sql`
-   - Configura autenticación (Email y Google OAuth)
+`.env.local` no se versiona (está en `.gitignore`). Si no existe o está vacío, la aplicación arranca en **modo local**: todo se guarda en `localStorage` y la sección de nube queda desactivada.
 
-**Ejecutar:**
+## ▶️ Uso
+
 ```bash
-npm run dev
+npm run dev       # servidor de desarrollo en http://localhost:5173
+npm run build     # genera dist/
+npm run preview   # sirve dist/
+npm run check     # verifica la sintaxis de los módulos JS
 ```
 
-La aplicación estará disponible en `http://localhost:5173`
+## 🗄️ Configurar Supabase (opcional)
 
-**Construir para producción:**
-```bash
-npm run build
-```
+1. Crea un proyecto en [supabase.com](https://supabase.com).
+2. Abre el **SQL Editor** y ejecuta `supabase_schema.sql`.
+3. En **Authentication > Providers** habilita **Email** (y Google si lo necesitas).
+4. Copia el **Project URL** y la **publishable/anon key** en tu `.env.local`.
+5. Reinicia el servidor de desarrollo.
 
-Los archivos de producción estarán en la carpeta `dist/`
+Con la sesión iniciada, en **Configuración** puedes elegir explícitamente **Cargar desde la nube** o **Guardar en la nube**; nada se sincroniza ni se sobrescribe sin confirmación.
 
 ## 📚 Estructura del proyecto
 
 ```
 poo_basico/
-├── index.html                   # Aplicación standalone (modo simple)
-├── src/                         # Código para modo completo
-│   ├── config/                  # Configuración de Supabase
-│   ├── auth/                    # Funciones de autenticación
-│   ├── api/                     # API functions (cursos, sesiones, classroom)
-│   ├── db/                      # Migración de datos
-│   └── main.js                  # Punto de entrada (versión con Supabase)
-├── docs/                        # Documentación académica
-│   ├── plan-academico.md        # Plan académico preliminar
-│   └── hoja-de-ruta-implementacion.md  # Hoja de ruta de desarrollo
-├── supabase_schema.sql          # Esquema de base de datos (modo completo)
+├── index.html                   # SPA (HTML + estilos)
+├── src/
+│   ├── main.js                  # Punto de entrada y UI
+│   ├── config/supabase.js       # Cliente de Supabase (opcional)
+│   ├── auth/auth.js             # Autenticación
+│   └── db/cloudSync.js          # Sincronización con Supabase
+├── docs/                        # Documentación académica y hoja de ruta
+├── supabase_schema.sql          # Esquema de base de datos + RLS
 ├── class_templates.json         # Plantillas de contenido
-├── IMPLEMENTATION_GUIDE.md     # Guía detallada de implementación
-├── CURRICULUM_INTEGRATION.md   # Guía de integración del curriculum POO
-├── poo_curriculum.json          # Unidad 1: Clases y Objetos
-├── poo_curriculum_extended.json # Unidad 2: Diseño de Objetos
-├── poo_curriculum_units3_4.json # Unidades 3 y 4
-├── poo_curriculum_complete.json # Resumen del curriculum completo
-├── import_curriculum.py         # Script para importar curriculum
-├── vite.config.js              # Configuración de Vite
-├── package.json                # Dependencias del proyecto
-└── .env.example                # Ejemplo de variables de entorno
+├── poo_curriculum*.json         # Currículo POO de referencia
+├── vite.config.js
+└── package.json
 ```
 
 ## 🔐 Seguridad
 
-**Modo Standalone:**
-- Los datos se guardan en `localStorage` del navegador
-- No hay autenticación ni sincronización
-- Los datos son privados (se quedan en tu dispositivo)
-- Exporta respaldos JSON regularmente
+- Las credenciales de Supabase se leen de variables de entorno; no hay claves en el código.
+- Row Level Security (RLS) activo: cada usuario solo accede a sus propios datos.
+- Los datos locales viven en `localStorage` del navegador; usa **Exportar JSON** para respaldarlos.
+- La nube requiere sesión iniciada y acciones manuales confirmadas.
 
-**Modo Completo:**
-- Las credenciales de Supabase se gestionan con variables de entorno
-- Row Level Security (RLS) activado en todas las tablas
-- Los usuarios solo pueden acceder a sus propios datos
-- Tokens de Classroom almacenados de forma segura
+## 📝 Pendientes
 
-## 📖 Guía de implementación completa
-
-Para una guía paso a paso detallada, consulta [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)
-
-## 🔄 Migración de datos
-
-**Modo Standalone:**
-- Exporta tus datos regularmente desde Configuración > Respaldo de datos
-- Importa archivos JSON para restaurar respaldos
-- Los datos no se sincronizan entre dispositivos
-
-**Modo Completo:**
-- La sincronización es automática cuando se implementa Supabase
-- Los datos persisten en la nube
-- Se puede acceder desde múltiples dispositivos con autenticación
-
-## 🤝 Contribución
-
-Este es un proyecto educativo. Las contribuciones son bienvenidas.
+- [ ] Integración real con Classroom API (hoy es manual)
+- [ ] Pruebas automatizadas y migración a TypeScript
+- [ ] Vista imprimible de la planificación
+- [ ] Modo offline / PWA
 
 ## 📄 Licencia
 
 MIT
-
-## 🆘 Soporte
-
-Para problemas o preguntas:
-- Revisa la [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)
-- Verifica la consola del navegador para errores
-- Asegúrate de que las credenciales de Supabase sean correctas
-
-## 🎨 Tecnologías
-
-**Modo Standalone:**
-- **Frontend**: HTML, CSS, JavaScript (Vanilla)
-- **Persistencia**: localStorage del navegador
-
-**Modo Completo:**
-- **Frontend**: HTML, CSS, JavaScript (Vanilla) + Vite
-- **Backend**: Supabase (PostgreSQL)
-- **Auth**: Supabase Auth + Google OAuth
-- **API**: Google Classroom API (pendiente)
-- **Build**: Vite
-
-## 📝 Próximas mejoras
-
-- [ ] **Completar modo completo**: Implementar autenticación con Supabase
-- [ ] **Sincronización en la nube**: Migrar datos de localStorage a Supabase
-- [ ] **Integración Classroom API**: Crear tareas automáticamente
-- [ ] **Dashboard de estadísticas**: Progreso y métricas de planificación
-- [ ] **Modo offline**: Service Workers para usar sin internet
-- [ ] **PWA**: Instalable en dispositivos móviles
-- [ ] **Colaboración**: Compartir planificaciones entre docentes
-- [ ] **Exportación PDF**: Generar planificaciones en PDF
-- [ ] **Integración calendario**: Sincronizar con Google Calendar

@@ -2,7 +2,7 @@
 
 ## Estado de la primera iteración
 
-La aplicación está en `index.html` y no requiere instalación. Persiste los datos en `localStorage` del navegador; por ello, borrar los datos del navegador o cambiar de dispositivo puede dejar la planificación inaccesible. Exportar respaldos JSON con frecuencia mientras siga siendo una herramienta local.
+La aplicación se sirve con Vite (`npm run dev`) y por defecto persiste los datos en `localStorage` del navegador; borrar los datos del navegador o cambiar de dispositivo puede dejar la planificación inaccesible, así que conviene exportar respaldos JSON. La sincronización con Supabase ya está implementada, pero es opcional y manual: se activa configurando `.env.local` e iniciando sesión.
 
 ## Decisiones ya acordadas
 

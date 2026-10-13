@@ -138,7 +138,7 @@
     "documentacion": [
       "CURRICULUM_INTEGRATION.md - Guía de integración",
       "import_curriculum.py - Script de importación",
-      "IMPLEMENTATION_GUIDE.md - Guía del backend"
+      "README.md - Guía de uso y configuración"
     ]
   },
   "recomendaciones": {
