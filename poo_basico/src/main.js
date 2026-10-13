@@ -195,7 +195,7 @@ function tablePage(k) {
 function settingsPage() {
   const classroomPanel = !classroomConfigured()
     ? '<section class="panel"><h2>Google Classroom</h2><div class="notice warn">Falta configurar <code>VITE_GOOGLE_CLIENT_ID</code> en Vercel y autorizar el dominio en Google Cloud.</div><p class="sub">Después podrás conectar tu cuenta, vincular cursos y publicar tareas reales.</p></section>'
-    : `<section class="panel"><h2>Google Classroom</h2><p class="sub">${classroomConnected() ? 'Cuenta de Google autorizada en esta sesión.' : 'Conecta tu cuenta de Google para consultar tus cursos y publicar tareas.'}</p><button class="btn primary" id="connectClassroom">${classroomConnected() ? 'Actualizar autorización de Google' : 'Conectar con Google Classroom'}</button>${googleClassroomCourses.length ? '<button class="btn" id="refreshClassroomCourses">Actualizar cursos</button>' : ''}<div id="classroomMappings">${googleClassroomCourses.length ? db.courses.map(c => `<div class="field"><label>${esc(c.name)} → curso de Classroom</label><select data-classroom-map="${esc(c.id)}"><option value="">Sin vincular</option>${googleClassroomCourses.map(gc => `<option value="${esc(gc.id)}" ${String((db.settings.classroomCourseMap || {})[c.id] || '') === String(gc.id) ? 'selected' : ''}>${esc(gc.name)}${gc.section ? ' · ' + esc(gc.section) : ''}</option>`).join('')}</select></div>`).join('') : ''}</div><p class="sub">El permiso se solicita a Google; el token de acceso se mantiene solo en memoria y tendrás que reconectar cuando expire o recargues la página.</p></section>`
+    : `<section class="panel"><h2>Google Classroom</h2><p class="sub">${classroomConnected() ? 'Cuenta de Google autorizada en esta sesión.' : 'Conecta tu cuenta de Google para consultar tus cursos y publicar tareas.'}</p><button class="btn primary" id="connectClassroom">${classroomConnected() ? 'Actualizar autorización de Google' : 'Conectar con Google Classroom'}</button>${googleClassroomCourses.length ? '<button class="btn" id="refreshClassroomCourses">Actualizar cursos</button>' : ''}<div id="classroomMappings">${googleClassroomCourses.length ? db.courses.map(c => `<div class="field"><label>${esc(c.name)} → curso de Classroom</label><select data-classroom-map="${esc(c.id)}"><option value="">Sin vincular</option>${googleClassroomCourses.map(gc => `<option value="${esc(gc.id)}" ${String((db.settings.classroomCourseMap || {})[c.id] || '') === String(gc.id) ? 'selected' : ''}>${esc(gc.name)}${gc.section ? ' · ' + esc(gc.section) : ''}</option>`).join('')}</select>${(db.settings.classroomCourseMap || {})[c.id] ? ` <button class="btn small" data-import-coursework="${esc(c.id)}">Importar tareas existentes</button>` : ''}</div>`).join('') : ''}</div><p class="sub">El permiso se solicita a Google; el token de acceso se mantiene solo en memoria y tendrás que reconectar cuando expire o recargues la página.</p></section>`
   return head("Preferencias", "Configuración", "Define el ciclo y la duración solo cuando tengas confirmación del centro.") +
     `<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="${esc(db.settings.year)}" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="${esc(db.settings.start)}"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="${esc(db.settings.end)}"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="${esc(db.settings.block)}" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option ${db.settings.schedule === "Confirmado" ? 'selected' : ''}>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Usuario</h2>${!isSupabaseConfigured ? '<div class="notice warn">La nube está desactivada. Define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en <code>.env.local</code> y reinicia para activar la sincronización.</div>' : currentUser ? `<p class="sub">Autenticado como: ${esc(currentUser.email)}</p><button class="btn danger" id="logout">Cerrar sesión</button><button class="btn" id="syncFromCloud">⇩ Cargar desde la nube</button><button class="btn" id="syncToCloud">⇧ Guardar en la nube</button>` : '<p class="sub">No autenticado: los datos se guardan solo en este navegador.</p><button class="btn primary" id="login">Iniciar sesión</button>'}</section>${classroomPanel}<section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">${currentUser ? "Los datos se sincronizan con Supabase cuando estás autenticado." : "Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos."}</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button></section></div>`
 }
@@ -251,6 +251,40 @@ function bind() {
     else delete db.settings.classroomCourseMap[select.dataset.classroomMap]
     save()
     msg("Vinculación con Classroom guardada")
+  })
+  document.querySelectorAll("[data-import-coursework]").forEach(button => button.onclick = async () => {
+    const localCourseId = button.dataset.importCoursework
+    const googleCourseId = (db.settings.classroomCourseMap || {})[localCourseId]
+    try {
+      button.disabled = true
+      button.textContent = "Consultando..."
+      const remoteTasks = await listCourseWork(googleCourseId)
+      let added = 0
+      for (const remote of remoteTasks) {
+        if (db.tasks.some(task => String(task.classroomWorkId || '') === String(remote.id))) continue
+        const dueDate = remote.dueDate
+          ? [remote.dueDate.year, String(remote.dueDate.month).padStart(2, '0'), String(remote.dueDate.day).padStart(2, '0')].join('-')
+          : ''
+        db.tasks.push({
+          id: 'classroom-' + googleCourseId + '-' + remote.id,
+          classroomWorkId: remote.id,
+          courseId: localCourseId,
+          title: remote.title || 'Tarea de Classroom',
+          description: remote.description || '',
+          dueDate,
+          status: remote.state === 'PUBLISHED' ? 'Publicada' : 'Pendiente',
+          url: remote.alternateLink || ''
+        })
+        added++
+      }
+      save()
+      render()
+      msg(`Classroom: ${remoteTasks.length} tareas encontradas; ${added} nuevas importadas.`)
+    } catch (error) {
+      button.disabled = false
+      button.textContent = "Importar tareas existentes"
+      msg("No se pudieron importar las tareas: " + error.message)
+    }
   })
   document.querySelectorAll("[data-publish-task]").forEach(button => button.onclick = async () => {
     const task = db.tasks.find(item => String(item.id) === button.dataset.publishTask)
