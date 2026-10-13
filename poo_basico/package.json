@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "node --check src/main.js && node --check src/db/cloudSync.js && node --check src/auth/auth.js && node --check src/config/supabase.js && node --check src/programacion1-plan.js && node --check src/selected-curriculum.js && node --check src/classroom/googleClassroom.js"
+    "check": "node --check src/main.js && node --check src/db/cloudSync.js && node --check src/auth/auth.js && node --check src/config/supabase.js && node --check src/programacion1-plan.js && node --check src/selected-curriculum.js && node --check src/classroom/googleClassroom.js && node --check src/student-portal.js && node --check src/teacher-portal.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
