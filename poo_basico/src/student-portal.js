@@ -155,7 +155,7 @@ $('#authForm').onsubmit = async e => {
   const btn = $('#authSubmit'); btn.disabled = true
   try {
     if (mode === 'register') {
-      const {data, error} = await supabase.auth.signUp({email, password, options:{data:{full_name:fullName}}})
+      const {data, error} = await supabase.auth.signUp({email, password, options:{data:{full_name:fullName}, emailRedirectTo:'https://4to-computacion-poo-basico.vercel.app/alumnos.html'}})
       if (error) throw error
       if (!data.session) say('Cuenta creada. Confirma tu correo y luego inicia sesión para ingresar el código de clase.', 'success')
       else { signedIn(data.user); say('Cuenta creada. Ingresa el código que te dio tu docente.', 'success') }
