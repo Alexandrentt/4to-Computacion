@@ -96,9 +96,13 @@ poo_basico/
 MIT
 
 
-## Malla seleccionada
+## Malla seleccionada: cuatro unidades por curso
 
-- **Sistemas e Instalación de Software:** computación básica y alfabetización digital, redes e Internet, sistemas operativos y arranque, controladores, particiones, sistemas de archivos, dual boot, formatos digitales, instalación y máquinas virtuales.
-- **Mantenimiento y Reparación de Computadoras:** fundamentos de electricidad, Ley de Ohm, uso del multímetro, circuitos, resistencias y componentes, seguridad ESD, diagnóstico y reparación de equipos.
-- La malla se aplica al abrir el planificador y al cargar datos desde Supabase. Las 21 referencias de Computación Básica y las 20 de electricidad/electrónica se registran como sesiones de referencia; los primeros seis videos de Computación Básica quedan marcados como completados según la indicación docente.
-- Las duraciones y títulos proporcionados se conservan en las notas de cada sesión. Los enlaces específicos de estas listas deben agregarse cuando se disponga de ellos; no se generan enlaces supuestos.
+Todos los cursos tienen exactamente **4 unidades**:
+
+- **Programación I / Laboratorio 1:** pensamiento algorítmico; fundamentos de Python; control y colecciones; programación modular.
+- **Sistemas e Instalación de Software:** computación básica y alfabetización digital; redes, Internet, archivos y datos; sistemas operativos, controladores y almacenamiento; instalación, configuración y virtualización.
+- **Mantenimiento y Reparación de Computadoras:** fundamentos de electricidad y seguridad; multímetro, mediciones y circuitos básicos; resistencias y componentes electrónicos; mantenimiento, diagnóstico y reparación de computadoras.
+- **Laboratorio 2:** clases y objetos; diseño de objetos; reutilización; proyecto integrador.
+
+La malla se aplica al abrir el planificador y al cargar datos desde Supabase. Las 21 referencias de Computación Básica y las 20 de electricidad/electrónica se registran como sesiones de referencia; los primeros seis videos de Computación Básica quedan marcados como completados según la indicación docente. Las duraciones y títulos proporcionados se conservan en las notas; los enlaces específicos deben agregarse cuando se disponga de ellos y no se generan URL supuestas.
