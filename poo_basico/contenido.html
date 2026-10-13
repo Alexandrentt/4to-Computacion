@@ -17,7 +17,7 @@
 <div class="actions">
 <a class="btn dark" href="./">← Volver al planificador</a>
 <button class="btn" id="export">Exportar respaldo</button>
-<button class="btn primary" id="seed">＋ Importar plan de 28 clases</button>
+<button class="btn primary" id="seed">＋ Importar plan de 29 clases</button>
 </div>
 </header>
 <main class="wrap">
@@ -43,7 +43,7 @@ let currentLesson=null
 const $=s=>document.querySelector(s)
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 function readDb(){
-  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.courses))return {...createDefaultDb(),...saved}}
+  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.courses))const merged={...createDefaultDb(),...saved}; merged.sessions=Array.isArray(merged.sessions)?merged.sessions:[]; merged.resources=Array.isArray(merged.resources)?merged.resources:[]; merged.tasks=Array.isArray(merged.tasks)?merged.tasks:[]; return merged}
   catch(e){}
   const fresh=createDefaultDb()
   localStorage.setItem(KEY,JSON.stringify(fresh))
@@ -54,9 +54,10 @@ function parseNotes(s){
   try{const n=JSON.parse(s||'');if(n&&n.lessonContentVersion===1)return n}catch(e){}
   return null
 }
+function programmingCourseId(){return db.courses.find(c=>c.name==='Programación I / Laboratorio 1')?.id||'prog'}
 function getSession(lesson){
-  const title=lesson.title
-  return db.sessions.find(s=>s.courseId==='prog'&&(s.lessonKey===lessonKey(lesson)||s.title===title||s.title.endsWith('· '+title)))
+  const title=lesson.title, key=lessonKey(lesson)
+  return db.sessions.find(s=>{const saved=parseNotes(s.notes);return saved?.lessonKey===key||s.lessonKey===key||(s.courseId===programmingCourseId()&&(s.title===title||String(s.title||'').endsWith('· '+title)))})
 }
 function lessonKey(l){return 'prog-u'+l.unit+'-'+l.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 function contentFor(lesson){
@@ -108,7 +109,7 @@ function renderEditor(){
  $('#next').onclick=()=>{if(selected<programmingLessons.length-1){selected++;renderList();renderEditor()}}
 }
 function serializeContent(data,l){
- return {lessonContentVersion:1,lessonKey:lessonKey(l),unit:l.unit,prior:data.prior||'',explanation:data.explanation||'',code:data.code||'',guided:data.guided||'',exercises:data.exercises||'',homework:data.homework||'',material:data.material||'',videoIndex:l.videoIndex||2}
+ return {lessonContentVersion:1,lessonKey:lessonKey(l),unit:l.unit,title:data.title||l.title,prior:data.prior||'',explanation:data.explanation||'',code:data.code||'',guided:data.guided||'',exercises:data.exercises||'',homework:data.homework||'',material:data.material||'',videoIndex:l.videoIndex||null}
 }
 function saveCurrent(e){
  e.preventDefault()
@@ -119,7 +120,7 @@ function saveCurrent(e){
  const development=(data.explanation||'')+'\n\nEjemplo de código:\n'+(data.code||'')
  const activities='Práctica guiada:\n'+(data.guided||'')+'\n\nEjercicios:\n'+(data.exercises||'')
  const closure='Tarea:\n'+(data.homework||'')
- if(!s){s={id:'session-'+key,courseId:'prog',title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title};db.sessions.push(s)}
+ if(!s){s={id:'session-'+key,courseId:programmingCourseId(),title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title};db.sessions.push(s)}
  Object.assign(s,{lessonKey:key,title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:'prog',objective:data.objective||'',introduction:data.prior||'',development,activities,closure,evidence:data.evidence||'',materialUrl:data.material||'',notes,date:data.date||'',duration:data.duration||'',status:data.status||'Borrador'})
  const taskTitle='Clase '+String(selected+1).padStart(2,'0')+' · '+data.title+' — tarea'
  let task=db.tasks.find(t=>t.lessonKey===key||t.title===taskTitle)
@@ -139,7 +140,7 @@ function saveCurrent(e){
 }
 function seedPlan(){
  const missing=programmingLessons.filter(l=>!getSession(l))
- if(!missing.length){alert('Las 28 clases ya están importadas. Puedes editarlas individualmente.');return}
+ if(!missing.length){alert('Las clases ya están importadas. Puedes editarlas individualmente.');return}
  if(!confirm('Se agregarán '+missing.length+' clases a Programación I, con ejemplos, ejercicios, enlaces y tareas. No se borrarán las clases existentes. ¿Continuar?'))return
  for(const l of missing){
   const i=programmingLessons.indexOf(l), key=lessonKey(l), num=String(i+1).padStart(2,'0')
