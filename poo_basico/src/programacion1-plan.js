@@ -72,3 +72,15 @@ export function createDefaultDb() {
     settings:{year:'',start:'',end:'',block:'',schedule:'Pendiente de confirmar'}
   }
 }
+
+// Alineación aproximada con el índice de la lista compartida; los temas posteriores usan la lista general.
+const playlistIndexes = [2,3,4,5,9,7,10,16,11,12,13,14,17,18,19,22,23,24,25,26,29,43,44,47,49,50,51,51,51]
+programmingLessons.forEach((item, index) => {
+  if (index < 26) {
+    item.videoIndex = playlistIndexes[index]
+    item.material = PLAYLIST_URL + '&index=' + item.videoIndex
+  } else {
+    item.videoIndex = null
+    item.material = PLAYLIST_URL
+  }
+})
