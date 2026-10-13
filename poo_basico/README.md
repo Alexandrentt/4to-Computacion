@@ -128,7 +128,7 @@ La malla se aplica al abrir el planificador y al cargar datos desde Supabase. La
 El portal educativo se separa del planificador docente:
 
 - `alumnos.html`: inicio de sesión, registro con correo, inscripción por código de clase, lecciones publicadas y progreso individual.
-- `docente-portal.html`: acceso docente, creación de clases vinculadas a los cursos existentes, códigos de inscripción, publicación de lecciones y seguimiento.
+- `docente-portal.html`: acceso docente, creación de clases vinculadas a los cursos existentes, códigos de inscripción, publicación de lecciones, ejercicios Python y seguimiento.
 - `supabase/migrations/20261013175104_student_portal_enrollment_and_progress.sql` y `supabase/migrations/20261013175151_student_portal_indexes.sql`: tablas nuevas, funciones de inscripción y políticas RLS para aislar los datos por estudiante y docente.
 
 ### Activación segura
@@ -143,4 +143,4 @@ Los códigos se generan aleatoriamente en el navegador, pero la base de datos al
 
 ### Estado y límites de esta primera versión
 
-El portal permite leer lecciones de texto, marcar progreso y ver un resumen por alumno. El editor/laboratorio que ejecute Python en el navegador y la analítica detallada de intentos todavía son pasos posteriores. La puntuación enviada por un navegador no debe usarse como evidencia inviolable en evaluaciones de alto impacto.
+El portal permite leer lecciones, marcar progreso, ejecutar prácticas Python con Pyodide/WebAssembly dentro de un Web Worker y guardar intentos para el docente. La primera carga del motor Python requiere conexión a Internet y puede tardar. El código se ejecuta en el navegador, no en el servidor. La salida y puntuación reportadas por el cliente son orientativas y pueden manipularse; no deben usarse como evidencia inviolable en evaluaciones de alto impacto.
