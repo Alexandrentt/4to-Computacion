@@ -369,3 +369,7 @@ DROP TRIGGER IF EXISTS on_auth_user_created_profile ON auth.users;
 CREATE TRIGGER on_auth_user_created_profile
 AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION public.handle_new_auth_user();
+
+
+-- Vinculación entre cursos locales y cursos reales de Google Classroom.
+ALTER TABLE public.user_settings ADD COLUMN IF NOT EXISTS classroom_course_map JSONB NOT NULL DEFAULT '{}'::jsonb;
