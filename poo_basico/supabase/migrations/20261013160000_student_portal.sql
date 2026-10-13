@@ -112,31 +112,31 @@ grant usage on schema private to authenticated;
 
 create or replace function private.is_class_teacher(p_class_id uuid)
 returns boolean language sql stable security definer set search_path = ''
-as $
+as $$
   select exists (
     select 1 from public.learning_classes c
     where c.id = p_class_id and c.teacher_id = (select auth.uid())
   );
-$;
+$$;
 
 create or replace function private.is_class_member(p_class_id uuid)
 returns boolean language sql stable security definer set search_path = ''
-as $
+as $$
   select exists (
     select 1 from public.class_memberships m
     where m.class_id = p_class_id and m.student_id = (select auth.uid()) and m.status = 'active'
   );
-$;
+$$;
 
 create or replace function private.is_lesson_teacher(p_lesson_id uuid)
 returns boolean language sql stable security definer set search_path = ''
-as $
+as $$
   select exists (
     select 1 from public.learning_lessons l
     join public.learning_classes c on c.id = l.class_id
     where l.id = p_lesson_id and c.teacher_id = (select auth.uid())
   );
-$;
+$$;
 
 revoke all on function private.is_class_teacher(uuid) from public, anon;
 revoke all on function private.is_class_member(uuid) from public, anon;
@@ -257,7 +257,7 @@ returns jsonb
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_uid uuid := auth.uid();
   v_email_confirmed timestamptz;
@@ -342,7 +342,7 @@ begin
 
   return jsonb_build_object('ok', true, 'class_id', v_class_id);
 end;
-$;
+$$;
 
 revoke all on function public.join_class_with_code(text) from public, anon;
 grant execute on function public.join_class_with_code(text) to authenticated;
