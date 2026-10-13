@@ -35,6 +35,7 @@ create table if not exists public.class_memberships (
   id uuid primary key default gen_random_uuid(),
   class_id uuid not null references public.learning_classes(id) on delete cascade,
   student_id uuid not null references auth.users(id) on delete cascade,
+  student_name text not null default '',
   joined_at timestamptz not null default now(),
   status text not null default 'active' check (status in ('active', 'removed')),
   unique (class_id, student_id)
@@ -256,6 +257,7 @@ as $
 declare
   v_uid uuid := auth.uid();
   v_email_confirmed timestamptz;
+  v_student_name text;
   v_attempt public.class_join_attempts%rowtype;
   v_invite public.class_invite_codes%rowtype;
   v_class_id uuid;
@@ -265,7 +267,9 @@ begin
     raise exception 'Debes iniciar sesión para inscribirte.' using errcode = '28000';
   end if;
 
-  select au.email_confirmed_at into v_email_confirmed
+  select au.email_confirmed_at,
+         coalesce(nullif(trim(au.raw_user_meta_data ->> 'full_name'), ''), split_part(coalesce(au.email, ''), '@', 1))
+    into v_email_confirmed, v_student_name
   from auth.users au where au.id = v_uid;
   if v_email_confirmed is null then
     raise exception 'Confirma tu correo antes de usar un código de clase.' using errcode = '42501';
@@ -323,8 +327,8 @@ begin
     raise exception 'La clase no está disponible.' using errcode = 'P0001';
   end if;
 
-  insert into public.class_memberships(class_id, student_id)
-  values (v_class_id, v_uid);
+  insert into public.class_memberships(class_id, student_id, student_name)
+  values (v_class_id, v_uid, coalesce(nullif(v_student_name, ''), 'Estudiante'));
 
   update public.class_invite_codes set use_count = use_count + 1
   where id = v_invite.id;
