@@ -250,6 +250,7 @@ function bind() {
     if (select.value) db.settings.classroomCourseMap[select.dataset.classroomMap] = select.value
     else delete db.settings.classroomCourseMap[select.dataset.classroomMap]
     save()
+    render()
     msg("Vinculación con Classroom guardada")
   })
   document.querySelectorAll("[data-import-coursework]").forEach(button => button.onclick = async () => {
