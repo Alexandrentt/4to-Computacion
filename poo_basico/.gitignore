@@ -2,6 +2,9 @@
 node_modules/
 dist/
 
+# Vercel
+.vercel/
+
 # Environment variables
 .env.local
 .env
