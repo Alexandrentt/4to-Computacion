@@ -94,3 +94,11 @@ poo_basico/
 ## 📄 Licencia
 
 MIT
+
+
+## Malla seleccionada
+
+- **Sistemas e Instalación de Software:** computación básica y alfabetización digital, redes e Internet, sistemas operativos y arranque, controladores, particiones, sistemas de archivos, dual boot, formatos digitales, instalación y máquinas virtuales.
+- **Mantenimiento y Reparación de Computadoras:** fundamentos de electricidad, Ley de Ohm, uso del multímetro, circuitos, resistencias y componentes, seguridad ESD, diagnóstico y reparación de equipos.
+- La malla se aplica al abrir el planificador y al cargar datos desde Supabase. Las 21 referencias de Computación Básica y las 20 de electricidad/electrónica se registran como sesiones de referencia; los primeros seis videos de Computación Básica quedan marcados como completados según la indicación docente.
+- Las duraciones y títulos proporcionados se conservan en las notas de cada sesión. Los enlaces específicos de estas listas deben agregarse cuando se disponga de ellos; no se generan enlaces supuestos.
