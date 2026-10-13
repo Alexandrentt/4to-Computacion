@@ -112,12 +112,12 @@ export const maintenanceUnits = [
 ]
 
 export const selectedVideoLessons = [
-  { course: 'sistemas', unit: 1, number: 1, title: 'Proceso de arranque y encendido de computadoras y móviles', duration: 'Video ya marcado como completado', status: 'Completada' },
-  { course: 'sistemas', unit: 1, number: 2, title: 'Cómo funciona un circuito electrónico', duration: 'Video ya marcado como completado', status: 'Completada' },
-  { course: 'sistemas', unit: 1, number: 3, title: 'Qué es un bit y qué es un byte', duration: 'Video ya marcado como completado', status: 'Completada' },
-  { course: 'sistemas', unit: 1, number: 4, title: 'Cómo funciona una CPU por dentro', duration: 'Video ya marcado como completado', status: 'Completada' },
-  { course: 'sistemas', unit: 1, number: 5, title: 'Qué hace un sistema operativo por dentro', duration: 'Video ya marcado como completado', status: 'Completada' },
-  { course: 'sistemas', unit: 1, number: 6, title: 'Cómo funciona internet', duration: 'Video ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 1, title: 'Proceso de arranque y encendido de computadoras y móviles', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 2, title: 'Cómo funciona un circuito electrónico', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 3, title: 'Qué es un bit y qué es un byte', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 4, title: 'Cómo funciona una CPU por dentro', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 5, title: 'Qué hace un sistema operativo por dentro', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
+  { course: 'sistemas', unit: 1, number: 6, title: 'Cómo funciona internet', duration: 'duración no indicada; ya marcado como completado', status: 'Completada' },
   { course: 'sistemas', unit: 1, number: 7, title: 'Cómo guarda y borra datos tu computadora', duration: '10:07', status: 'Borrador' },
   { course: 'sistemas', unit: 1, number: 8, title: 'Cómo se organizan los archivos', duration: '10:54', status: 'Borrador' },
   { course: 'sistemas', unit: 1, number: 9, title: 'Qué es y cómo funciona un system on a chip', duration: '12:53', status: 'Borrador' },
