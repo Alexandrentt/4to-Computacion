@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172239">
+<title>Contenido por clase | Aula</title>
+<style>
+:root{--bg:#f4f6fa;--paper:#fff;--ink:#192235;--muted:#667187;--line:#e2e7f0;--brand:#354f9a;--nav:#172239;--soft:#eaf0ff;--green:#187753;--amber:#97620a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button,a{cursor:pointer}.top{background:var(--nav);color:white;padding:20px max(20px,calc((100vw - 1400px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:#cbd4e6}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);border-radius:9px;padding:9px 13px;background:#fff;color:var(--ink);font-weight:650;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.btn.dark{background:#263755;color:white;border-color:#52627c}.wrap{max-width:1400px;margin:auto;padding:22px}.notice{padding:12px 15px;background:var(--soft);border:1px solid #d6e4ff;border-radius:10px;margin-bottom:16px}.layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:18px}.sidebar{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}.filters{display:grid;gap:8px;margin-bottom:12px}.filters input,.filters select,.field input,.field textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:white}.list{display:grid;gap:6px}.lesson{width:100%;border:1px solid transparent;border-radius:9px;padding:10px;text-align:left;background:transparent;color:var(--ink)}.lesson:hover{background:#f6f8fc}.lesson.active{background:var(--soft);border-color:#cbd9ff}.lesson strong{display:block;font-size:13px}.lesson small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.badge{font-size:10px;background:#eef0f4;color:#536078;padding:2px 6px;border-radius:5px;display:inline-block;margin-right:5px}.detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.detail-head h2{margin:3px 0 6px;font-size:24px;letter-spacing:-.03em}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:13px}.field label{display:block;font-weight:700;font-size:12px;color:var(--muted);margin-bottom:5px}.field textarea{min-height:105px;resize:vertical}.field textarea.code{font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:150px;background:#111b2d;color:#f1f5ff;border-color:#111b2d}.field textarea.tall{min-height:180px}.section-title{font-size:14px;margin:18px 0 10px;border-bottom:1px solid var(--line);padding-bottom:7px}.video{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff8e6;border:1px solid #ffe6a0;padding:12px;border-radius:9px;margin-bottom:16px}.video a{font-weight:700;color:#805400}.footer{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:16px}.empty{padding:28px;text-align:center;color:var(--muted)}.status{font-size:12px;color:var(--green);min-height:20px}.pill{background:#d4f4e4;color:#0f5c40;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;max-height:none}.list{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.wrap{padding:12px}.top{padding:16px}.detail-head{display:block}}@media(max-width:520px){.list{grid-template-columns:1fr}.actions .btn{flex:1}.top h1{font-size:21px}}
+</style>
+</head>
+<body>
+<header class="top">
+<div><h1>Contenido por clase</h1><p>Programación I / Laboratorio 1 · Python desde cero</p></div>
+<div class="actions">
+<a class="btn dark" href="./">← Volver al planificador</a>
+<button class="btn" id="export">Exportar respaldo</button>
+<button class="btn primary" id="seed">＋ Importar plan de 28 clases</button>
+</div>
+</header>
+<main class="wrap">
+<div class="notice"><strong>Cómo funciona:</strong> el plan inicial es editable y se guarda en el mismo almacenamiento local del planificador. La secuencia de Python se basa en la <a href="https://youtube.com/playlist?list=PLyvsggKtwbLW1j0d5yaCkRF9Axpdlhsxz" target="_blank" rel="noreferrer">lista de reproducción compartida</a>. Las fechas y duraciones quedan vacías hasta confirmar el horario. Después de importar el plan, usa Configuración en la aplicación principal para sincronizar los cambios con Supabase.</div>
+<div class="layout">
+<aside class="panel sidebar">
+<div class="filters">
+<input id="search" placeholder="Buscar clase, tema o unidad…">
+<select id="unitFilter"><option value="all">Todas las unidades</option><option value="2">Unidad 2 · Fundamentos de Python</option><option value="3">Unidad 3 · Control y colecciones</option><option value="4">Unidad 4 · Programación modular</option></select>
+</div>
+<div class="muted" id="count"></div>
+<div class="list" id="lessonList"></div>
+</aside>
+<section class="panel" id="editor"><div class="empty">Selecciona una clase o importa el plan para empezar.</div></section>
+</div>
+</main>
+<script type="module">
+import { programmingLessons, starterCourses, createDefaultDb, PLAYLIST_URL } from '/src/programacion1-plan.js'
+const KEY='aula-docente-4to-v2'
+let db
+let selected=0
+let currentLesson=null
+const $=s=>document.querySelector(s)
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+function readDb(){
+  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.courses))return {...createDefaultDb(),...saved}}
+  catch(e){}
+  const fresh=createDefaultDb()
+  localStorage.setItem(KEY,JSON.stringify(fresh))
+  return fresh
+}
+db=readDb()
+function parseNotes(s){
+  try{const n=JSON.parse(s||'');if(n&&n.lessonContentVersion===1)return n}catch(e){}
+  return null
+}
+function getSession(lesson){
+  const title=lesson.title
+  return db.sessions.find(s=>s.courseId==='prog'&&(s.lessonKey===lessonKey(lesson)||s.title===title||s.title.endsWith('· '+title)))
+}
+function lessonKey(l){return 'prog-u'+l.unit+'-'+l.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function contentFor(lesson){
+ const s=getSession(lesson), saved=parseNotes(s?.notes)
+ if(saved)return {...lesson,...saved}
+ return {...lesson}
+}
+function lessonList(){
+ const q=$('#search').value.trim().toLowerCase(), u=$('#unitFilter').value
+ const visible=programmingLessons.map((l,i)=>({...l,index:i})).filter(l=>(u==='all'||String(l.unit)===u)&&(!q||(l.title+' '+l.objective+' '+l.explanation).toLowerCase().includes(q)))
+ $('#count').textContent=visible.length+' de '+programmingLessons.length+' clases'
+ $('#lessonList').innerHTML=visible.map(l=>`<button class="lesson ${l.index===selected?'active':''}" data-lesson="${l.index}"><strong><span class="badge">${String(l.index+1).padStart(2,'0')}</span>${esc(l.title)}</strong><small>Unidad ${l.unit} · ${getSession(l)?'Importada':'Plantilla disponible'}</small></button>`).join('')||'<div class="empty">No hay clases que coincidan.</div>'
+ $('#lessonList').querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.lesson);renderList();renderEditor()})
+}
+function renderList(){lessonList()}
+function renderEditor(){
+ const l=programmingLessons[selected]; if(!l)return
+ currentLesson=contentFor(l)
+ const s=getSession(l)
+ const videoUrl=currentLesson.material||PLAYLIST_URL+'&index='+(currentLesson.videoIndex||2)
+ $('#editor').innerHTML=`
+ <div class="detail-head"><div><span class="badge">CLASE ${String(selected+1).padStart(2,'0')} / ${programmingLessons.length}</span><span class="badge">UNIDAD ${l.unit}</span><h2>${esc(currentLesson.title)}</h2><div class="muted">Objetivo, explicación, código, práctica, recursos y tarea.</div></div><span class="pill">${s?.status==='Preparada'?'Preparada':s?.status==='Completada'?'Impartida':'Borrador'}</span></div>
+ <div class="video"><div><strong>Video de referencia</strong><div class="muted">Puedes cambiar el enlace si decides usar otro material.</div><a href="${esc(videoUrl)}" target="_blank" rel="noreferrer">Abrir video/lista de reproducción ↗</a></div><span class="badge">YouTube</span></div>
+ <form id="lessonForm">
+ <div class="field"><label>Título de la clase</label><input name="title" value="${esc(currentLesson.title)}" required></div>
+ <div class="field"><label>Objetivo observable</label><textarea name="objective" required>${esc(currentLesson.objective)}</textarea></div>
+ <div class="field"><label>Activación / conocimientos previos</label><textarea name="prior">${esc(currentLesson.prior)}</textarea></div>
+ <div class="field"><label>Explicación docente</label><textarea name="explanation" class="tall">${esc(currentLesson.explanation)}</textarea></div>
+ <div class="field"><label>Ejemplo de código (Python)</label><textarea name="code" class="code">${esc(currentLesson.code)}</textarea></div>
+ <div class="field"><label>Práctica guiada</label><textarea name="guided">${esc(currentLesson.guided)}</textarea></div>
+ <div class="grid">
+ <div class="field"><label>Ejercicios en clase</label><textarea name="exercises" class="tall">${esc(currentLesson.exercises)}</textarea></div>
+ <div class="field"><label>Tarea para casa / Classroom</label><textarea name="homework" class="tall">${esc(currentLesson.homework)}</textarea></div>
+ </div>
+ <div class="grid">
+ <div class="field"><label>Enlace a material/video</label><input name="material" type="url" value="${esc(videoUrl)}"></div>
+ <div class="field"><label>Duración en minutos (opcional)</label><input name="duration" type="number" min="1" value="${esc(s?.duration||'')}" placeholder="Pendiente de horario"></div>
+ </div>
+ <div class="grid">
+ <div class="field"><label>Fecha (opcional)</label><input name="date" type="date" value="${esc(s?.date||'')}"></div>
+ <div class="field"><label>Estado</label><select name="status">${['Borrador','Preparada','Completada'].map(x=>'<option '+(x===(s?.status||'Borrador')?'selected':'')+'>'+x+'</option>').join('')}</select></div>
+ </div>
+ <div class="field"><label>Evidencia / criterios de evaluación</label><textarea name="evidence">${esc(s?.evidence||'Código ejecutable, resultados correctos y explicación breve del procedimiento.')}</textarea></div>
+ <div class="footer"><span class="status" id="savedStatus"></span><button class="btn primary" type="submit">Guardar contenido de esta clase</button></div>
+ </form>
+ <div class="footer"><button class="btn" id="prev" ${selected===0?'disabled':''}>← Clase anterior</button><button class="btn" id="next" ${selected===programmingLessons.length-1?'disabled':''}>Clase siguiente →</button></div>`
+ $('#lessonForm').onsubmit=saveCurrent
+ $('#prev').onclick=()=>{if(selected>0){selected--;renderList();renderEditor()}}
+ $('#next').onclick=()=>{if(selected<programmingLessons.length-1){selected++;renderList();renderEditor()}}
+}
+function serializeContent(data,l){
+ return {lessonContentVersion:1,lessonKey:lessonKey(l),unit:l.unit,prior:data.prior||'',explanation:data.explanation||'',code:data.code||'',guided:data.guided||'',exercises:data.exercises||'',homework:data.homework||'',material:data.material||'',videoIndex:l.videoIndex||2}
+}
+function saveCurrent(e){
+ e.preventDefault()
+ const form=new FormData(e.target), data=Object.fromEntries(form)
+ const l=programmingLessons[selected], key=lessonKey(l)
+ let s=getSession(l)
+ const notes=JSON.stringify(serializeContent(data,l))
+ const development=(data.explanation||'')+'\n\nEjemplo de código:\n'+(data.code||'')
+ const activities='Práctica guiada:\n'+(data.guided||'')+'\n\nEjercicios:\n'+(data.exercises||'')
+ const closure='Tarea:\n'+(data.homework||'')
+ if(!s){s={id:'session-'+key,courseId:'prog',title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title};db.sessions.push(s)}
+ Object.assign(s,{lessonKey:key,title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:'prog',objective:data.objective||'',introduction:data.prior||'',development,activities,closure,evidence:data.evidence||'',materialUrl:data.material||'',notes,date:data.date||'',duration:data.duration||'',status:data.status||'Borrador'})
+ const taskTitle='Clase '+String(selected+1).padStart(2,'0')+' · '+data.title+' — tarea'
+ let task=db.tasks.find(t=>t.lessonKey===key||t.title===taskTitle)
+ if(data.homework?.trim()){
+  if(!task){task={id:'task-'+key,courseId:'prog',lessonKey:key};db.tasks.push(task)}
+  Object.assign(task,{title:taskTitle,courseId:'prog',lessonKey:key,description:data.homework, instructions:'Entrega en Classroom el archivo solicitado y una breve explicación del procedimiento.',status:task.status||'Pendiente',url:task.url||'',dueDate:task.dueDate||'',points:task.points||''})
+ }
+ const url=data.material||''
+ if(url){
+  let resource=db.resources.find(r=>r.lessonKey===key||r.url===url&&r.courseId==='prog')
+  if(!resource){resource={id:'resource-'+key,courseId:'prog',lessonKey:key};db.resources.push(resource)}
+  Object.assign(resource,{title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:'prog',lessonKey:key,type:'Video',url,notes:'Video de apoyo para '+data.title})
+ }
+ localStorage.setItem(KEY,JSON.stringify(db))
+ $('#savedStatus').textContent='Guardado en el planificador local.'
+ renderList()
+}
+function seedPlan(){
+ const missing=programmingLessons.filter(l=>!getSession(l))
+ if(!missing.length){alert('Las 28 clases ya están importadas. Puedes editarlas individualmente.');return}
+ if(!confirm('Se agregarán '+missing.length+' clases a Programación I, con ejemplos, ejercicios, enlaces y tareas. No se borrarán las clases existentes. ¿Continuar?'))return
+ for(const l of missing){
+  const i=programmingLessons.indexOf(l), key=lessonKey(l), num=String(i+1).padStart(2,'0')
+  const notes=JSON.stringify({...l,lessonContentVersion:1,lessonKey:key})
+  const development=l.explanation+'\n\nEjemplo de código:\n'+l.code
+  const activities='Práctica guiada:\n'+l.guided+'\n\nEjercicios:\n'+l.exercises
+  const closure='Tarea:\n'+l.homework
+  const session={id:'session-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:'prog',objective:l.objective,introduction:l.prior,development,activities,closure,evidence:'Código ejecutable, resultados correctos, casos de prueba y explicación breve del procedimiento.',materialUrl:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes,date:'',duration:'',status:'Borrador'}
+  db.sessions.push(session)
+  const taskTitle='Clase '+num+' · '+l.title+' — tarea'
+  if(l.homework?.trim())db.tasks.push({id:'task-'+key,lessonKey:key,title:taskTitle,courseId:'prog',description:l.homework,instructions:'Entrega el archivo .py solicitado y una breve explicación. Publicar en Classroom y registrar aquí el seguimiento manual.',dueDate:'',points:'',status:'Pendiente',url:''})
+  db.resources.push({id:'resource-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:'prog',type:'Video',url:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes:'Video de referencia; verificar el minuto/tema antes de asignarlo.'})
+ }
+ localStorage.setItem(KEY,JSON.stringify(db))
+ selected=0;renderList();renderEditor()
+ alert('Plan importado. Se guardaron clases, tareas y recursos en el almacenamiento local compartido con el planificador.')
+}
+$('#search').addEventListener('input',renderList)
+$('#unitFilter').addEventListener('change',renderList)
+$('#seed').onclick=seedPlan
+$('#export').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='plan-docente-respaldo.json';a.click();URL.revokeObjectURL(url)}
+renderList()
+if(programmingLessons.length)renderEditor()
+</script>
+</body>
+</html>
