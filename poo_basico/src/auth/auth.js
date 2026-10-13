@@ -19,20 +19,9 @@ export async function signUp(email, password, fullName) {
     return { data: null, error }
   }
 
-  // Crear registro en tabla users
-  if (data.user) {
-    const { error: userError } = await supabase
-      .from('users')
-      .insert({
-        id: data.user.id,
-        email: data.user.email,
-        full_name: fullName
-      })
-
-    if (userError) {
-      console.error('Error creando usuario:', userError)
-    }
-  }
+  // El perfil público se crea mediante un trigger seguro en la base de datos
+  // cuando Supabase Auth registra al usuario. Así no depende de que el cliente
+  // tenga una sesión activa mientras se confirma el correo.
 
   return { data, error: null }
 }
