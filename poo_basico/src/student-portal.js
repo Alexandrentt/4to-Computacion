@@ -134,8 +134,9 @@ $('#joinForm').onsubmit = async e => {
   if (!user) return say('Inicia sesión primero.', 'error')
   const btn = $('#joinBtn'); btn.disabled = true
   try {
-    const {error} = await supabase.rpc('join_class_with_code', {p_code:$('#classCode').value.trim()})
+    const {data, error} = await supabase.rpc('join_class_with_code', {p_code:$('#classCode').value.trim()})
     if (error) throw error
+    if (!data?.ok) throw new Error(data?.message || 'No se pudo usar el código.')
     $('#classCode').value = ''; await loadClasses(); say('Te inscribiste correctamente.', 'success')
   } catch (err) { say(err.message || 'No se pudo usar el código.', 'error') }
   finally { btn.disabled = false }
