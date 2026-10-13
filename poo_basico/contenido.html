@@ -121,18 +121,18 @@ function saveCurrent(e){
  const activities='Práctica guiada:\n'+(data.guided||'')+'\n\nEjercicios:\n'+(data.exercises||'')
  const closure='Tarea:\n'+(data.homework||'')
  if(!s){s={id:'session-'+key,courseId:programmingCourseId(),title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title};db.sessions.push(s)}
- Object.assign(s,{lessonKey:key,title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:'prog',objective:data.objective||'',introduction:data.prior||'',development,activities,closure,evidence:data.evidence||'',materialUrl:data.material||'',notes,date:data.date||'',duration:data.duration||'',status:data.status||'Borrador'})
+ Object.assign(s,{lessonKey:key,title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:programmingCourseId(),objective:data.objective||'',introduction:data.prior||'',development,activities,closure,evidence:data.evidence||'',materialUrl:data.material||'',notes,date:data.date||'',duration:data.duration||'',status:data.status||'Borrador'})
  const taskTitle='Clase '+String(selected+1).padStart(2,'0')+' · '+data.title+' — tarea'
  let task=db.tasks.find(t=>t.lessonKey===key||t.title===taskTitle)
  if(data.homework?.trim()){
-  if(!task){task={id:'task-'+key,courseId:'prog',lessonKey:key};db.tasks.push(task)}
-  Object.assign(task,{title:taskTitle,courseId:'prog',lessonKey:key,description:data.homework, instructions:'Entrega en Classroom el archivo solicitado y una breve explicación del procedimiento.',status:task.status||'Pendiente',url:task.url||'',dueDate:task.dueDate||'',points:task.points||''})
+  if(!task){task={id:'task-'+key,courseId:programmingCourseId(),lessonKey:key};db.tasks.push(task)}
+  Object.assign(task,{title:taskTitle,courseId:programmingCourseId(),lessonKey:key,description:data.homework, instructions:'Entrega en Classroom el archivo solicitado y una breve explicación del procedimiento.',status:task.status||'Pendiente',url:task.url||'',dueDate:task.dueDate||'',points:task.points||''})
  }
  const url=data.material||''
  if(url){
-  let resource=db.resources.find(r=>r.lessonKey===key||r.url===url&&r.courseId==='prog')
-  if(!resource){resource={id:'resource-'+key,courseId:'prog',lessonKey:key};db.resources.push(resource)}
-  Object.assign(resource,{title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:'prog',lessonKey:key,type:'Video',url,notes:'Video de apoyo para '+data.title})
+  let resource=db.resources.find(r=>r.lessonKey===key||r.url===url&&r.courseId===programmingCourseId())
+  if(!resource){resource={id:'resource-'+key,courseId:programmingCourseId(),lessonKey:key};db.resources.push(resource)}
+  Object.assign(resource,{title:'Clase '+String(selected+1).padStart(2,'0')+' · '+data.title,courseId:programmingCourseId(),lessonKey:key,type:'Video',url,notes:'Video de apoyo para '+data.title})
  }
  localStorage.setItem(KEY,JSON.stringify(db))
  $('#savedStatus').textContent='Guardado en el planificador local.'
@@ -148,11 +148,11 @@ function seedPlan(){
   const development=l.explanation+'\n\nEjemplo de código:\n'+l.code
   const activities='Práctica guiada:\n'+l.guided+'\n\nEjercicios:\n'+l.exercises
   const closure='Tarea:\n'+l.homework
-  const session={id:'session-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:'prog',objective:l.objective,introduction:l.prior,development,activities,closure,evidence:'Código ejecutable, resultados correctos, casos de prueba y explicación breve del procedimiento.',materialUrl:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes,date:'',duration:'',status:'Borrador'}
+  const session={id:'session-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:programmingCourseId(),objective:l.objective,introduction:l.prior,development,activities,closure,evidence:'Código ejecutable, resultados correctos, casos de prueba y explicación breve del procedimiento.',materialUrl:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes,date:'',duration:'',status:'Borrador'}
   db.sessions.push(session)
   const taskTitle='Clase '+num+' · '+l.title+' — tarea'
-  if(l.homework?.trim())db.tasks.push({id:'task-'+key,lessonKey:key,title:taskTitle,courseId:'prog',description:l.homework,instructions:'Entrega el archivo .py solicitado y una breve explicación. Publicar en Classroom y registrar aquí el seguimiento manual.',dueDate:'',points:'',status:'Pendiente',url:''})
-  db.resources.push({id:'resource-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:'prog',type:'Video',url:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes:'Video de referencia; verificar el minuto/tema antes de asignarlo.'})
+  if(l.homework?.trim())db.tasks.push({id:'task-'+key,lessonKey:key,title:taskTitle,courseId:programmingCourseId(),description:l.homework,instructions:'Entrega el archivo .py solicitado y una breve explicación. Publicar en Classroom y registrar aquí el seguimiento manual.',dueDate:'',points:'',status:'Pendiente',url:''})
+  db.resources.push({id:'resource-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:programmingCourseId(),type:'Video',url:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes:'Video de referencia; verificar el minuto/tema antes de asignarlo.'})
  }
  localStorage.setItem(KEY,JSON.stringify(db))
  selected=0;renderList();renderEditor()
