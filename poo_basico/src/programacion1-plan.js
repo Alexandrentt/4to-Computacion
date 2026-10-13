@@ -1,36 +1,36 @@
 export const PLAYLIST_ID = 'PLyvsggKtwbLW1j0d5yaCkRF9Axpdlhsxz'
-export const PLAYLIST_URL = `https://www.youtube.com/playlist?list=` + PLAYLIST_ID
+export const PLAYLIST_URL = 'https://www.youtube.com/playlist?list=' + PLAYLIST_ID
 
 export const starterCourses = [
-  { id:`prog', name:'Programación I / Laboratorio 1', grade:'4.º Bachillerato', color:'blue', desc:'De algoritmos y PSeInt a Python estructurado y modular.`, units:[
-    [`Unidad 1 · Pensamiento algorítmico',['Pensamiento computacional y resolución de problemas','Entradas, procesos y salidas','Algoritmos y pseudocódigo','Diagramas de flujo','Uso de PSeInt','Variables y operaciones en pseudocódigo','Práctica integradora de lógica`]],
-    [`Unidad 2 · Fundamentos de Python',['Preparación del entorno Python','Primer programa, print y comentarios','Variables, tipos y conversiones','Operadores aritméticos, relacionales y lógicos','Entrada de datos','Condicionales simples y múltiples','Problemas de decisión en Python y PSeInt`]],
-    [`Unidad 3 · Control y colecciones',['Ciclo while','Ciclo for y rangos','Contadores, acumuladores y validación','Cadenas de texto','Listas y recorridos','Listas anidadas y matrices','Reto con ciclos y colecciones`]],
-    [`Unidad 4 · Programación modular',['Descomposición en funciones','Parámetros y retorno','Alcance de variables','Módulos e importaciones','Validación y errores','Archivos de texto según el ritmo','Proyecto estructurado y documentado`]]
+  { id:'prog', name:'Programación I / Laboratorio 1', grade:'4.º Bachillerato', color:'blue', desc:'De algoritmos y PSeInt a Python estructurado y modular.', units:[
+    ['Unidad 1 · Pensamiento algorítmico',['Pensamiento computacional y resolución de problemas','Entradas, procesos y salidas','Algoritmos y pseudocódigo','Diagramas de flujo','Uso de PSeInt','Variables y operaciones en pseudocódigo','Práctica integradora de lógica']],
+    ['Unidad 2 · Fundamentos de Python',['Preparación del entorno Python','Primer programa, print y comentarios','Variables, tipos y conversiones','Operadores aritméticos, relacionales y lógicos','Entrada de datos','Condicionales simples y múltiples','Problemas de decisión en Python y PSeInt']],
+    ['Unidad 3 · Control y colecciones',['Ciclo while','Ciclo for y rangos','Contadores, acumuladores y validación','Cadenas de texto','Listas y recorridos','Listas anidadas y matrices','Reto con ciclos y colecciones']],
+    ['Unidad 4 · Programación modular',['Descomposición en funciones','Parámetros y retorno','Alcance de variables','Módulos e importaciones','Validación y errores','Archivos de texto según el ritmo','Proyecto estructurado y documentado']]
   ]},
-  { id:`sistemas',name:'Sistemas e Instalación de Software',grade:'4.º Bachillerato',color:'green',desc:'Instalación, configuración y recuperación segura de sistemas.`,units:[
-    [`Unidad 1 · Fundamentos y preparación',['Hardware, firmware y software','Sistemas operativos y licencias','BIOS/UEFI y arranque','Particiones y sistemas de archivos','Requisitos y compatibilidad','Medios de instalación','Lista de comprobación previa`]],
-    [`Unidad 2 · Instalación de sistemas',['Respaldos y autorización','Instalación en máquina virtual o equipo de práctica','Particionado y riesgos','Configuración inicial','Instalación limpia frente a actualización','Verificación del arranque','Informe de instalación`]],
-    [`Unidad 3 · Configuración',['Controladores','Actualizaciones','Instalación de aplicaciones','Usuarios, grupos y permisos','Licencias y software legítimo','Configuración básica de red','Herramientas de diagnóstico`]],
-    [`Unidad 4 · Recuperación',['Copias de seguridad','Restauración de archivos','Recuperación del sistema','Máquinas virtuales y snapshots','Errores frecuentes de arranque','Bitácora de recuperación','Informe técnico final`]]
+  { id:'sistemas',name:'Sistemas e Instalación de Software',grade:'4.º Bachillerato',color:'green',desc:'Instalación, configuración y recuperación segura de sistemas.',units:[
+    ['Unidad 1 · Fundamentos y preparación',['Hardware, firmware y software','Sistemas operativos y licencias','BIOS/UEFI y arranque','Particiones y sistemas de archivos','Requisitos y compatibilidad','Medios de instalación','Lista de comprobación previa']],
+    ['Unidad 2 · Instalación de sistemas',['Respaldos y autorización','Instalación en máquina virtual o equipo de práctica','Particionado y riesgos','Configuración inicial','Instalación limpia frente a actualización','Verificación del arranque','Informe de instalación']],
+    ['Unidad 3 · Configuración',['Controladores','Actualizaciones','Instalación de aplicaciones','Usuarios, grupos y permisos','Licencias y software legítimo','Configuración básica de red','Herramientas de diagnóstico']],
+    ['Unidad 4 · Recuperación',['Copias de seguridad','Restauración de archivos','Recuperación del sistema','Máquinas virtuales y snapshots','Errores frecuentes de arranque','Bitácora de recuperación','Informe técnico final']]
   ]},
-  { id:`mantenimiento',name:'Mantenimiento y Reparación de Computadoras',grade:'5.º Bachillerato',color:'amber',desc:'Prevención, diagnóstico sistemático y reparación documentada.`,units:[
-    [`Unidad 1 · Seguridad y componentes',['Seguridad del taller y registro del equipo','Electricidad estática y ESD','Herramientas y organización','Placa base, CPU, RAM y discos','Fuente de poder y refrigeración','Inspección visual','Rutina preventiva`]],
-    [`Unidad 2 · Diagnóstico',['Síntoma, hipótesis, prueba y resultado','Equipo no enciende','POST e indicadores de error','Memoria RAM y almacenamiento','Temperatura y ventilación','Software frente a hardware','Árbol de diagnóstico`]],
-    [`Unidad 3 · Mantenimiento correctivo',['Limpieza interna segura','Montaje y desmontaje supervisado','Compatibilidad de componentes','Sustitución de piezas','Pruebas posteriores','Inventario y repuestos','Evaluación práctica`]],
-    [`Unidad 4 · Casos integrales',['Árbol de decisión para averías','Caso de equipo que no arranca','Caso de lentitud o temperatura','Estimación de costos','Informe técnico','Recepción y entrega simulada','Caso final documentado`]]
+  { id:'mantenimiento',name:'Mantenimiento y Reparación de Computadoras',grade:'5.º Bachillerato',color:'amber',desc:'Prevención, diagnóstico sistemático y reparación documentada.',units:[
+    ['Unidad 1 · Seguridad y componentes',['Seguridad del taller y registro del equipo','Electricidad estática y ESD','Herramientas y organización','Placa base, CPU, RAM y discos','Fuente de poder y refrigeración','Inspección visual','Rutina preventiva']],
+    ['Unidad 2 · Diagnóstico',['Síntoma, hipótesis, prueba y resultado','Equipo no enciende','POST e indicadores de error','Memoria RAM y almacenamiento','Temperatura y ventilación','Software frente a hardware','Árbol de diagnóstico']],
+    ['Unidad 3 · Mantenimiento correctivo',['Limpieza interna segura','Montaje y desmontaje supervisado','Compatibilidad de componentes','Sustitución de piezas','Pruebas posteriores','Inventario y repuestos','Evaluación práctica']],
+    ['Unidad 4 · Casos integrales',['Árbol de decisión para averías','Caso de equipo que no arranca','Caso de lentitud o temperatura','Estimación de costos','Informe técnico','Recepción y entrega simulada','Caso final documentado']]
   ]},
-  { id:`lab2',name:'Laboratorio 2',grade:'5.º Bachillerato',color:'blue',desc:'Diseño de software con clases, objetos y relaciones.`,units:[
-    [`Unidad 1 · Clases y objetos',['Repaso de funciones y módulos','Clases y objetos','Atributos y métodos','Constructores','Estado y comportamiento','Modelado de entidades','Práctica de objetos`]],
-    [`Unidad 2 · Diseño de objetos',['Encapsulación','Validación del estado','Composición','Relaciones entre clases','Responsabilidades y cohesión','Modelo de dominio','Implementación y pruebas`]],
-    [`Unidad 3 · Reutilización',['Herencia y especialización','Sobrescritura de métodos','Polimorfismo','Composición frente a herencia','Organización por archivos','Pruebas y depuración','Ejercicio integrador`]],
-    [`Unidad 4 · Proyecto integrador',['Problema y requisitos','Diseño de clases','Implementación incremental','Validación de entradas','Pruebas normales y límites','Documentación técnica','Demostración y retrospectiva`]]
+  { id:'lab2',name:'Laboratorio 2',grade:'5.º Bachillerato',color:'blue',desc:'Diseño de software con clases, objetos y relaciones.',units:[
+    ['Unidad 1 · Clases y objetos',['Repaso de funciones y módulos','Clases y objetos','Atributos y métodos','Constructores','Estado y comportamiento','Modelado de entidades','Práctica de objetos']],
+    ['Unidad 2 · Diseño de objetos',['Encapsulación','Validación del estado','Composición','Relaciones entre clases','Responsabilidades y cohesión','Modelo de dominio','Implementación y pruebas']],
+    ['Unidad 3 · Reutilización',['Herencia y especialización','Sobrescritura de métodos','Polimorfismo','Composición frente a herencia','Organización por archivos','Pruebas y depuración','Ejercicio integrador']],
+    ['Unidad 4 · Proyecto integrador',['Problema y requisitos','Diseño de clases','Implementación incremental','Validación de entradas','Pruebas normales y límites','Documentación técnica','Demostración y retrospectiva']]
   ]}
 ]
 
-const lesson = (unit, title, objective, prior, explanation, code, guided, exercises, homework, videoIndex, material=``) => ({
+const lesson = (unit, title, objective, prior, explanation, code, guided, exercises, homework, videoIndex, material='') => ({
   unit,title,objective,prior,explanation,code,guided,exercises,homework,videoIndex,
-  material: material || PLAYLIST_URL + `&index=` + videoIndex
+  material: material || PLAYLIST_URL + '&index=' + videoIndex
 })
 
 export const programmingLessons = [
@@ -62,13 +62,13 @@ lesson(3,'Modificar listas: append e insert','Añadir, insertar y modificar elem
 lesson(3,'Listas y recorridos: práctica integradora','Procesar una colección de datos con ciclos, decisiones y acumuladores.','Listas, for, if y operadores aritméticos.','Combinar listas y ciclos permite resolver problemas con múltiples datos. El patrón es recorrer cada elemento, actualizar un acumulador o contador y mostrar el resumen. Mantén separado el ingreso de datos, el procesamiento y la presentación.',`notas = [80, 65, 92, 48, 75]\ntotal = 0\naprobados = 0\nfor nota in notas:\n    total += nota\n    if nota >= 60:\n        aprobados += 1\nprint(f"Promedio: {total / len(notas):.2f}")\nprint(f"Aprobados: {aprobados}")`,'Modificar la lista y comprobar cómo cambian promedio y aprobados.',['Encuentra el precio más alto de una lista.','Cuenta cuántos nombres tienen más de seis caracteres.','Muestra solo los números pares de una lista.'],'Entrega un reporte de calificaciones que muestre promedio, mayor, menor, aprobados y reprobados a partir de una lista.',50),
 lesson(4,'Funciones: dividir el programa en tareas','Definir y llamar funciones que encapsulen una responsabilidad concreta.','Variables, expresiones y problemas resueltos paso a paso.','Una función se define con def y un nombre descriptivo. El bloque indentado contiene sus instrucciones. Llamarla ejecuta el bloque. Las funciones reducen repetición y facilitan probar partes del programa por separado.',`def mostrar_menu():\n    print("1. Sumar")\n    print("2. Restar")\n\nmostrar_menu()`,'Convertir un bloque repetido en una función y llamarla desde dos lugares.',['Crea una función mostrar_titulo() que imprima el nombre del proyecto.','Crea una función que muestre una tabla de multiplicar.'],'Organiza un pequeño menú en al menos tres funciones con nombres claros. Incluye un punto de entrada principal y comentarios.',51),
 lesson(4,'Parámetros y return','Crear funciones que reciban datos y devuelvan resultados reutilizables.','Definición y llamada de funciones.','Los parámetros aparecen en la definición y reciben argumentos cuando se llama la función. return entrega un resultado al código que llamó; print solo lo muestra. Una función que calcula debe devolver el valor para que pueda reutilizarse.',`def area_rectangulo(base, altura):\n    return base * altura\n\narea = area_rectangulo(5, 3)\nprint(f"Área: {area}")`,'Comparar una función que imprime con otra que retorna y guardar el resultado en una variable.',['Implementa celsius_a_fahrenheit(celsius).','Implementa es_par(numero) que devuelva True o False.','Implementa promedio(lista) y prueba con tres listas.'],'Entrega una calculadora modular con funciones sumar, restar, multiplicar y dividir; contempla división entre cero y prueba cada función.',51),
-lesson(4,'Proyecto de cierre: programa estructurado','Integrar variables, decisiones, ciclos, listas y funciones en un programa pequeño.','Fundamentos de Python, condicionales, ciclos y listas.','Un programa estructurado divide el problema en entrada, procesamiento y salida. Cada función debe tener una responsabilidad clara. Antes de entregar, ejecuta casos normales, límites y entradas inválidas conocidas. Documenta cómo usarlo y qué limitaciones tiene.',`def calcular_promedio(notas):\n    return sum(notas) / len(notas)\n\nnotas = [80, 75, 90]\nprint(f"Promedio: {calcular_promedio(notas):.2f}")`,'Revisar una lista de requisitos y diseñar funciones antes de escribir código.',['Añade validación de notas y conteo de aprobados.','Agrega un menú que permita repetir cálculos hasta elegir salir.'],'Proyecto: gestor de calificaciones o inventario básico. Entrega .py, descripción del problema, pseudocódigo, al menos seis pruebas y una demostración breve. La fecha se asignará al confirmar el horario.`,51)
+lesson(4,'Proyecto de cierre: programa estructurado','Integrar variables, decisiones, ciclos, listas y funciones en un programa pequeño.','Fundamentos de Python, condicionales, ciclos y listas.','Un programa estructurado divide el problema en entrada, procesamiento y salida. Cada función debe tener una responsabilidad clara. Antes de entregar, ejecuta casos normales, límites y entradas inválidas conocidas. Documenta cómo usarlo y qué limitaciones tiene.',`def calcular_promedio(notas):\n    return sum(notas) / len(notas)\n\nnotas = [80, 75, 90]\nprint(f"Promedio: {calcular_promedio(notas):.2f}")`,'Revisar una lista de requisitos y diseñar funciones antes de escribir código.',['Añade validación de notas y conteo de aprobados.','Agrega un menú que permita repetir cálculos hasta elegir salir.'],'Proyecto: gestor de calificaciones o inventario básico. Entrega .py, descripción del problema, pseudocódigo, al menos seis pruebas y una demostración breve. La fecha se asignará al confirmar el horario.',51)
 ]
 
 export function createDefaultDb() {
   return {
     courses: starterCourses.map(c => ({...c, units:c.units.map(u=>[u[0],[...u[1]]])})),
     sessions:[], resources:[], tasks:[],
-    settings:{year:`',start:'',end:'',block:'',schedule:'Pendiente de confirmar'}
+    settings:{year:'',start:'',end:'',block:'',schedule:'Pendiente de confirmar'}
   }
 }
