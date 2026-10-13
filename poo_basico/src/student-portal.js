@@ -149,7 +149,8 @@ $('#registerTab').onclick = () => setMode('register')
 $('#authForm').onsubmit = async e => {
   e.preventDefault(); clearSay()
   if (!supabase) { say('Supabase no está configurado. Define VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.', 'error'); return }
-  const email = $('#email').value.trim(), password = $('#password').value, fullName = $('#fullName').value.trim()
+  const loginValue = $('#email').value.trim(), password = $('#password').value, fullName = $('#fullName').value.trim()
+  const email = mode === 'login' && !loginValue.includes('@') ? loginValue.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9._-]/g, '') + '@alumnos.4to-computacion.test' : loginValue
   if (mode === 'register' && fullName.length < 2) { say('Escribe tu nombre completo.', 'error'); return }
   if (password.length < 8) { say('La contraseña debe tener al menos 8 caracteres.', 'error'); return }
   const btn = $('#authSubmit'); btn.disabled = true
@@ -177,6 +178,21 @@ $('#joinForm').onsubmit = async e => {
     if (!data?.ok) throw new Error(data?.message || 'No se pudo usar el código.')
     $('#classCode').value = ''; await loadClasses(); say('Te inscribiste correctamente.', 'success')
   } catch (err) { say(err.message || 'No se pudo usar el código.', 'error') }
+  finally { btn.disabled = false }
+}
+$('#passwordForm').onsubmit = async e => {
+  e.preventDefault(); clearSay()
+  if (!user || !supabase) return say('Inicia sesión primero.', 'error')
+  const next = $('#newPassword').value, confirm = $('#confirmPassword').value
+  if (next.length < 10) return say('Usa al menos 10 caracteres para la nueva contraseña.', 'error')
+  if (next !== confirm) return say('Las contraseñas no coinciden.', 'error')
+  const btn = $('#changePasswordBtn'); btn.disabled = true
+  try {
+    const { error } = await supabase.auth.updateUser({ password: next })
+    if (error) throw error
+    $('#passwordForm').reset()
+    say('Contraseña actualizada correctamente.', 'success')
+  } catch (err) { say(err.message || 'No se pudo cambiar la contraseña.', 'error') }
   finally { btn.disabled = false }
 }
 $('#logoutBtn').onclick = async () => { if (supabase) await supabase.auth.signOut(); signedOut() }
