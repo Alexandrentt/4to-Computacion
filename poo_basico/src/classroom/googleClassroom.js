@@ -5,16 +5,31 @@ let expiresAt = 0
 export function classroomConfigured() { return Boolean(CLIENT_ID) }
 export function classroomConnected() { return Boolean(accessToken && Date.now() < expiresAt) }
 
-export async function connectClassroom() {
-  if (!CLIENT_ID) throw new Error('Falta configurar VITE_GOOGLE_CLIENT_ID en Vercel.')
-  await new Promise((resolve, reject) => {
-    if (window.google?.accounts?.oauth2) return resolve()
+let identityPromise = null
+
+function loadGoogleIdentity() {
+  if (window.google?.accounts?.oauth2) return Promise.resolve()
+  if (identityPromise) return identityPromise
+  identityPromise = new Promise((resolve, reject) => {
     const script = document.createElement('script')
     script.src = 'https://accounts.google.com/gsi/client'
-    script.onload = resolve
+    script.async = true
+    script.defer = true
+    script.onload = () => window.google?.accounts?.oauth2
+      ? resolve()
+      : reject(new Error('Google Identity Services se cargó, pero no está disponible.'))
     script.onerror = () => reject(new Error('No se pudo cargar Google Identity Services.'))
     document.head.appendChild(script)
   })
+  return identityPromise
+}
+
+// Carga el script antes de que el docente pulse el botón de autorización.
+loadGoogleIdentity().catch(() => {})
+
+export async function connectClassroom() {
+  if (!CLIENT_ID) throw new Error('Falta configurar VITE_GOOGLE_CLIENT_ID en Vercel.')
+  await loadGoogleIdentity()
   return new Promise((resolve, reject) => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
@@ -42,13 +57,29 @@ async function request(path, options = {}) {
 }
 
 export async function listClassroomCourses() {
-  const data = await request('/courses?pageSize=100&courseStates=ACTIVE')
-  return data.courses || []
+  const all = []
+  let pageToken = ''
+  do {
+    const params = new URLSearchParams({ pageSize: '100', courseStates: 'ACTIVE' })
+    if (pageToken) params.set('pageToken', pageToken)
+    const data = await request('/courses?' + params.toString())
+    all.push(...(data.courses || []))
+    pageToken = data.nextPageToken || ''
+  } while (pageToken)
+  return all
 }
 
 export async function listCourseWork(courseId) {
-  const data = await request('/courses/' + encodeURIComponent(courseId) + '/courseWork?pageSize=100')
-  return data.courseWork || []
+  const all = []
+  let pageToken = ''
+  do {
+    const params = new URLSearchParams({ pageSize: '100' })
+    if (pageToken) params.set('pageToken', pageToken)
+    const data = await request('/courses/' + encodeURIComponent(courseId) + '/courseWork?' + params.toString())
+    all.push(...(data.courseWork || []))
+    pageToken = data.nextPageToken || ''
+  } while (pageToken)
+  return all
 }
 
 export async function publishClassroomTask(courseId, task) {
