@@ -55,7 +55,14 @@ export async function getCourseById(courseId) {
 export async function createCourse(courseData) {
   const { data, error } = await supabase
     .from('courses')
-    .insert(courseData)
+    .insert({
+      id: courseData.id,
+      user_id: courseData.user_id,
+      name: courseData.name,
+      level: courseData.level,
+      color: courseData.color,
+      description: courseData.description
+    })
     .select()
     .single()
 
@@ -73,7 +80,12 @@ export async function createCourse(courseData) {
 export async function updateCourse(courseId, courseData) {
   const { data, error } = await supabase
     .from('courses')
-    .update(courseData)
+    .update({
+      name: courseData.name,
+      level: courseData.level,
+      color: courseData.color,
+      description: courseData.description
+    })
     .eq('id', courseId)
     .select()
     .single()

@@ -1,6 +1,9 @@
 import { getCurrentUser, onAuthStateChange, signOut, signIn, signUp } from './auth/auth.js'
 import { getCourses, createCourse, updateCourse, deleteCourse } from './api/courses.js'
 import { getSessions, createSession, updateSession, deleteSession } from './api/sessions.js'
+import { getResources, createResource, updateResource, deleteResource } from './api/resources.js'
+import { getTasks, createTask, updateTask, deleteTask } from './api/tasks.js'
+import { getSettings, upsertSettings } from './api/settings.js'
 
 // Datos iniciales de cursos
 const starterCourses = [
@@ -174,7 +177,7 @@ function tablePage(k) {
 
 function settingsPage() {
   return head("Preferencias", "Configuración", "Define el ciclo y la duración solo cuando tengas confirmación del centro.") +
-    `<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="${esc(db.settings.year)}" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="${esc(db.settings.start)}"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="${esc(db.settings.end)}"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="${esc(db.settings.block)}" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option ${db.settings.schedule === "Confirmado" ? 'selected' : ''}>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Usuario</h2><p class="sub">${currentUser ? `Autenticado como: ${currentUser.email}` : "No autenticado - usando localStorage"}</p>${currentUser ? '<button class="btn danger" id="logout">Cerrar sesión</button>' : '<button class="btn primary" id="login">Iniciar sesión</button>'}</section><section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos.</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button></section></div>`
+    `<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="${esc(db.settings.year)}" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="${esc(db.settings.start)}"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="${esc(db.settings.end)}"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="${esc(db.settings.block)}" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option ${db.settings.schedule === "Confirmado" ? 'selected' : ''}>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Usuario</h2><p class="sub">${currentUser ? `Autenticado como: ${currentUser.email}` : "No autenticado - usando localStorage"}</p>${currentUser ? '<button class="btn danger" id="logout">Cerrar sesión</button><button class="btn" id="syncFromCloud">⇩ Cargar desde la nube</button><button class="btn" id="syncToCloud">⇧ Guardar en la nube</button>' : '<button class="btn primary" id="login">Iniciar sesión</button>'}</section><section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">${currentUser ? "Los datos se sincronizan con Supabase cuando estás autenticado." : "Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos."}</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button></section></div>`
 }
 
 // Event binding
@@ -222,6 +225,18 @@ function bind() {
     render()
     msg("Sesión cerrada")
   }
+  if ($("#syncFromCloud")) $("#syncFromCloud").onclick = async () => {
+    if (currentUser) {
+      msg("Cargando datos desde la nube...")
+      await loadFromSupabase(currentUser.id)
+    }
+  }
+  if ($("#syncToCloud")) $("#syncToCloud").onclick = async () => {
+    if (currentUser) {
+      msg("Guardando datos en la nube...")
+      await saveToSupabase(currentUser.id)
+    }
+  }
   if ($("#login")) $("#login").onclick = async () => {
     const register = window.confirm("¿Quieres crear una cuenta nueva?\\nAceptar: crear cuenta\\nCancelar: iniciar sesión")
     const email = window.prompt("Correo electrónico:")
@@ -248,8 +263,13 @@ function bind() {
     }
 
     currentUser = result.data?.user || null
+    if (currentUser) {
+      msg("Sesión iniciada. Cargando datos...")
+      await loadFromSupabase(currentUser.id)
+    } else {
+      msg("Revisa tu correo para continuar")
+    }
     render()
-    msg(currentUser ? "Sesión iniciada" : "Revisa tu correo para continuar")
   }
   if ($("#export2")) $("#export2").onclick = exportData
   if ($("#import2")) $("#import2").onclick = () => $("#importFile").click()
@@ -385,6 +405,209 @@ function load() {
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(db))
+}
+
+// Sincronización con Supabase
+async function loadFromSupabase(userId) {
+  if (!userId) return
+
+  try {
+    // Cargar configuración
+    const { data: settingsData } = await getSettings(userId)
+    if (settingsData) {
+      db.settings = {
+        year: settingsData.school_year || "",
+        start: settingsData.start_date || "",
+        end: settingsData.end_date || "",
+        block: settingsData.block_duration || "",
+        schedule: settingsData.schedule_status || "Pendiente de confirmar"
+      }
+    }
+
+    // Cargar cursos con unidades y temas
+    const { data: coursesData } = await getCourses(userId)
+    if (coursesData && coursesData.length > 0) {
+      db.courses = coursesData.map(course => ({
+        id: course.id,
+        name: course.name,
+        grade: course.level,
+        color: course.color,
+        desc: course.description,
+        units: course.units ? course.units.map(unit => [
+          unit.name,
+          unit.topics ? unit.topics.map(t => t.title) : []
+        ]) : []
+      }))
+    }
+
+    // Cargar sesiones
+    const { data: sessionsData } = await getSessions(userId)
+    if (sessionsData) {
+      db.sessions = sessionsData.map(s => ({
+        id: s.id,
+        title: s.title,
+        courseId: s.course_id,
+        objective: s.objective,
+        date: s.date,
+        duration: s.duration,
+        status: s.status
+      }))
+    }
+
+    // Cargar recursos
+    const { data: resourcesData } = await getResources(userId)
+    if (resourcesData) {
+      db.resources = resourcesData.map(r => ({
+        id: r.id,
+        title: r.title,
+        courseId: r.course_id,
+        type: r.kind,
+        url: r.url,
+        notes: r.notes
+      }))
+    }
+
+    // Cargar tareas
+    const { data: tasksData } = await getTasks(userId)
+    if (tasksData) {
+      db.tasks = tasksData.map(t => ({
+        id: t.id,
+        title: t.title,
+        courseId: t.course_id,
+        description: t.description,
+        dueDate: t.due_date,
+        status: t.status,
+        url: t.classroom_url
+      }))
+    }
+
+    save()
+    render()
+    msg("Datos sincronizados desde la nube")
+  } catch (error) {
+    console.error("Error cargando desde Supabase:", error)
+    msg("Error al sincronizar datos")
+  }
+}
+
+async function saveToSupabase(userId) {
+  if (!userId) return
+
+  try {
+    // Guardar configuración
+    await upsertSettings(userId, db.settings)
+
+    // Guardar cursos (simplificado - en producción habría que manejar unidades y temas)
+    for (const course of db.courses) {
+      const { data: existing } = await getCourses(userId)
+      const existingCourse = existing?.find(c => c.id === course.id)
+
+      if (existingCourse) {
+        await updateCourse(course.id, {
+          name: course.name,
+          level: course.grade,
+          color: course.color,
+          description: course.desc
+        })
+      } else {
+        await createCourse({
+          id: course.id,
+          user_id: userId,
+          name: course.name,
+          level: course.grade,
+          color: course.color,
+          description: course.desc
+        })
+      }
+    }
+
+    // Guardar sesiones
+    for (const session of db.sessions) {
+      const existingData = await getSessions(userId)
+      const existing = existingData.data?.find(s => s.id === session.id)
+
+      if (existing) {
+        await updateSession(session.id, {
+          title: session.title,
+          course_id: session.courseId,
+          objective: session.objective,
+          date: session.date,
+          duration: session.duration,
+          status: session.status
+        })
+      } else {
+        await createSession({
+          id: session.id,
+          user_id: userId,
+          title: session.title,
+          course_id: session.courseId,
+          objective: session.objective,
+          date: session.date,
+          duration: session.duration,
+          status: session.status
+        })
+      }
+    }
+
+    // Guardar recursos
+    for (const resource of db.resources) {
+      const existingData = await getResources(userId)
+      const existing = existingData.data?.find(r => r.id === resource.id)
+
+      if (existing) {
+        await updateResource(resource.id, {
+          title: resource.title,
+          course_id: resource.courseId,
+          kind: resource.type,
+          url: resource.url,
+          notes: resource.notes
+        })
+      } else {
+        await createResource({
+          id: resource.id,
+          user_id: userId,
+          title: resource.title,
+          course_id: resource.courseId,
+          kind: resource.type,
+          url: resource.url,
+          notes: resource.notes
+        })
+      }
+    }
+
+    // Guardar tareas
+    for (const task of db.tasks) {
+      const existingData = await getTasks(userId)
+      const existing = existingData.data?.find(t => t.id === task.id)
+
+      if (existing) {
+        await updateTask(task.id, {
+          title: task.title,
+          course_id: task.courseId,
+          description: task.description,
+          due_date: task.dueDate,
+          status: task.status,
+          classroom_url: task.url
+        })
+      } else {
+        await createTask({
+          id: task.id,
+          user_id: userId,
+          title: task.title,
+          course_id: task.courseId,
+          description: task.description,
+          due_date: task.dueDate,
+          status: task.status,
+          classroom_url: task.url
+        })
+      }
+    }
+
+    msg("Datos guardados en la nube")
+  } catch (error) {
+    console.error("Error guardando en Supabase:", error)
+    msg("Error al guardar en la nube")
+  }
 }
 
 // Inicialización
