@@ -84,12 +84,13 @@ export async function savePlannerToCloud(userId, db) {
 
   for (const course of db.courses || []) {
     let remote = remoteCourseByName.get(course.name)
+    const knownUnits = remote?.units || []
     const payload = {
       user_id: userId, name: course.name, level: course.grade || null,
       color: course.color || 'blue', description: course.desc || null, is_active: true
     }
     if (remote) {
-      remote = await must(supabase.from('courses').update(payload).eq('id', remote.id).select().single(), 'Actualizar curso')
+      remote = { ...await must(supabase.from('courses').update(payload).eq('id', remote.id).select().single(), 'Actualizar curso'), units: knownUnits }
     } else {
       remote = await must(supabase.from('courses').insert(payload).select().single(), 'Crear curso')
       remoteCourseByName.set(course.name, { ...remote, units: [] })
@@ -114,8 +115,12 @@ export async function savePlannerToCloud(userId, db) {
       const existingTopics = unit.topics || []
       for (let j = 0; j < topics.length; j++) {
         const topicTitle = typeof topics[j] === 'string' ? topics[j] : topics[j].title
-        if (!existingTopics.some(t => t.title === topicTitle)) {
-          await must(supabase.from('topics').insert({ unit_id: unit.id, title: topicTitle, order_index: j }), 'Crear tema')
+        const existingTopic = existingTopics.find(t => t.title === topicTitle)
+        if (!existingTopic) {
+          const inserted = await must(supabase.from('topics').insert({ unit_id: unit.id, title: topicTitle, order_index: j }).select().single(), 'Crear tema')
+          existingTopics.push(inserted)
+        } else if (existingTopic.order_index !== j) {
+          await must(supabase.from('topics').update({ order_index: j }).eq('id', existingTopic.id), 'Ordenar tema')
         }
         report.topics++
       }
