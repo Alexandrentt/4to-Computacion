@@ -1,0 +1,434 @@
+{
+  "course": {
+    "id": "lab2",
+    "name": "Laboratorio 2 - Programación Orientada a Objetos",
+    "level": "5.º Bachillerato",
+    "area": "Programación orientada a objetos",
+    "description": "Diseño de software mediante clases, objetos y relaciones. Aprenderás a modelar problemas del mundo real usando POO, implementar encapsulación, herencia y polimorfismo en Python.",
+    "evaluation_distribution": {
+      "total_points": 100,
+      "breakdown": {
+        "actitudinal": 5,
+        "parcial": 15,
+        "examen_final": 30,
+        "tareas_actividades": 50
+      }
+    },
+    "units": [
+      {
+        "id": "unit1",
+        "name": "Unidad 1 - Clases y Objetos",
+        "order": 1,
+        "objectives": [
+          "Comprender el paradigma de programación orientada a objetos",
+          "Definir clases y crear objetos en Python",
+          "Implementar atributos y métodos",
+          "Utilizar constructores para inicializar objetos",
+          "Diferenciar entre estado y comportamiento"
+        ],
+        "topics": [
+          {
+            "id": "u1t1",
+            "name": "Repaso de funciones y módulos",
+            "order": 1,
+            "duration_minutes": 90,
+            "content": {
+              "introduction": "La programación orientada a objetos se basa en el concepto de objetos, que son instancias de clases. Antes de entrar en POO, repasaremos funciones y módulos como base fundamental.",
+              "development": "Las funciones son bloques de código reutilizables que realizan una tarea específica. Los módulos son archivos que contienen funciones y variables que pueden ser importados en otros programas. En POO, las funciones se convierten en métodos de una clase.",
+              "key_concepts": [
+                "Definición de funciones con def",
+                "Parámetros y argumentos",
+                "Return y valores de retorno",
+                "Importación de módulos",
+                "Espacios de nombres (namespaces)"
+              ],
+              "examples": [
+                {
+                  "title": "Ejemplo básico de función",
+                  "code": "def saludar(nombre):\n    return f\"Hola, {nombre}!\"\n\nmensaje = saludar(\"Ana\")\nprint(mensaje)  # Hola, Ana!"
+                },
+                {
+                  "title": "Función con múltiples parámetros",
+                  "code": "def calcular_promedio(nota1, nota2, nota3):\n    promedio = (nota1 + nota2 + nota3) / 3\n    return promedio\n\nresultado = calcular_promedio(85, 90, 78)\nprint(f\"El promedio es: {resultado:.2f}\")"
+                },
+                {
+                  "title": "Importación de módulo",
+                  "code": "import math\n\nradio = 5\narea = math.pi * radio ** 2\nprint(f\"Área del círculo: {area:.2f}\")"
+                }
+              ]
+            },
+            "activities": [
+              {
+                "type": "practica_individual",
+                "title": "Crear funciones matemáticas",
+                "description": "Implementa las siguientes funciones en un archivo Python: 1) area_rectangulo(base, altura), 2) perimetro_rectangulo(base, altura), 3) es_par(numero)",
+                "duration_minutes": 20,
+                "points": 2
+              },
+              {
+                "type": "discusion",
+                "title": "Ventajas de modularización",
+                "description": "En grupos de 3, discutan por qué es importante dividir el código en funciones y módulos. Presenten 3 ventajas principales.",
+                "duration_minutes": 15,
+                "points": 1
+              }
+            ],
+            "exercises": [
+              {
+                "title": "Ejercicio 1: Conversor de temperatura",
+                "description": "Crea una función celsius_a_fahrenheit(celsius) que convierta grados Celsius a Fahrenheit. Fórmula: F = (C × 9/5) + 32",
+                "solution": "def celsius_a_fahrenheit(celsius):\n    return (celsius * 9/5) + 32\n\n# Prueba\nprint(celsius_a_fahrenheit(0))   # 32.0\nprint(celsius_a_fahrenheit(100)) # 212.0"
+              },
+              {
+                "title": "Ejercicio 2: Validación de contraseña",
+                "description": "Crea una función validar_contrasena(password) que retorne True si tiene al menos 8 caracteres, False en caso contrario.",
+                "solution": "def validar_contrasena(password):\n    return len(password) >= 8\n\n# Prueba\nprint(validar_contrasena(\"abc123\"))     # False\nprint(validar_contrasena(\"abc12345\"))   # True"
+              },
+              {
+                "title": "Ejercicio 3: Cálculo de factorial",
+                "description": "Implementa factorial(n) que calcule el factorial de un número. Usa recursión o ciclo.",
+                "solution": "def factorial(n):\n    if n == 0 or n == 1:\n        return 1\n    return n * factorial(n - 1)\n\n# Prueba\nprint(factorial(5))  # 120"
+              }
+            ],
+            "homework": {
+              "title": "Tarea 1: Biblioteca de funciones",
+              "description": "Crea un módulo llamado utilidades.py con al menos 5 funciones útiles (ej: conversión de unidades, validaciones, cálculos). Luego crea un programa principal que importe y use estas funciones.",
+              "deliverable": "Archivo utilidades.py y programa principal",
+              "due_days": 3,
+              "points": 5
+            }
+          },
+          {
+            "id": "u1t2",
+            "name": "Clases y Objetos",
+            "order": 2,
+            "duration_minutes": 90,
+            "content": {
+              "introduction": "Una clase es un plano o plantilla para crear objetos. Un objeto es una instancia de una clase. Piensa en la clase como el diseño de una casa, y el objeto como la casa construida según ese diseño.",
+              "development": "En Python, definimos una clase usando la palabra clave class. Dentro de la clase definimos atributos (variables) y métodos (funciones). Los atributos representan el estado del objeto, y los métodos representan su comportamiento.",
+              "key_concepts": [
+                "Definición de clase con class",
+                "Creación de objetos (instanciación)",
+                "Atributos de instancia",
+                "Métodos de instancia",
+                "El parámetro self",
+                "Acceso a atributos con punto (.)"
+              ],
+              "examples": [
+                {
+                  "title": "Clase simple: Persona",
+                  "code": "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n    \n    def presentarse(self):\n        return f\"Soy {self.nombre} y tengo {self.edad} años\"\n\n# Crear objetos\npersona1 = Persona(\"Carlos\", 25)\npersona2 = Persona(\"María\", 30)\n\nprint(persona1.presentarse())  # Soy Carlos y tengo 25 años\nprint(persona2.presentarse())  # Soy María y tengo 30 años"
+                },
+                {
+                  "title": "Clase: Rectángulo",
+                  "code": "class Rectangulo:\n    def __init__(self, base, altura):\n        self.base = base\n        self.altura = altura\n    \n    def area(self):\n        return self.base * self.altura\n    \n    def perimetro(self):\n        return 2 * (self.base + self.altura)\n\n# Uso\nrect = Rectangulo(5, 3)\nprint(f\"Área: {rect.area()}\")          # Área: 15\nprint(f\"Perímetro: {rect.perimetro()}\") # Perímetro: 16"
+                },
+                {
+                  "title": "Clase: Cuenta Bancaria",
+                  "code": "class CuentaBancaria:\n    def __init__(self, titular, saldo=0):\n        self.titular = titular\n        self.saldo = saldo\n    \n    def depositar(self, monto):\n        self.saldo += monto\n        print(f\"Depositado: ${monto}. Nuevo saldo: ${self.saldo}\")\n    \n    def retirar(self, monto):\n        if monto <= self.saldo:\n            self.saldo -= monto\n            print(f\"Retirado: ${monto}. Nuevo saldo: ${self.saldo}\")\n        else:\n            print(\"Saldo insuficiente\")\n\n# Uso\ncuenta = CuentaBancaria(\"Juan\", 1000)\ncuenta.depositar(500)   # Depositado: $500. Nuevo saldo: $1500\ncuenta.retirar(200)     # Retirado: $200. Nuevo saldo: $1300"
+                }
+              ]
+            },
+            "activities": [
+              {
+                "type": "practica_guiada",
+                "title": "Crear clase Estudiante",
+                "description": "Juntos crearemos una clase Estudiante con atributos nombre, grado, notas y métodos para calcular promedio y agregar notas.",
+                "duration_minutes": 25,
+                "points": 2
+              },
+              {
+                "type": "practica_individual",
+                "title": "Modelar una entidad",
+                "description": "Elige una entidad del mundo real (ej: Auto, Libro, Producto, Mascota) y crea una clase con al menos 3 atributos y 2 métodos.",
+                "duration_minutes": 20,
+                "points": 3
+              }
+            ],
+            "exercises": [
+              {
+                "title": "Ejercicio 1: Clase Libro",
+                "description": "Crea una clase Libro con atributos titulo, autor, anio y paginas. Agrega métodos para mostrar información y verificar si es un libro largo (más de 300 páginas).",
+                "solution": "class Libro:\n    def __init__(self, titulo, autor, anio, paginas):\n        self.titulo = titulo\n        self.autor = autor\n        self.anio = anio\n        self.paginas = paginas\n    \n    def mostrar_info(self):\n        return f\"'{self.titulo}' por {self.autor} ({self.anio})\"\n    \n    def es_largo(self):\n        return self.paginas > 300\n\n# Prueba\nlibro = Libro(\"Cien Años de Soledad\", \"Gabriel García Márquez\", 1967, 417)\nprint(libro.mostrar_info())  # 'Cien Años de Soledad' por Gabriel García Márquez (1967)\nprint(libro.es_largo())      # True"
+              },
+              {
+                "title": "Ejercicio 2: Clase Tiempo",
+                "description": "Crea una clase Tiempo con atributos hora, minuto, segundo. Agrega métodos para sumar segundos y mostrar en formato HH:MM:SS.",
+                "solution": "class Tiempo:\n    def __init__(self, hora=0, minuto=0, segundo=0):\n        self.hora = hora\n        self.minuto = minuto\n        self.segundo = segundo\n    \n    def sumar_segundos(self, segundos):\n        total = self.hora * 3600 + self.minuto * 60 + self.segundo + segundos\n        self.hora = total // 3600\n        self.minuto = (total % 3600) // 60\n        self.segundo = total % 60\n    \n    def mostrar(self):\n        return f\"{self.hora:02d}:{self.minuto:02d}:{self.segundo:02d}\"\n\n# Prueba\nt = Tiempo(12, 30, 45)\nt.sumar_segundos(90)\nprint(t.mostrar())  # 12:32:15"
+              },
+              {
+                "title": "Ejercicio 3: Clase Calculadora",
+                "description": "Crea una clase Calculadora que mantenga un valor actual y tenga métodos sumar, restar, multiplicar, dividir y obtener resultado.",
+                "solution": "class Calculadora:\n    def __init__(self):\n        self.valor = 0\n    \n    def sumar(self, n):\n        self.valor += n\n    \n    def restar(self, n):\n        self.valor -= n\n    \n    def multiplicar(self, n):\n        self.valor *= n\n    \n    def dividir(self, n):\n        if n != 0:\n            self.valor /= n\n        else:\n            print(\"Error: división por cero\")\n    \n    def resultado(self):\n        return self.valor\n\n# Prueba\ncalc = Calculadora()\ncalc.sumar(10)\ncalc.multiplicar(2)\ncalc.restar(5)\nprint(calc.resultado())  # 15"
+              }
+            ],
+            "homework": {
+              "title": "Tarea 2: Sistema de gestión de productos",
+              "description": "Crea una clase Producto con atributos codigo, nombre, precio, stock. Agrega métodos para: 1) mostrar información, 2) actualizar stock, 3) aplicar descuento, 4) verificar disponibilidad. Crea un programa que gestione al menos 5 productos.",
+              "deliverable": "Archivo Python con clase Producto y programa de prueba",
+              "due_days": 4,
+              "points": 8
+            }
+          },
+          {
+            "id": "u1t3",
+            "name": "Atributos y Métodos",
+            "order": 3,
+            "duration_minutes": 90,
+            "content": {
+              "introduction": "Los atributos almacenan datos sobre el objeto (estado), mientras que los métodos definen el comportamiento del objeto. Comprender la diferencia y su relación es fundamental en POO.",
+              "development": "Los atributos pueden ser de instancia (propiedad de cada objeto) o de clase (compartidos por todos los objetos). Los métodos pueden acceder y modificar atributos. El parámetro self representa la instancia actual del objeto.",
+              "key_concepts": [
+                "Atributos de instancia vs atributos de clase",
+                "Métodos que modifican estado (mutadores)",
+                "Métodos que solo leen estado (accesores)",
+                "Encapsulación básica con _atributo",
+                "Métodos especiales (__str__, __repr__)",
+                "Propiedades con @property"
+              ],
+              "examples": [
+                {
+                  "title": "Atributos de clase vs instancia",
+                  "code": "class Estudiante:\n    institucion = \"Instituto Técnico\"  # Atributo de clase\n    \n    def __init__(self, nombre, grado):\n        self.nombre = nombre       # Atributo de instancia\n        self.grado = grado\n        self.notas = []\n\ne1 = Estudiante(\"Ana\", \"10mo\")\ne2 = Estudiante(\"Pedro\", \"11mo\")\n\nprint(e1.institucion)  # Instituto Técnico\nprint(e2.institucion)  # Instituto Técnico (compartido)\nprint(e1.nombre)       # Ana\nprint(e2.nombre)       # Pedro (diferente)"
+                },
+                {
+                  "title": "Método __str__ para representación",
+                  "code": "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n    \n    def __str__(self):\n        return f\"Persona: {self.nombre}, {self.edad} años\"\n\np = Persona(\"Luis\", 28)\nprint(p)  # Persona: Luis, 28 años"
+                },
+                {
+                  "title": "Propiedades con @property",
+                  "code": "class Temperatura:\n    def __init__(self, celsius):\n        self._celsius = celsius\n    \n    @property\n    def celsius(self):\n        return self._celsius\n    \n    @celsius.setter\n    def celsius(self, valor):\n        if valor < -273.15:\n            raise ValueError(\"Temperatura imposible\")\n        self._celsius = valor\n    \n    @property\n    def fahrenheit(self):\n        return (self._celsius * 9/5) + 32\n\nt = Temperatura(25)\nprint(t.celsius)      # 25\nprint(t.fahrenheit)    # 77.0\nt.celsius = 30\nprint(t.fahrenheit)    # 86.0"
+                }
+              ]
+            },
+            "activities": [
+              {
+                "type": "analisis",
+                "title": "Identificar atributos y métodos",
+                "description": "Analiza un objeto del mundo real (ej: un celular) y lista sus atributos (color, marca, batería) y métodos (llamar, enviar mensaje, tomar foto). Comparte con la clase.",
+                "duration_minutes": 15,
+                "points": 1
+              },
+              {
+                "type": "practica_individual",
+                "title": "Mejorar clase con propiedades",
+                "description": "Toma la clase que creaste en el tema anterior y agrega: 1) método __str__, 2) al menos una propiedad con @property, 3) validación en un setter.",
+                "duration_minutes": 25,
+                "points": 3
+              }
+            ],
+            "exercises": [
+              {
+                "title": "Ejercicio 1: Clase Película",
+                "description": "Crea clase Película con atributos titulo, director, anio, duracion (min). Agrega __str__ y propiedad duracion_horas que convierte minutos a horas.",
+                "solution": "class Pelicula:\n    def __init__(self, titulo, director, anio, duracion):\n        self.titulo = titulo\n        self.director = director\n        self.anio = anio\n        self._duracion = duracion\n    \n    def __str__(self):\n        return f\"{self.titulo} ({self.anio}) - Dir: {self.director}\"\n    \n    @property\n    def duracion(self):\n        return self._duracion\n    \n    @property\n    def duracion_horas(self):\n        return self._duracion / 60\n\np = Pelicula(\"El Padrino\", \"Francis Ford Coppola\", 1972, 175)\nprint(p)                    # El Padrino (1972) - Dir: Francis Ford Coppola\nprint(p.duracion_horas)    # 2.9166666666666665"
+              },
+              {
+                "title": "Ejercicio 2: Clase Empleado",
+                "description": "Crea clase Empleado con nombre, salario_base. Agrega propiedad salario_anual (salario_base * 12) y setter que valide que sea positivo.",
+                "solution": "class Empleado:\n    def __init__(self, nombre, salario_base):\n        self.nombre = nombre\n        self._salario_base = salario_base\n    \n    @property\n    def salario_base(self):\n        return self._salario_base\n    \n    @salario_base.setter\n    def salario_base(self, valor):\n        if valor < 0:\n            raise ValueError(\"Salario debe ser positivo\")\n        self._salario_base = valor\n    \n    @property\n    def salario_anual(self):\n        return self._salario_base * 12\n\ne = Empleado(\"Juan\", 2500)\nprint(e.salario_anual)  # 30000"
+              },
+              {
+                "title": "Ejercicio 3: Contador de instancias",
+                "description": "Crea una clase que cuente cuántas instancias se han creado usando un atributo de clase.",
+                "solution": "class Contador:\n    contador = 0\n    \n    def __init__(self):\n        Contador.contador += 1\n    \n    @classmethod\n    def total_instancias(cls):\n        return cls.contador\n\nc1 = Contador()\nc2 = Contador()\nc3 = Contador()\nprint(Contador.total_instancias())  # 3"
+              }
+            ],
+            "homework": {
+              "title": "Tarea 3: Sistema de biblioteca mejorado",
+              "description": "Mejora la clase Libro agregando: 1) atributo de clase para contar libros creados, 2) método __str__, 3) propiedad 'antiguedad' que calcule años desde publicación, 4) validación en setter de año (no puede ser futuro). Crea un programa que demuestre todas las funcionalidades.",
+              "deliverable": "Archivo Python con clase mejorada y demostración",
+              "due_days": 4,
+              "points": 8
+            }
+          },
+          {
+            "id": "u1t4",
+            "name": "Constructores e Inicialización",
+            "order": 4,
+            "duration_minutes": 90,
+            "content": {
+              "introduction": "El constructor (__init__) es un método especial que se ejecuta automáticamente al crear un objeto. Su propósito es inicializar los atributos del objeto con valores iniciales.",
+              "development": "En Python, __init__ no es técnicamente un constructor (el objeto ya existe), pero funciona como uno en la práctica. También podemos usar __new__ para controlar la creación del objeto, aunque es menos común. Los constructores pueden tener parámetros con valores por defecto.",
+              "key_concepts": [
+                "Método __init__",
+                "Parámetros por defecto en __init__",
+                "Sobrecarga simulada con *args y **kwargs",
+                "Inicialización de atributos obligatorios vs opcionales",
+                "Diferencia entre __new__ y __init__",
+                "Constructores en herencia (super().__init__)"
+              ],
+              "examples": [
+                {
+                  "title": "Constructor con parámetros por defecto",
+                  "code": "class Usuario:\n    def __init__(self, nombre, email, activo=True):\n        self.nombre = nombre\n        self.email = email\n        self.activo = activo\n        self.fecha_registro = datetime.now()\n\nu1 = Usuario(\"Ana\", \"ana@email.com\")\nu2 = Usuario(\"Pedro\", \"pedro@email.com\", activo=False)\n\nprint(u1.activo)  # True\nprint(u2.activo)  # False"
+                },
+                {
+                  "title": "Constructor flexible con **kwargs",
+                  "code": "class Producto:\n    def __init__(self, **kwargs):\n        self.nombre = kwargs.get('nombre', 'Sin nombre')\n        self.precio = kwargs.get('precio', 0)\n        self.stock = kwargs.get('stock', 0)\n\np1 = Producto(nombre=\"Laptop\", precio=999.99)\np2 = Producto(nombre=\"Mouse\", precio=25.50, stock=100)\n\nprint(p1.nombre, p1.precio)  # Laptop 999.99\nprint(p2.nombre, p2.stock)   # Mouse 100"
+                },
+                {
+                  "title": "Inicialización condicional",
+                  "code": "class Cuenta:\n    def __init__(self, titular, saldo_inicial=0):\n        self.titular = titular\n        if saldo_inicial < 0:\n            raise ValueError(\"Saldo inicial no puede ser negativo\")\n        self.saldo = saldo_inicial\n        self.transacciones = []\n\ntry:\n    c = Cuenta(\"Juan\", -100)\nexcept ValueError as e:\n    print(e)  # Saldo inicial no puede ser negativo"
+                }
+              ]
+            },
+            "activities": [
+              {
+                "type": "practica_guiada",
+                "title": "Constructores flexibles",
+                "description": "Juntos diseñaremos constructores con parámetros opcionales para clases como Estudiante, Producto y Vehículo.",
+                "duration_minutes": 20,
+                "points": 2
+              },
+              {
+                "type": "practica_individual",
+                "title": "Crear clase con validación",
+                "description": "Crea una clase con constructor que valide los parámetros (ej: edad positiva, email válido, stock no negativo). Muestra ejemplos de uso correcto e incorrecto.",
+                "duration_minutes": 25,
+                "points": 3
+              }
+            ],
+            "exercises": [
+              {
+                "title": "Ejercicio 1: Clase Fecha",
+                "description": "Crea clase Fecha con constructor que acepte día, mes, año. Valide que la fecha sea válida (ej: no 31 de febrero).",
+                "solution": "class Fecha:\n    def __init__(self, dia, mes, anio):\n        self.dia = dia\n        self.mes = mes\n        self.anio = anio\n        self._validar()\n    \n    def _validar(self):\n        dias_por_mes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\n        if self.mes < 1 or self.mes > 12:\n            raise ValueError(\"Mes inválido\")\n        if self.dia < 1 or self.dia > dias_por_mes[self.mes - 1]:\n            raise ValueError(\"Día inválido para el mes\")\n\n# Prueba\ntry:\n    f = Fecha(31, 2, 2024)\nexcept ValueError as e:\n    print(e)  # Día inválido para el mes"
+              },
+              {
+                "title": "Ejercicio 2: Clase Vector",
+                "description": "Crea clase Vector 2D con constructor que acepte coordenadas x, y (default 0). Agrega método para calcular magnitud.",
+                "solution": "class Vector:\n    def __init__(self, x=0, y=0):\n        self.x = x\n        self.y = y\n    \n    def magnitud(self):\n        return (self.x**2 + self.y**2) ** 0.5\n\nv = Vector(3, 4)\nprint(v.magnitud())  # 5.0"
+              },
+              {
+                "title": "Ejercicio 3: Clase Configuración",
+                "description": "Crea clase Configuración con constructor que acepte diccionario de configuración. Valide claves requeridas.",
+                "solution": "class Configuracion:\n    def __init__(self, config_dict):\n        self.config = config_dict\n        self._validar_requeridos(['host', 'puerto', 'usuario'])\n    \n    def _validar_requeridos(self, requeridos):\n        for clave in requeridos:\n            if clave not in self.config:\n                raise ValueError(f\"Falta clave requerida: {clave}\")\n\n# Prueba\nconfig = Configuracion({'host': 'localhost', 'puerto': 5432, 'usuario': 'admin'})\nprint(config.config)"
+              }
+            ],
+            "homework": {
+              "title": "Tarea 4: Sistema de reservas",
+              "description": "Crea un sistema de reservas con clases: Reserva (fecha, hora, numero_personas), Restaurante (nombre, capacidad, lista_reservas). Implementa constructores con validaciones: 1) capacidad positiva, 2) número de personas no exceda capacidad, 3) fecha no pasada. Crea programa de prueba.",
+              "deliverable": "Archivo Python con sistema de reservas",
+              "due_days": 5,
+              "points": 10
+            }
+          },
+          {
+            "id": "u1t5",
+            "name": "Estado y Comportamiento",
+            "order": 5,
+            "duration_minutes": 90,
+            "content": {
+              "introduction": "El estado de un objeto está determinado por los valores de sus atributos en un momento dado. El comportamiento está definido por sus métodos, que pueden leer y modificar el estado.",
+              "development": "Un objeto bien diseñado mantiene su estado interno protegido (encapsulación) y expone comportamiento a través de métodos. Los métodos deben mantener invariantes - propiedades que siempre deben ser verdaderas para el objeto.",
+              "key_concepts": [
+                "Estado interno del objeto",
+                "Comportamiento como interfaz pública",
+                "Invariantes de clase",
+                "Métodos que cambian estado vs métodos puros",
+                "Consistencia del estado",
+                "Máquina de estados simple"
+              ],
+              "examples": [
+                {
+                  "title": "Estado: Semáforo",
+                  "code": "class Semaforo:\n    def __init__(self):\n        self.estado = \"rojo\"  # Estado inicial\n    \n    def cambiar(self):\n        \"\"\"Cambia el estado del semáforo\"\"\"\n        if self.estado == \"rojo\":\n            self.estado = \"verde\"\n        elif self.estado == \"verde\":\n            self.estado = \"amarillo\"\n        else:\n            self.estado = \"rojo\"\n    \n    def puede_pasar(self):\n        \"\"\"Comportamiento basado en estado\"\"\"\n        return self.estado == \"verde\"\n\ns = Semaforo()\nprint(s.puede_pasar())  # False\ns.cambiar()\nprint(s.puede_pasar())  # True"
+                },
+                {
+                  "title": "Estado: Termostato",
+                  "code": "class Termostato:\n    def __init__(self, temperatura_objetivo=22):\n        self.temperatura_actual = 20\n        self.temperatura_objetivo = temperatura_objetivo\n        self.encendido = False\n    \n    def ajustar_objetivo(self, nueva_temp):\n        self.temperatura_objetivo = nueva_temp\n        self._actualizar_estado()\n    \n    def actualizar_temperatura(self, temp):\n        self.temperatura_actual = temp\n        self._actualizar_estado()\n    \n    def _actualizar_estado(self):\n        # Invariante: encendido si hay diferencia significativa\n        diferencia = abs(self.temperatura_actual - self.temperatura_objetivo)\n        self.encendido = diferencia > 0.5\n\nt = Termostato()\nt.ajustar_objetivo(25)\nprint(t.encendido)  # True"
+                },
+                {
+                  "title": "Estado y comportamiento: Juego",
+                  "code": "class JuegoAdivinanza:\n    def __init__(self, numero_secreto):\n        self.numero_secreto = numero_secreto\n        self.intentos = 0\n        self.terminado = False\n    \n    def adivinar(self, numero):\n        if self.terminado:\n            return \"El juego ya terminó\"\n        \n        self.intentos += 1\n        \n        if numero == self.numero_secreto:\n            self.terminado = True\n            return f\"¡Correcto! Lo adivinaste en {self.intentos} intentos\"\n        elif numero < self.numero_secreto:\n            return \"Más alto\"\n        else:\n            return \"Más bajo\"\n\njuego = JuegoAdivinanza(50)\nprint(juego.adivinar(30))  # Más alto\nprint(juego.adivinar(70))  # Más bajo\nprint(juego.adivinar(50))  # ¡Correcto! Lo adivinaste en 3 intentos"
+                }
+              ]
+            },
+            "activities": [
+              {
+                "type": "analisis",
+                "title": "Analizar estado y comportamiento",
+                "description": "En grupos, analicen un objeto complejo (ej: sistema de ventas, carrito de compras). Identifiquen: 1) atributos de estado, 2) métodos que cambian estado, 3) invariantes importantes.",
+                "duration_minutes": 20,
+                "points": 2
+              },
+              {
+                "type": "practica_individual",
+                "title": "Implementar máquina de estados",
+                "description": "Crea una clase que modele una máquina de estados simple (ej: orden de pedido: pendiente -> procesando -> enviado -> entregado). Implementa métodos para transicionar entre estados.",
+                "duration_minutes": 25,
+                "points": 3
+              }
+            ],
+            "exercises": [
+              {
+                "title": "Ejercicio 1: Clase Carrito de Compras",
+                "description": "Crea CarritoCompras con estado: items (lista), total. Métodos: agregar(item, precio), eliminar(item), vaciar(), obtener_total(). Mantenga el total consistente.",
+                "solution": "class CarritoCompras:\n    def __init__(self):\n        self.items = []\n        self._total = 0\n    \n    def agregar(self, item, precio):\n        self.items.append((item, precio))\n        self._total += precio\n    \n    def eliminar(self, indice):\n        if 0 <= indice < len(self.items):\n            item, precio = self.items.pop(indice)\n            self._total -= precio\n    \n    def vaciar(self):\n        self.items = []\n        self._total = 0\n    \n    def obtener_total(self):\n        return self._total\n\ncarrito = CarritoCompras()\ncarrito.agregar(\"Laptop\", 999.99)\ncarrito.agregar(\"Mouse\", 25.50)\nprint(carrito.obtener_total())  # 1025.49"
+              },
+              {
+                "title": "Ejercicio 2: Clave de juego",
+                "description": "Crea clase JuegoLaberinto con estado: posicion_actual, tiene_llave, juego_terminado. Métodos: mover(direccion), recoger_llave(), salir().",
+                "solution": "class JuegoLaberinto:\n    def __init__(self):\n        self.posicion_actual = (0, 0)\n        self.tiene_llave = False\n        self.juego_terminado = False\n    \n    def mover(self, direccion):\n        if self.juego_terminado:\n            return \"Juego terminado\"\n        \n        x, y = self.posicion_actual\n        if direccion == \"arriba\":\n            self.posicion_actual = (x, y + 1)\n        elif direccion == \"abajo\":\n            self.posicion_actual = (x, y - 1)\n        # ... otras direcciones\n        return f\"Movido a {self.posicion_actual}\"\n    \n    def recoger_llave(self):\n        self.tiene_llave = True\n        return \"¡Has recogido la llave!\"\n    \n    def salir(self):\n        if self.tiene_llave:\n            self.juego_terminado = True\n            return \"¡Has escapado!\"\n        return \"Necesitas la llave\""
+              },
+              {
+                "title": "Ejercicio 3: Contador con límite",
+                "description": "Crea clase ContadorLimitado con estado: valor, maximo. Métodos: incrementar(), decrementar(), reiniciar(). No debe exceder el máximo ni ser negativo.",
+                "solution": "class ContadorLimitado:\n    def __init__(self, maximo=10):\n        self.valor = 0\n        self.maximo = maximo\n    \n    def incrementar(self):\n        if self.valor < self.maximo:\n            self.valor += 1\n            return self.valor\n        return \"Máximo alcanzado\"\n    \n    def decrementar(self):\n        if self.valor > 0:\n            self.valor -= 1\n            return self.valor\n        return \"Mínimo alcanzado\"\n    \n    def reiniciar(self):\n        self.valor = 0\n        return self.valor\n\nc = ContadorLimitado(5)\nprint(c.incrementar())  # 1\nprint(c.incrementar())  # 2"
+              }
+            ],
+            "homework": {
+              "title": "Tarea 5: Proyecto final de unidad - Simulador",
+              "description": "Crea un simulador de tu elección (ej: simulador de cajero automático, simulador de inventario, simulador de juego). Debe incluir: 1) al menos 3 clases relacionadas, 2) estado interno complejo, 3) métodos que cambian estado, 4) validaciones, 5) demostración de uso. Documenta el código con comentarios.",
+              "deliverable": "Proyecto completo con documentación",
+              "due_days": 7,
+              "points": 15
+            }
+          }
+        ],
+        "evaluation": {
+          "actitudinal": {
+            "points": 5,
+            "criteria": [
+              "Participación activa en clase (2 puntos)",
+              "Trabajo colaborativo en grupo (1.5 puntos)",
+              "Puntualidad y entrega de tareas (1.5 puntos)"
+            ]
+          },
+          "parcial": {
+            "points": 15,
+            "topics": [
+              "Definición de clases y objetos (3 puntos)",
+              "Atributos y métodos (4 puntos)",
+              "Constructores y __init__ (4 puntos)",
+              "Estado y comportamiento (4 puntos)"
+            ],
+            "format": "Mixto: teoría corta + ejercicios de código"
+          },
+          "tareas_actividades": {
+            "points": 50,
+            "breakdown": {
+              "tarea_1": 5,
+              "tarea_2": 8,
+              "tarea_3": 8,
+              "tarea_4": 10,
+              "tarea_5": 15,
+              "actividades_clase": 4
+            }
+          },
+          "examen_final": {
+            "points": 30,
+            "topics": [
+              "Todo el contenido de la unidad",
+              "Problema integrador de diseño de clases (10 puntos)",
+              "Depuración de código con errores (10 puntos)",
+              "Análisis de código existente (10 puntos)"
+            ],
+            "format": "Práctico con problemas de diseño e implementación"
+          }
+        }
+      }
+    ]
+  }
+}

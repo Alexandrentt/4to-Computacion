@@ -1,0 +1,167 @@
+{
+  "metadatos": {
+    "version": "1.0",
+    "fecha_creacion": "2026-10-13",
+    "curso": "Laboratorio 2 - Programación Orientada a Objetos",
+    "total_unidades": 4,
+    "total_temas": 20,
+    "total_horas": 30
+  },
+  "curso": {
+    "id": "lab2",
+    "name": "Laboratorio 2 - Programación Orientada a Objetos",
+    "level": "5.º Bachillerato",
+    "area": "Programación orientada a objetos",
+    "description": "Diseño de software mediante clases, objetos y relaciones. Aprenderás a modelar problemas del mundo real usando POO, implementar encapsulación, herencia y polimorfismo en Python.",
+    "evaluation_distribution": {
+      "total_points": 100,
+      "breakdown": {
+        "actitudinal": 5,
+        "parcial": 15,
+        "examen_final": 30,
+        "tareas_actividades": 50
+      }
+    }
+  },
+  "resumen_curriculum": {
+    "unidad_1": {
+      "nombre": "Clases y Objetos",
+      "temas": [
+        "Repaso de funciones y módulos",
+        "Clases y Objetos",
+        "Atributos y Métodos",
+        "Constructores e Inicialización",
+        "Estado y Comportamiento"
+      ],
+      "objetivos": [
+        "Comprender el paradigma de programación orientada a objetos",
+        "Definir clases y crear objetos en Python",
+        "Implementar atributos y métodos",
+        "Utilizar constructores para inicializar objetos",
+        "Diferenciar entre estado y comportamiento"
+      ],
+      "tareas_principales": [
+        "Tarea 1: Biblioteca de funciones (5 pts)",
+        "Tarea 2: Sistema de gestión de productos (8 pts)",
+        "Tarea 3: Sistema de biblioteca mejorado (8 pts)",
+        "Tarea 4: Sistema de reservas (10 pts)",
+        "Tarea 5: Proyecto final de unidad - Simulador (15 pts)"
+      ]
+    },
+    "unidad_2": {
+      "nombre": "Diseño de Objetos",
+      "temas": [
+        "Encapsulación y Control de Acceso",
+        "Propiedades y Validación de Estado",
+        "Composición de Objetos",
+        "Relaciones entre Clases",
+        "Responsabilidades y Cohesión"
+      ],
+      "objetivos": [
+        "Aplicar encapsulación para proteger el estado interno",
+        "Implementar propiedades con validación",
+        "Usar composición para relacionar objetos",
+        "Identificar relaciones entre clases",
+        "Diseñar clases cohesivas con responsabilidades claras"
+      ],
+      "tareas_principales": [
+        "Tarea 6: Sistema de inventario con encapsulación (10 pts)",
+        "Tarea 7: Sistema de calificaciones (12 pts)",
+        "Tarea 8: Sistema de comercio electrónico (15 pts)",
+        "Tarea 9: Diseño de sistema complejo (15 pts)",
+        "Tarea 10: Refactorización de proyecto anterior (15 pts)"
+      ]
+    },
+    "unidad_3": {
+      "nombre": "Reutilización y Pruebas",
+      "temas": [
+        "Herencia y Especialización",
+        "Polimorfismo y Sobrescritura",
+        "Métodos Especiales",
+        "Organización del Proyecto",
+        "Pruebas y Depuración"
+      ],
+      "objetivos": [
+        "Aplicar herencia para especializar clases",
+        "Implementar polimorfismo con sobrescritura de métodos",
+        "Usar métodos especiales de Python",
+        "Organizar el proyecto en módulos y paquetes",
+        "Escribir pruebas unitarias básicas"
+      ],
+      "tareas_principales": [
+        "Tarea 11: Sistema de gestión de empleados (12 pts)",
+        "Tarea 12: Sistema de transporte (10 pts)",
+        "Tarea 13: Sistema de monedas (10 pts)",
+        "Tarea 14: Proyecto organizado (12 pts)",
+        "Tarea 15: Proyecto con pruebas (15 pts)"
+      ]
+    },
+    "unidad_4": {
+      "nombre": "Proyecto Integrador",
+      "temas": [
+        "Requisitos y Diseño del Proyecto",
+        "Diagrama de Clases Sencillo",
+        "Implementación Incremental",
+        "Validación y Pruebas",
+        "Documentación y Presentación"
+      ],
+      "objetivos": [
+        "Aplicar todos los conceptos de POO en un proyecto real",
+        "Diseñar sistema completo con múltiples clases y relaciones",
+        "Implementar encapsulación, herencia, polimorfismo",
+        "Organizar código en módulos y paquetes",
+        "Escribir documentación técnica y de usuario"
+      ],
+      "tareas_principales": [
+        "Tarea 16: Documentación de diseño (10 pts)",
+        "Tarea 17: Diagrama formal (8 pts)",
+        "Tarea 18: Implementación parcial (20 pts)",
+        "Tarea 19: Pruebas completas (15 pts)",
+        "Tarea 20: Proyecto final completo (30 pts)"
+      ]
+    }
+  },
+  "guia_importacion": {
+    "instrucciones": {
+      "paso_1": "Revisa los archivos JSON completos del curriculum",
+      "paso_2": "Decide cómo importar: manual o automático",
+      "paso_3": "Para importación manual: usa el script import_curriculum.py",
+      "paso_4": "Para importación automática: configura el backend de Supabase",
+      "paso_5": "Verifica que todas las sesiones y tareas se crearon correctamente"
+    },
+    "archivos_curriculum": [
+      "poo_curriculum.json - Unidad 1 completa",
+      "poo_curriculum_extended.json - Unidad 2",
+      "poo_curriculum_units3_4.json - Unidades 3 y 4",
+      "poo_curriculum_complete.json - Este archivo (resumen)"
+    ],
+    "documentacion": [
+      "CURRICULUM_INTEGRATION.md - Guía de integración",
+      "import_curriculum.py - Script de importación",
+      "IMPLEMENTATION_GUIDE.md - Guía del backend"
+    ]
+  },
+  "recomendaciones": {
+    "para_docentes": [
+      "Revisa el contenido antes de cada sesión",
+      "Adapta los ejemplos al nivel de los estudiantes",
+      "Usa las actividades prácticas como base",
+      "Da feedback oportuno en las tareas",
+      "Fomenta la participación en clase"
+    ],
+    "para_estudiantes": [
+      "Lee la introducción antes de cada clase",
+      "Practica con todos los ejercicios",
+      "Participa en las actividades grupales",
+      "Entrega las tareas a tiempo",
+      "Pide ayuda cuando tengas dudas"
+    ],
+    "para_el_proyecto": [
+      "Planifica bien desde el inicio",
+      "Implementa fase por fase",
+      "Escribe pruebas desde el principio",
+      "Documenta todo el código",
+      "Presenta con orgullo el trabajo"
+    ]
+  }
+}

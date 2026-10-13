@@ -1,0 +1,223 @@
+{
+  "sessionTemplate": {
+    "sections": [
+      {
+        "id": "objective",
+        "title": "Objetivo de aprendizaje",
+        "description": "Qué lograrán los estudiantes al finalizar la clase",
+        "type": "textarea",
+        "placeholder": "Al finalizar esta sesión, el estudiante será capaz de...",
+        "required": true,
+        "examples": [
+          "Identificar y aplicar operadores aritméticos en expresiones matemáticas",
+          "Diseñar un algoritmo que resuelva un problema específico",
+          "Explicar las diferencias entre los tipos de datos primitivos"
+        ]
+      },
+      {
+        "id": "introduction",
+        "title": "Introducción / Activación",
+        "description": "Cómo comenzar la clase para captar la atención y conectar con conocimientos previos",
+        "type": "textarea",
+        "placeholder": "Presentación del tema, pregunta inicial, problema motivador...",
+        "required": false,
+        "examples": [
+          "Pregunta: ¿Qué pasa si dividimos por cero en un programa?",
+          "Breve repaso de la clase anterior sobre condicionales",
+          "Presentación de un caso real donde se aplica el tema"
+        ]
+      },
+      {
+        "id": "development",
+        "title": "Desarrollo del contenido",
+        "description": "Explicación teórica, conceptos clave, ejemplos demostrativos",
+        "type": "textarea",
+        "placeholder": "Explicación paso a paso del tema, definiciones, ejemplos...",
+        "required": false,
+        "examples": [
+          "Definición de ciclo while: estructura y sintaxis en Python",
+          "Demostración en vivo de la instalación de un sistema operativo",
+          "Explicación de la encapsulación con diagramas de clases"
+        ]
+      },
+      {
+        "id": "activities",
+        "title": "Actividades de los estudiantes",
+        "description": "Ejercicios prácticos, trabajo individual o grupal, aplicando lo aprendido",
+        "type": "textarea",
+        "placeholder": "Ejercicios, prácticas, laboratorio, proyecto...",
+        "required": false,
+        "examples": [
+          "Ejercicio: Escribir un programa que calcule el promedio de 5 notas",
+          "Práctica: Instalar Ubuntu en máquina virtual con guía paso a paso",
+          "Actividad en parejas: Diseñar clase 'Estudiante' con atributos y métodos"
+        ]
+      },
+      {
+        "id": "closure",
+        "title": "Cierre / Metacognición",
+        "description": "Síntesis, preguntas de reflexión, anticipación de la próxima clase",
+        "type": "textarea",
+        "placeholder": "Resumen, preguntas finales, tarea para casa...",
+        "required": false,
+        "examples": [
+          "Resumen: Los ciclos permiten repetir bloques de código automáticamente",
+          "Pregunta: ¿En qué situación usarías un ciclo for en lugar de while?",
+          "Anuncio: La próxima clase veremos listas y matrices"
+        ]
+      },
+      {
+        "id": "evidence",
+        "title": "Evidencia de aprendizaje",
+        "description": "Cómo se evaluará que se cumplió el objetivo (producto observable)",
+        "type": "text",
+        "placeholder": "Ejercicio resuelto, código funcional, quiz, presentación...",
+        "required": false,
+        "examples": [
+          "Entrega del ejercicio resuelto en el repositorio",
+          "Captura de pantalla del sistema instalado funcionando",
+          "Quiz de 5 preguntas sobre el tema"
+        ]
+      },
+      {
+        "id": "material_url",
+        "title": "Enlace a materiales",
+        "description": "URL del material de apoyo (slides, PDF, código de ejemplo)",
+        "type": "url",
+        "placeholder": "https://docs.google.com/presentation/...",
+        "required": false
+      },
+      {
+        "id": "notes",
+        "title": "Notas del docente",
+        "description": "Observaciones privadas para futuras mejoras o recordatorios",
+        "type": "textarea",
+        "placeholder": "Notas para la próxima vez, ajustes necesarios...",
+        "required": false,
+        "examples": [
+          "Los estudiantes tuvieron dificultad con el concepto de recursión",
+          "Faltó tiempo para el ejercicio final, se moverá a la siguiente clase",
+          "Preparar más ejemplos visuales para este tema"
+        ]
+      }
+    ]
+  },
+  "taskTemplate": {
+    "sections": [
+      {
+        "id": "title",
+        "title": "Nombre de la tarea",
+        "type": "text",
+        "required": true,
+        "placeholder": "Ej. Ejercicio 1: Operadores aritméticos"
+      },
+      {
+        "id": "description",
+        "title": "Descripción / Instrucciones",
+        "type": "textarea",
+        "required": false,
+        "placeholder": "Instrucciones detalladas para completar la tarea",
+        "examples": [
+          "Resolver los ejercicios 1-10 del capítulo 3 del libro de texto",
+          "Crear un programa Python que solicite 3 números y muestre el mayor",
+          "Elaborar un informe técnico de la reparación realizada"
+        ]
+      },
+      {
+        "id": "due_date",
+        "title": "Fecha de entrega",
+        "type": "date",
+        "required": false
+      },
+      {
+        "id": "points",
+        "title": "Puntos / Ponderación",
+        "type": "number",
+        "required": false,
+        "placeholder": "Ej. 10"
+      },
+      {
+        "id": "classroom_url",
+        "title": "Enlace de Classroom",
+        "type": "url",
+        "required": false,
+        "placeholder": "https://classroom.google.com/..."
+      },
+      {
+        "id": "status",
+        "title": "Estado de seguimiento",
+        "type": "select",
+        "options": ["Pendiente", "Publicada", "En revisión", "Revisada"],
+        "required": true,
+        "default": "Pendiente"
+      }
+    ]
+  },
+  "resourceTemplate": {
+    "sections": [
+      {
+        "id": "title",
+        "title": "Nombre del recurso",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "kind",
+        "title": "Tipo de recurso",
+        "type": "select",
+        "options": ["Google Drive", "OneDrive", "YouTube", "Documento", "Presentación", "Sitio web", "Otro"],
+        "required": true
+      },
+      {
+        "id": "url",
+        "title": "URL del recurso",
+        "type": "url",
+        "required": true
+      },
+      {
+        "id": "notes",
+        "title": "Descripción / notas",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "courseTemplate": {
+    "sections": [
+      {
+        "id": "name",
+        "title": "Nombre del curso",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "level",
+        "title": "Grado / Nivel",
+        "type": "text",
+        "required": false,
+        "placeholder": "Ej. 4.º Bachillerato"
+      },
+      {
+        "id": "area",
+        "title": "Área",
+        "type": "text",
+        "required": false,
+        "placeholder": "Ej. Programación estructurada"
+      },
+      {
+        "id": "description",
+        "title": "Descripción",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "id": "color",
+        "title": "Color",
+        "type": "select",
+        "options": ["blue", "green", "amber", "red"],
+        "required": true,
+        "default": "blue"
+      }
+    ]
+  }
+}

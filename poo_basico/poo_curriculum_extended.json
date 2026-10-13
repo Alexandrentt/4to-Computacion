@@ -1,0 +1,419 @@
+{
+  "unidades_restantes": [
+    {
+      "id": "unit2",
+      "name": "Unidad 2 - Diseño de Objetos",
+      "order": 2,
+      "objectives": [
+        "Aplicar encapsulación para proteger el estado interno",
+        "Implementar propiedades con validación",
+        "Usar composición para relacionar objetos",
+        "Identificar relaciones entre clases (asociación, agregación, composición)",
+        "Diseñar clases cohesivas con responsabilidades claras"
+      ],
+      "topics": [
+        {
+          "id": "u2t1",
+          "name": "Encapsulación y Control de Acceso",
+          "order": 1,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "La encapsulación es el principio de ocultar los detalles internos de un objeto y exponer solo lo necesario. Esto protege el estado y permite cambiar la implementación sin afectar el código que usa el objeto.",
+            "development": "En Python, la encapsulación es convencional: atributos que empiezan con _ son 'protegidos' (no deberían accederse directamente), y atributos que empiezan con __ son 'privados' (name mangling). Las propiedades (@property) permiten control de acceso elegante.",
+            "key_concepts": [
+              "Encapsulación como principio de diseño",
+              "Atributos públicos, protegidos (_) y privados (__)",
+              "Name mangling en Python",
+              "Getters y setters tradicionales",
+              "Propiedades con @property",
+              "Validación de datos en setters"
+            ],
+            "examples": [
+              {
+                "title": "Encapsulación básica",
+                "code": "class CuentaBancaria:\n    def __init__(self, titular, saldo):\n        self._titular = titular      # Protegido\n        self.__saldo = saldo          # Privado\n    \n    def get_saldo(self):\n        return self.__saldo\n    \n    def depositar(self, monto):\n        if monto > 0:\n            self.__saldo += monto\n\ncuenta = CuentaBancaria(\"Ana\", 1000)\nprint(cuenta.get_saldo())  # 1000\n# cuenta.__saldo  # Error: no accesible directamente"
+              },
+              {
+                "title": "Propiedades con validación",
+                "code": "class Persona:\n    def __init__(self, nombre, edad):\n        self._nombre = nombre\n        self.edad = edad  # Usa el setter\n    \n    @property\n    def edad(self):\n        return self._edad\n    \n    @edad.setter\n    def edad(self, valor):\n        if valor < 0:\n            raise ValueError(\"Edad no puede ser negativa\")\n        if valor > 150:\n            raise ValueError(\"Edad no realista\")\n        self._edad = valor\n\np = Persona(\"Juan\", 25)\np.edad = 30  # OK\n# p.edad = -5  # Error: ValueError"
+              },
+              {
+                "title": "Clase inmutable",
+                "code": "class Punto:\n    def __init__(self, x, y):\n        self._x = x\n        self._y = y\n    \n    @property\n    def x(self):\n        return self._x\n    \n    @property\n    def y(self):\n        return self._y\n    \n    # Sin setters - inmutable\n\np = Punto(3, 4)\nprint(p.x, p.y)  # 3 4\n# p.x = 5  # Error: no se puede asignar"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "analisis",
+              "title": "Encapsulación en el mundo real",
+              "description": "Analiza objetos del mundo real (ej: televisor, automóvil) e identifica qué debería ser público (botones, controles) y qué debería ser interno (circuitos, mecánica).",
+              "duration_minutes": 15,
+              "points": 1
+            },
+            {
+              "type": "practica_individual",
+              "title": "Refactorizar con encapsulación",
+              "description": "Toma una clase creada anteriormente y refactoriza para usar encapsulación: atributos protegidos, propiedades con validación, getters/setters donde sea necesario.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Clase Termómetro",
+              "description": "Crea Termómetro con temperatura interna privada. Propiedad celsius con validación (-273.15 mínimo). Propiedad fahrenheit de solo lectura.",
+              "solution": "class Termometro:\n    def __init__(self, celsius=0):\n        self._celsius = celsius\n    \n    @property\n    def celsius(self):\n        return self._celsius\n    \n    @celsius.setter\n    def celsius(self, valor):\n        if valor < -273.15:\n            raise ValueError(\"Temperatura imposible\")\n        self._celsius = valor\n    \n    @property\n    def fahrenheit(self):\n        return (self._celsius * 9/5) + 32"
+            },
+            {
+              "title": "Ejercicio 2: Clase Producto con descuento",
+              "description": "Producto con precio base privado. Propiedad precio (puede tener descuento). Método aplicar_descuento(porcentaje) que valide 0-100%.",
+              "solution": "class Producto:\n    def __init__(self, nombre, precio_base):\n        self.nombre = nombre\n        self._precio_base = precio_base\n        self._descuento = 0\n    \n    @property\n    def precio(self):\n        return self._precio_base * (1 - self._descuento / 100)\n    \n    def aplicar_descuento(self, porcentaje):\n        if 0 <= porcentaje <= 100:\n            self._descuento = porcentaje\n        else:\n            raise ValueError(\"Descuento inválido\")"
+            },
+            {
+              "title": "Ejercicio 3: Clase Cuenta con límite",
+              "description": "CuentaBancaria con saldo privado. Retiros y depósitos con validación. Propiedad saldo de solo lectura.",
+              "solution": "class CuentaBancaria:\n    def __init__(self, titular, saldo_inicial=0):\n        self.titular = titular\n        self._saldo = max(0, saldo_inicial)\n    \n    @property\n    def saldo(self):\n        return self._saldo\n    \n    def depositar(self, monto):\n        if monto > 0:\n            self._saldo += monto\n    \n    def retirar(self, monto):\n        if monto > 0 and monto <= self._saldo:\n            self._saldo -= monto\n            return True\n        return False"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 6: Sistema de inventario con encapsulación",
+            "description": "Crea sistema de inventario con clases Producto (encapsulado) e Inventario (lista de productos). Producto debe tener: código, nombre, precio, stock. Todos los atributos privados excepto nombre. Inventario debe controlar operaciones (agregar, remover, actualizar stock) con validaciones.",
+            "deliverable": "Sistema completo con demostración",
+            "due_days": 5,
+            "points": 10
+          }
+        },
+        {
+          "id": "u2t2",
+          "name": "Propiedades y Validación de Estado",
+          "order": 2,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "Las propiedades (@property) permiten controlar el acceso a atributos sin cambiar la interfaz pública. Son ideales para validación, cálculos derivados y mantener invariantes.",
+            "development": "Los property getters permiten calcular valores al vuelo, mientras que los property setters permiten validar y modificar el estado de forma controlada. También pueden usarse property deleters para lógica especial al eliminar.",
+            "key_concepts": [
+              "Property getters (cálculo al vuelo)",
+              "Property setters (validación)",
+              "Property deleters (lógica de eliminación)",
+              "Propiedades de solo lectura",
+              "Propiedades con dependencias",
+              "Invariantes mantenidas por propiedades"
+            ],
+            "examples": [
+              {
+                "title": "Propiedad calculada",
+                "code": "class Rectangulo:\n    def __init__(self, base, altura):\n        self.base = base\n        self.altura = altura\n    \n    @property\n    def area(self):\n        return self.base * self.altura\n    \n    @property\n    def perimetro(self):\n        return 2 * (self.base + self.altura)\n\nr = Rectangulo(5, 3)\nprint(r.area)        # 15\nprint(r.perimetro)   # 16"
+              },
+              {
+                "title": "Setter con validación cruzada",
+                "code": "class Triangulo:\n    def __init__(self, lado1, lado2, lado3):\n        self.lado1 = lado1\n        self.lado2 = lado2\n        self.lado3 = lado3\n    \n    def _validar_triángulo(self):\n        a, b, c = self.lado1, self.lado2, self.lado3\n        return a + b > c and a + c > b and b + c > a\n    \n    @property\n    def lado1(self):\n        return self._lado1\n    \n    @lado1.setter\n    def lado1(self, valor):\n        self._lado1 = valor\n        if not self._validar_triángulo():\n            raise ValueError(\"No forma triángulo válido\")"
+              },
+              {
+                "title": "Property deleter",
+                "code": "class Archivo:\n    def __init__(self, nombre):\n        self._nombre = nombre\n        self._contenido = \"\"\n    \n    @property\n    def contenido(self):\n        return self._contenido\n    \n    @contenido.setter\n    def contenido(self, texto):\n        self._contenido = texto\n    \n    @contenido.deleter\n    def contenido(self):\n        print(\"Borrando contenido...\")\n        self._contenido = \"\"\n\na = Archivo(\"datos.txt\")\na.contenido = \"Hola mundo\"\nprint(a.contenido)  # Hola mundo\ndel a.contenido      # Borrando contenido...\nprint(a.contenido)  # (vacío)"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Diseñar propiedades",
+              "description": "Juntos diseñaremos propiedades para clases como Estudiante (promedio calculado), Vehículo (velocidad con límite), y Producto (precio con descuento).",
+              "duration_minutes": 20,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Propiedades complejas",
+              "description": "Crea una clase con al menos 3 propiedades: 1) getter calculado, 2) setter con validación, 3) setter que afecta otros atributos (validación cruzada).",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Clase Estudiante con promedio",
+              "description": "Estudiante con lista de notas privada. Propiedad promedio calculada automáticamente. Método agregar_nota con validación (0-100).",
+              "solution": "class Estudiante:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self._notas = []\n    \n    def agregar_nota(self, nota):\n        if 0 <= nota <= 100:\n            self._notas.append(nota)\n        else:\n            raise ValueError(\"Nota inválida\")\n    \n    @property\n    def promedio(self):\n        if not self._notas:\n            return 0\n        return sum(self._notas) / len(self._notas)"
+            },
+            {
+              "title": "Ejercicio 2: Clase Fecha con validación",
+              "description": "Fecha con día, mes, año. Setter de día que valide según el mes (considerar años bisiestos). Propiedad dia_semana calculada.",
+              "solution": "class Fecha:\n    def __init__(self, dia, mes, anio):\n        self._dia = dia\n        self._mes = mes\n        self._anio = anio\n    \n    @property\n    def dia(self):\n        return self._dia\n    \n    @dia.setter\n    def dia(self, valor):\n        # Validación según mes...\n        self._dia = valor"
+            },
+            {
+              "title": "Ejercicio 3: Clase Conversor",
+              "description": "Conversor con valor en metros. Propiedades: kilometros, centimetros, milimetros (todas de solo lectura, cálculo al vuelo). Setter solo en metros.",
+              "solution": "class ConversorDistancia:\n    def __init__(self, metros=0):\n        self._metros = metros\n    \n    @property\n    def metros(self):\n        return self._metros\n    \n    @metros.setter\n    def metros(self, valor):\n        if valor >= 0:\n            self._metros = valor\n    \n    @property\n    def kilometros(self):\n        return self._metros / 1000\n    \n    @property\n    def centimetros(self):\n        return self._metros * 100\n    \n    @property\n    def milimetros(self):\n        return self._metros * 1000"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 7: Sistema de calificaciones",
+            "description": "Sistema con clases Estudiante, Curso, Calificacion. Estudiante: nombre, lista de calificaciones (privada). Curso: nombre, lista estudiantes. Propiedades: promedio_estudiante, promedio_curso, mejor_estudiante. Todas las operaciones con validación.",
+            "deliverable": "Sistema completo con propiedades",
+            "due_days": 6,
+            "points": 12
+          }
+        },
+        {
+          "id": "u2t3",
+          "name": "Composición de Objetos",
+          "order": 3,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "La composición es una relación donde un objeto contiene otros objetos. A diferencia de la herencia (es-un), la composición es tiene-un. Es preferible a la herencia en muchos casos.",
+            "development": "En composición, el objeto compuesto (contenedor) tiene referencias a objetos componentes. Si el contenedor se destruye, los componentes pueden seguir existiendo o destruirse también. Promueve reutilización y flexibilidad.",
+            "key_concepts": [
+              "Composición vs herencia",
+              "Relación tiene-un (has-a)",
+              "Objetos contenedor y componentes",
+              "Inicialización de objetos compuestos",
+              "Delegación de comportamiento",
+              "Composición profunda (anidada)"
+            ],
+            "examples": [
+              {
+                "title": "Composición básica: Motor y Auto",
+                "code": "class Motor:\n    def __init__(self, caballos):\n        self.caballos = caballos\n        self.encendido = False\n    \n    def encender(self):\n        self.encendido = True\n        print(\"Motor encendido\")\n    \n    def apagar(self):\n        self.encendido = False\n        print(\"Motor apagado\")\n\nclass Auto:\n    def __init__(self, marca, modelo, motor):\n        self.marca = marca\n        self.modelo = modelo\n        self.motor = motor  # Composición\n    \n    def arrancar(self):\n        self.motor.encender()\n        print(f\"{self.marca} {self.modelo} arrancó\")\n\nmotor = Motor(150)\nauto = Auto(\"Toyota\", \"Corolla\", motor)\nauto.arrancar()  # Motor encendido, Toyota Corolla arrancó"
+              },
+              {
+                "title": "Composición: Dirección y Persona",
+                "code": "class Direccion:\n    def __init__(self, calle, ciudad, pais):\n        self.calle = calle\n        self.ciudad = ciudad\n        self.pais = pais\n    \n    def __str__(self):\n        return f\"{self.calle}, {self.ciudad}, {self.pais}\"\n\nclass Persona:\n    def __init__(self, nombre, direccion):\n        self.nombre = nombre\n        self.direccion = direccion  # Composición\n    \n    def mostrar_direccion(self):\n        print(f\"{self.nombre} vive en: {self.direccion}\")\n\ndir = Direccion(\"123 Main St\", \"NYC\", \"USA\")\npersona = Persona(\"John\", dir)\npersona.mostrar_direccion()"
+              },
+              {
+                "title": "Composición múltiple: Orden y Items",
+                "code": "class ItemOrden:\n    def __init__(self, producto, cantidad, precio_unitario):\n        self.producto = producto\n        self.cantidad = cantidad\n        self.precio_unitario = precio_unitario\n    \n    @property\n    def subtotal(self):\n        return self.cantidad * self.precio_unitario\n\nclass Orden:\n    def __init__(self, numero_orden):\n        self.numero_orden = numero_orden\n        self.items = []  # Lista de objetos ItemOrden\n    \n    def agregar_item(self, item):\n        self.items.append(item)\n    \n    @property\n    def total(self):\n        return sum(item.subtotal for item in self.items)\n\norden = Orden(123)\norden.agregar_item(ItemOrden(\"Laptop\", 1, 999.99))\norden.agregar_item(ItemOrden(\"Mouse\", 2, 25.50))\nprint(orden.total)  # 1050.99"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "analisis",
+              "title": "Identificar composición",
+              "description": "Analiza sistemas del mundo real (ej: restaurante, hospital, escuela) e identifica relaciones de composición (qué objetos contienen a otros).",
+              "duration_minutes": 15,
+              "points": 1
+            },
+            {
+              "type": "practica_individual",
+              "title": "Diseñar sistema con composición",
+              "description": "Diseña un sistema con al menos 3 clases relacionadas por composición (ej: Biblioteca con Libros, Auto con Ruedas/Motor, Computadora con Componentes). Implementa la inicialización y métodos que usen los componentes.",
+              "duration_minutes": 30,
+              "points": 4
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Biblioteca con composición",
+              "description": "Libro con Autor y Editorial (composición). Biblioteca con lista de Libros. Métodos para agregar libros, buscar por autor, contar libros por editorial.",
+              "solution": "class Autor:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nclass Editorial:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nclass Libro:\n    def __init__(self, titulo, autor, editorial):\n        self.titulo = titulo\n        self.autor = autor  # Composición\n        self.editorial = editorial  # Composición\n\nclass Biblioteca:\n    def __init__(self):\n        self.libros = []\n    \n    def agregar_libro(self, libro):\n        self.libros.append(libro)"
+            },
+            {
+              "title": "Ejercicio 2: Computadora con componentes",
+              "description": "CPU, RAM, DiscoDuro como clases. Computadora los contiene. Método specs() que retorna especificaciones completas.",
+              "solution": "class CPU:\n    def __init__(self, modelo, nucleos):\n        self.modelo = modelo\n        self.nucleos = nucleos\n\nclass RAM:\n    def __init__(self, capacidad_gb):\n        self.capacidad_gb = capacidad_gb\n\nclass DiscoDuro:\n    def __init__(self, capacidad_tb, tipo):\n        self.capacidad_tb = capacidad_tb\n        self.tipo = tipo\n\nclass Computadora:\n    def __init__(self, cpu, ram, disco):\n        self.cpu = cpu\n        self.ram = ram\n        self.disco = disco\n    \n    def specs(self):\n        return f\"CPU: {self.cpu.modelo}, RAM: {self.ram.capacidad_gb}GB, Disco: {self.disco.capacidad_tb}TB {self.disco.tipo}\""
+            },
+            {
+              "title": "Ejercicio 3: Sistema de reservas",
+              "description": "Hotel con Habitaciones. Reserva contiene Cliente, Habitación, Fechas. Hotel gestiona reservas. Métodos: reservar, cancelar, verificar disponibilidad.",
+              "solution": "class Habitacion:\n    def __init__(self, numero, tipo, precio):\n        self.numero = numero\n        self.tipo = tipo\n        self.precio = precio\n        self.ocupada = False\n\nclass Cliente:\n    def __init__(self, nombre, documento):\n        self.nombre = nombre\n        self.documento = documento\n\nclass Reserva:\n    def __init__(self, cliente, habitacion, fecha_entrada, fecha_salida):\n        self.cliente = cliente\n        self.habitacion = habitacion\n        self.fecha_entrada = fecha_entrada\n        self.fecha_salida = fecha_salida"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 8: Sistema de comercio electrónico",
+            "description": "Sistema e-commerce con clases: Producto, Carrito, ItemCarrito, Orden, Cliente, Direccion. Usa composición extensivamente. Implementa: agregar al carrito, calcular total, validar stock, crear orden, generar factura. Usa propiedades y encapsulación.",
+            "deliverable": "Sistema e-commerce completo",
+            "due_days": 7,
+            "points": 15
+          }
+        },
+        {
+          "id": "u2t4",
+          "name": "Relaciones entre Clases",
+          "order": 4,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "Las clases pueden relacionarse de diferentes formas: asociación (conocimiento mutuo), agregación (tiene-un pero no esencial), composición (tiene-un esencial), y dependencia (usa temporalmente).",
+            "development": "Elegir la relación correcta es crucial para un buen diseño. La asociación es la más general, la agregación permite que el componente exista independientemente, y la composición implica que el componente no tiene sentido sin el contenedor.",
+            "key_concepts": [
+              "Asociación (conocimiento)",
+              "Agregación (has-a débil)",
+              "Composición (has-a fuerte)",
+              "Dependencia (uses-a)",
+              "Cardinalidad (1:1, 1:N, N:M)",
+              "Diagramas UML básicos"
+            ],
+            "examples": [
+              {
+                "title": "Asociación: Estudiante y Curso",
+                "code": "class Estudiante:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.cursos = []  # Asociación: conoce cursos\n    \n    def inscribir(self, curso):\n        self.cursos.append(curso)\n        curso.estudiantes.append(self)\n\nclass Curso:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.estudiantes = []  # Asociación bidireccional\n\nest = Estudiante(\"Ana\")\ncurso = Curso(\"Python\")\nest.inscribir(curso)"
+              },
+              {
+                "title": "Agregación: Departamento y Empleados",
+                "code": "class Empleado:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nclass Departamento:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.empleados = []  # Agregación: empleados pueden existir sin departamento\n    \n    def agregar_empleado(self, empleado):\n        self.empleados.append(empleado)\n    \n    def eliminar_empleado(self, empleado):\n        if empleado in self.empleados:\n            self.empleados.remove(empleado)\n            # Empleado sigue existiendo"
+              },
+              {
+                "title": "Composición: Casa y Habitaciones",
+                "code": "class Habitacion:\n    def __init__(self, tipo, area):\n        self.tipo = tipo\n        self.area = area\n\nclass Casa:\n    def __init__(self, direccion):\n        self.direccion = direccion\n        self.habitaciones = []  # Composición: habitaciones no tienen sentido sin casa\n    \n    def agregar_habitacion(self, habitacion):\n        self.habitaciones.append(habitacion)\n    \n    def demoler(self):\n        # Al destruir la casa, las habitaciones también se destruyen\n        self.habitaciones = []"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "discusion",
+              "title": "Analizar relaciones",
+              "description": "En grupos, analicen diferentes sistemas (ej: escuela, hospital, tienda) e identifiquen qué tipo de relación es apropiada para cada par de clases. Justifiquen su elección.",
+              "duration_minutes": 20,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Implementar relaciones",
+              "description": "Elige un dominio e implementa al menos 3 clases con diferentes tipos de relaciones (asociación, agregación, composición). Documenta qué tipo de relación es cada una.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Sistema escolar",
+              "description": "Estudiante, Curso, Profesor con asociaciones. Estudiante inscribe en cursos, Profesor imparte cursos. Métodos para ver relaciones.",
+              "solution": "class Profesor:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.cursos = []\n    \n    def impartir(self, curso):\n        self.cursos.append(curso)\n        curso.profesor = self\n\nclass Curso:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.profesor = None\n        self.estudiantes = []\n\nclass Estudiante:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.cursos = []"
+            },
+            {
+              "title": "Ejercicio 2: Sistema hospitalario",
+              "description": "Paciente, Doctor, Habitación, Hospital. Hospital agrega doctores y habitaciones (agregación). Paciente asignado a habitación y doctor (asociación).",
+              "solution": "class Doctor:\n    def __init__(self, nombre, especialidad):\n        self.nombre = nombre\n        self.especialidad = especialidad\n\nclass Habitacion:\n    def __init__(self, numero, tipo):\n        self.numero = numero\n        self.tipo = tipo\n        self.ocupada = False\n\nclass Paciente:\n    def __init__(self, nombre):\n        self.nombre = nombre\n        self.doctor = None\n        self.habitacion = None"
+            },
+            {
+              "title": "Ejercicio 3: Red social",
+              "description": "Usuario, Post, Comentario. Usuario crea posts (composición). Post tiene comentarios (composición). Usuarios siguen a otros (asociación).",
+              "solution": "class Usuario:\n    def __init__(self, username):\n        self.username = username\n        self.posts = []\n        self.seguidos = []\n    \n    def seguir(self, usuario):\n        if usuario not in self.seguidos:\n            self.seguidos.append(usuario)\n\nclass Post:\n    def __init__(self, autor, contenido):\n        self.autor = autor\n        self.contenido = contenido\n        self.comentarios = []\n        autor.posts.append(self)\n\nclass Comentario:\n    def __init__(self, autor, post, texto):\n        self.autor = autor\n        self.post = post\n        self.texto = texto\n        post.comentarios.append(self)"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 9: Diseño de sistema complejo",
+            "description": "Diseña e implementa un sistema de tu elección con al menos 5 clases y múltiples tipos de relaciones. Debe incluir: 1) asociación bidireccional, 2) agregación, 3) composición, 4) cardinalidad 1:N, 5) documentación de relaciones. Presenta diagrama UML simple.",
+            "deliverable": "Sistema con diagrama UML",
+            "due_days": 7,
+            "points": 15
+          }
+        },
+        {
+          "id": "u2t5",
+          "name": "Responsabilidades y Cohesión",
+          "order": 5,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "Una clase bien diseñada tiene una sola responsabilidad (principio SRP). La cohesión alta significa que los elementos de una clase están relacionados y trabajan juntos.",
+            "development": "La cohesión alta facilita mantenimiento, testing y reutilización. Si una clase hace demasiadas cosas (baja cohesión), debería dividirse. Las responsabilidades claras hacen el código más entendible.",
+            "key_concepts": [
+              "Principio de Responsabilidad Única (SRP)",
+              "Cohesión alta vs baja",
+              "División de responsabilidades",
+              "Clases con propósito claro",
+              "Delegación de responsabilidades",
+              "Refactorización para mejorar cohesión"
+            ],
+            "examples": [
+              {
+                "title": "Baja cohesión (mal diseño)",
+                "code": "# MAL: Una clase hace demasiado\nclass SistemaMalDiseñado:\n    def __init__(self):\n        self.clientes = []\n        self.productos = []\n        self.ventas = []\n    \n    def agregar_cliente(self, cliente):\n        self.clientes.append(cliente)\n    \n    def procesar_pago(self, pago):\n        pass\n    \n    def enviar_email(self, email):\n        pass\n    \n    def generar_reporte(self):\n        pass\n    # Hace todo: gestión, pagos, email, reportes"
+              },
+              {
+                "title": "Alta cohesión (buen diseño)",
+                "code": "# BIEN: Cada clase tiene una responsabilidad\nclass GestorClientes:\n    def __init__(self):\n        self.clientes = []\n    \n    def agregar_cliente(self, cliente):\n        self.clientes.append(cliente)\n\nclass ProcesadorPagos:\n    def procesar(self, pago):\n        pass\n\nclass ServicioEmail:\n    def enviar(self, email):\n        pass\n\nclass GeneradorReportes:\n    def generar(self, datos):\n        pass"
+              },
+              {
+                "title": "Delegación de responsabilidades",
+                "code": "class ValidadorEmail:\n    @staticmethod\n    def es_valido(email):\n        return \"@\" in email and \".\" in email\n\nclass Usuario:\n    def __init__(self, nombre, email):\n        self.nombre = nombre\n        self.email = email\n    \n    def set_email(self, nuevo_email):\n        if ValidadorEmail.es_valido(nuevo_email):\n            self.email = nuevo_email\n        else:\n            raise ValueError(\"Email inválido\")"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "analisis",
+              "title": "Identificar responsabilidades",
+              "description": "Analiza clases que hayas creado e identifica si tienen múltiples responsabilidades. Divide las responsabilidades en clases separadas.",
+              "duration_minutes": 20,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Refactorizar para cohesión",
+              "description": "Toma un sistema existente (o crea uno nuevo) y refactoriza para mejorar cohesión. Divide clases con múltiples responsabilidades en clases más pequeñas y enfocadas.",
+              "duration_minutes": 30,
+              "points": 4
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Refactorizar GestorDatos",
+              "description": "GestorDatos hace: guardar datos, cargar datos, validar datos, formatear datos. Divide en 4 clases especializadas.",
+              "solution": "class ValidadorDatos:\n    def validar(self, datos):\n        pass\n\nclass FormateadorDatos:\n    def formatear(self, datos):\n        pass\n\nclass PersistenciaDatos:\n    def guardar(self, datos):\n        pass\n    \n    def cargar(self):\n        pass\n\nclass GestorDatos:\n    def __init__(self):\n        self.validador = ValidadorDatos()\n        self.formateador = FormateadorDatos()\n        self.persistencia = PersistenciaDatos()"
+            },
+            {
+              "title": "Ejercicio 2: Sistema de autenticación",
+              "description": "SistemaAuth hace: validar credenciales, hashear contraseñas, generar tokens, enviar email de recuperación. Divide responsabilidades.",
+              "solution": "class HasherContrasenas:\n    def hashear(self, contrasena):\n        pass\n\nclass ValidadorCredenciales:\n    def validar(self, usuario, contrasena):\n        pass\n\nclass GeneradorTokens:\n    def generar(self, usuario):\n        pass\n\nclass ServicioEmail:\n    def enviar_recuperacion(self, email):\n        pass"
+            },
+            {
+              "title": "Ejercicio 3: Analizar clase compleja",
+              "description": "Dada una clase con 10+ métodos, analiza si puede dividirse. Identifica grupos de métodos relacionados y propón nuevas clases.",
+              "solution": "# Análisis: buscar grupos de métodos relacionados\n# Ejemplo: métodos de cálculo juntos, métodos de persistencia juntos,\n# métodos de validación juntos, etc."
+            }
+          ],
+          "homework": {
+            "title": "Tarea 10: Refactorización de proyecto anterior",
+            "description": "Toma un proyecto o sistema que hayas creado en tareas anteriores y refactoriza para mejorar cohesión. Divide clases con múltiples responsabilidades, crea clases especializadas, usa delegación. Documenta antes y después con explicación de mejoras.",
+            "deliverable": "Código refactorizado con documentación",
+            "due_days": 7,
+            "points": 15
+          }
+        }
+      ],
+      "evaluation": {
+        "actitudinal": {
+          "points": 5,
+          "criteria": [
+            "Participación activa en discusiones de diseño (2 puntos)",
+            "Trabajo colaborativo en análisis de relaciones (1.5 puntos)",
+            "Calidad del código y documentación (1.5 puntos)"
+          ]
+        },
+        "parcial": {
+          "points": 15,
+          "topics": [
+            "Encapsulación y control de acceso (4 puntos)",
+            "Propiedades y validación (4 puntos)",
+            "Composición y relaciones (4 puntos)",
+            "Responsabilidades y cohesión (3 puntos)"
+          ],
+          "format": "Problemas de diseño + análisis de código"
+        },
+        "tareas_actividades": {
+          "points": 50,
+          "breakdown": {
+            "tarea_6": 10,
+            "tarea_7": 12,
+            "tarea_8": 15,
+            "tarea_9": 15,
+            "tarea_10": 15,
+            "actividades_clase": 8
+          }
+        },
+        "examen_final": {
+          "points": 30,
+          "topics": [
+            "Todo el contenido de la unidad",
+            "Diseño de sistema con composición (10 puntos)",
+            "Refactorización para mejorar cohesión (10 puntos)",
+            "Análisis de relaciones y responsabilidades (10 puntos)"
+          ],
+          "format": "Proyecto de diseño + código"
+        }
+      }
+    }
+  ]
+}

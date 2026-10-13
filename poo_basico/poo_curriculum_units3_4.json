@@ -1,0 +1,826 @@
+{
+  "unidades_finales": [
+    {
+      "id": "unit3",
+      "name": "Unidad 3 - Reutilización y Pruebas",
+      "order": 3,
+      "objectives": [
+        "Aplicar herencia para especializar clases",
+        "Implementar polimorfismo con sobrescritura de métodos",
+        "Usar métodos especiales de Python (__str__, __eq__, etc.)",
+        "Organizar el proyecto en módulos y paquetes",
+        "Escribir pruebas unitarias básicas"
+      ],
+      "topics": [
+        {
+          "id": "u3t1",
+          "name": "Herencia y Especialización",
+          "order": 1,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "La herencia permite crear nuevas clases basadas en clases existentes. La clase hija hereda atributos y métodos de la clase padre, y puede agregar o modificar comportamiento.",
+            "development": "En Python, la herencia se especifica con class Hija(Padre). La palabra clave super() permite llamar a métodos de la clase padre. La herencia promueve reutilización pero debe usarse con cuidado (composición sobre herencia).",
+            "key_concepts": [
+              "Clase base (padre) y clase derivada (hija)",
+              "Sintaxis de herencia en Python",
+              "Herencia de atributos y métodos",
+              "super() para llamar al padre",
+              "Sobrescritura de métodos",
+              "Herencia múltiple (avanzado)"
+            ],
+            "examples": [
+              {
+                "title": "Herencia básica: Animal y Perro",
+                "code": "class Animal:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n    \n    def hablar(self):\n        pass  # Método base\n    \n    def comer(self):\n        print(f\"{self.nombre} está comiendo\")\n\nclass Perro(Animal):\n    def __init__(self, nombre, edad, raza):\n        super().__init__(nombre, edad)  # Llama al padre\n        self.raza = raza\n    \n    def hablar(self):\n        print(f\"{self.nombre} dice: ¡Guau!\")  # Sobrescritura\n    \n    def ladrar(self):\n        print(\"¡Guau guau!\")\n\nperro = Perro(\"Fido\", 3, \"Labrador\")\nperro.comer()    # Heredado de Animal\nperro.hablar()   # Sobrescrito en Perro\nperro.ladrar()    # Propio de Perro"
+              },
+              {
+                "title": "Herencia: Vehículo y subclases",
+                "code": "class Vehiculo:\n    def __init__(self, marca, modelo, anio):\n        self.marca = marca\n        self.modelo = modelo\n        self.anio = anio\n        self.encendido = False\n    \n    def encender(self):\n        self.encendido = True\n        print(\"Vehículo encendido\")\n    \n    def apagar(self):\n        self.encendido = False\n        print(\"Vehículo apagado\")\n\nclass Automovil(Vehiculo):\n    def __init__(self, marca, modelo, anio, num_puertas):\n        super().__init__(marca, modelo, anio)\n        self.num_puertas = num_puertas\n    \n    def abrir_puertas(self):\n        print(f\"Abriendo {self.num_puertas} puertas\")\n\nclass Motocicleta(Vehiculo):\n    def __init__(self, marca, modelo, anio, cilindrada):\n        super().__init__(marca, modelo, anio)\n        self.cilindrada = cilindrada\n    \n    def hacer_wheelie(self):\n        print(\"¡Haciendo wheelie!\")"
+              },
+              {
+                "title": "Jerarquía de empleados",
+                "code": "class Empleado:\n    def __init__(self, nombre, salario_base):\n        self.nombre = nombre\n        self.salario_base = salario_base\n    \n    def calcular_salario(self):\n        return self.salario_base\n\nclass Gerente(Empleado):\n    def __init__(self, nombre, salario_base, bono):\n        super().__init__(nombre, salario_base)\n        self.bono = bono\n    \n    def calcular_salario(self):\n        return self.salario_base + self.bono\n\nclass Desarrollador(Empleado):\n    def __init__(self, nombre, salario_base, horas_extra):\n        super().__init__(nombre, salario_base)\n        self.horas_extra = horas_extra\n    \n    def calcular_salario(self):\n        pago_extra = self.horas_extra * 50\n        return self.salario_base + pago_extra"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Crear jerarquía de clases",
+              "description": "Juntos diseñaremos una jerarquía: Figura -> Rectángulo, Círculo, Triángulo. Cada subclase tendrá su propio cálculo de área.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Diseñar jerarquía propia",
+              "description": "Diseña e implementa una jerarquía de clases de tu elección (mínimo 3 niveles: base, intermedia, concreta). Usa super() y sobrescritura de métodos.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Jerarquía de cuentas bancarias",
+              "description": "CuentaBancaria -> CuentaAhorros, CuentaCorriente. CuentaAhorros tiene interés, CuentaCorriente tiene límite de sobregiro.",
+              "solution": "class CuentaBancaria:\n    def __init__(self, titular, saldo):\n        self.titular = titular\n        self.saldo = saldo\n    \n    def depositar(self, monto):\n        self.saldo += monto\n    \n    def retirar(self, monto):\n        if monto <= self.saldo:\n            self.saldo -= monto\n            return True\n        return False\n\nclass CuentaAhorros(CuentaBancaria):\n    def __init__(self, titular, saldo, tasa_interes):\n        super().__init__(titular, saldo)\n        self.tasa_interes = tasa_interes\n    \n    def aplicar_interes(self):\n        self.saldo *= (1 + self.tasa_interes)\n\nclass CuentaCorriente(CuentaBancaria):\n    def __init__(self, titular, saldo, limite_sobregiro):\n        super().__init__(titular, saldo)\n        self.limite_sobregiro = limite_sobregiro\n    \n    def retirar(self, monto):\n        if monto <= self.saldo + self.limite_sobregiro:\n            self.saldo -= monto\n            return True\n        return False"
+            },
+            {
+              "title": "Ejercicio 2: Jerarquía de productos",
+              "description": "Producto -> ProductoFisico, ProductoDigital, ProductoServicio. Cada uno con atributos y métodos específicos.",
+              "solution": "class Producto:\n    def __init__(self, nombre, precio):\n        self.nombre = nombre\n        self.precio = precio\n    \n    def calcular_envio(self):\n        return 0\n\nclass ProductoFisico(Producto):\n    def __init__(self, nombre, precio, peso):\n        super().__init__(nombre, precio)\n        self.peso = peso\n    \n    def calcular_envio(self):\n        return self.peso * 2  # $2 por kg\n\nclass ProductoDigital(Producto):\n    def __init__(self, nombre, precio, tamano_mb):\n        super().__init__(nombre, precio)\n        self.tamano_mb = tamano_mb\n    \n    def calcular_envio(self):\n        return 0  # Sin envío"
+            },
+            {
+              "title": "Ejercicio 3: Jerarquía de usuarios",
+              "description": "Usuario -> UsuarioRegular, UsuarioPremium, UsuarioAdmin. Diferentes permisos y capacidades.",
+              "solution": "class Usuario:\n    def __init__(self, username, email):\n        self.username = username\n        self.email = email\n    \n    def puede_publicar(self):\n        return True\n    \n    def puede_moderar(self):\n        return False\n\nclass UsuarioRegular(Usuario):\n    def puede_publicar(self):\n        return True\n\nclass UsuarioPremium(Usuario):\n    def puede_publicar(self):\n        return True\n    \n    def puede_editar(self):\n        return True\n\nclass UsuarioAdmin(Usuario):\n    def puede_moderar(self):\n        return True\n    \n    def puede_banear(self):\n        return True"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 11: Sistema de gestión de empleados",
+            "description": "Sistema con jerarquía: Empleado -> Gerente, Desarrollador, Diseñador, QA. Cada uno con atributos específicos y cálculo de salario diferente. Implementa: 1) método polimórfico calcular_salario(), 2) método mostrar_info(), 3) validaciones específicas. Crea programa de prueba con varios empleados.",
+            "deliverable": "Sistema con jerarquía completa",
+            "due_days": 6,
+            "points": 12
+          }
+        },
+        {
+          "id": "u3t2",
+          "name": "Polimorfismo y Sobrescritura",
+          "order": 2,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "El polimorfismo permite que objetos de diferentes clases respondan al mismo mensaje de manera diferente. En Python, se logra principalmente mediante sobrescritura de métodos y duck typing.",
+            "development": "La sobrescritura (override) redefine un método heredado. Para extender comportamiento del padre, usamos super(). El polimorfismo permite escribir código genérico que funciona con cualquier objeto que tenga la interfaz necesaria.",
+            "key_concepts": [
+              "Polimorfismo como concepto",
+              "Sobrescritura de métodos",
+              "Extensión con super()",
+              "Duck typing en Python",
+              "Interfaces implícitas",
+              "Métodos abstractos (ABC)"
+            ],
+            "examples": [
+              {
+                "title": "Polimorfismo con figuras",
+                "code": "class Figura:\n    def area(self):\n        pass\n    \n    def perimetro(self):\n        pass\n\nclass Rectangulo(Figura):\n    def __init__(self, base, altura):\n        self.base = base\n        self.altura = altura\n    \n    def area(self):\n        return self.base * self.altura\n    \n    def perimetro(self):\n        return 2 * (self.base + self.altura)\n\nclass Circulo(Figura):\n    def __init__(self, radio):\n        self.radio = radio\n    \n    def area(self):\n        return 3.14159 * self.radio ** 2\n    \n    def perimetro(self):\n        return 2 * 3.14159 * self.radio\n\n# Uso polimórfico\nfiguras = [Rectangulo(5, 3), Circulo(2)]\nfor fig in figuras:\n    print(f\"Área: {fig.area()}, Perímetro: {fig.perimetro()}\")"
+              },
+              {
+                "title": "Sobrescritura con super()",
+                "code": "class Vehiculo:\n    def __init__(self, marca):\n        self.marca = marca\n        self.velocidad = 0\n    \n    def acelerar(self, cantidad):\n        self.velocidad += cantidad\n        print(f\"Velocidad: {self.velocidad} km/h\")\n\nclass AutoDeportivo(Vehiculo):\n    def acelerar(self, cantidad):\n        # Comportamiento especial + llama al padre\n        cantidad *= 1.5  # Acelera más rápido\n        super().acelerar(cantidad)\n        print(\"¡Vroom!\")\n\nauto = AutoDeportivo(\"Ferrari\")\nauto.acelerar(10)  # Velocidad: 15 km/h, ¡Vroom!"
+              },
+              {
+                "title": "Duck typing",
+                "code": "class Pato:\n    def hablar(self):\n        print(\"Cuac cuac\")\n\nclass Perro:\n    def hablar(self):\n        print(\"Guau guau\")\n\ndef hacer_hablar(animal):\n    animal.hablar()  # No importa el tipo, solo que tenga hablar()\n\nhacer_hablar(Pato())   # Cuac cuac\nhacer_hablar(Perro())  # Guau guao"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Polimorfismo en acción",
+              "description": "Juntos implementaremos un sistema de pagos donde diferentes métodos de pago (Tarjeta, PayPal, Efectivo) responden al mismo mensaje procesar_pago() de forma diferente.",
+              "duration_minutes": 20,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Sistema polimórfico",
+              "description": "Crea un sistema con al menos 3 clases que implementen la misma interfaz (métodos con el mismo nombre) pero con comportamientos diferentes. Demuestra el uso polimórfico.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Sistema de notificaciones",
+              "description": "Notificador -> Email, SMS, Push. Todos tienen método enviar(mensaje) pero implementaciones diferentes.",
+              "solution": "class Notificador:\n    def enviar(self, mensaje):\n        pass\n\nclass EmailNotificador(Notificador):\n    def enviar(self, mensaje):\n        print(f\"Enviando email: {mensaje}\")\n\nclass SMSNotificador(Notificador):\n    def enviar(self, mensaje):\n        print(f\"Enviando SMS: {mensaje}\")\n\nclass PushNotificador(Notificador):\n    def enviar(self, mensaje):\n        print(f\"Enviando push: {mensaje}\")"
+            },
+            {
+              "title": "Ejercicio 2: Sistema de exportación",
+              "description": "Exportador -> PDF, Excel, CSV. Método exportar(datos) con formatos diferentes.",
+              "solution": "class Exportador:\n    def exportar(self, datos):\n        pass\n\nclass PDFExportador(Exportador):\n    def exportar(self, datos):\n        print(f\"Exportando a PDF: {datos}\")\n\nclass CSVExportador(Exportador):\n    def exportar(self, datos):\n        print(f\"Exportando a CSV: {datos}\")"
+            },
+            {
+              "title": "Ejercicio 3: Procesadores de texto",
+              "description": "ProcesadorTexto -> Mayusculas, Minusculas, Invertir. Método procesar(texto) con transformaciones diferentes.",
+              "solution": "class ProcesadorTexto:\n    def procesar(self, texto):\n        pass\n\nclass MayusculasProcesador(ProcesadorTexto):\n    def procesar(self, texto):\n        return texto.upper()\n\nclass InvertirProcesador(ProcesadorTexto):\n    def procesar(self, texto):\n        return texto[::-1]"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 12: Sistema de transporte",
+            "description": "Sistema con clases Transporte -> Autobus, Tren, Avion, Barco. Método calcular_tiempo(distancia) con fórmulas diferentes según el tipo. Método calcular_precio(distancia) también polimórfico. Crea sistema que reciba lista de transportes y compare tiempos y precios para una ruta.",
+            "deliverable": "Sistema polimórfico completo",
+            "due_days": 5,
+            "points": 10
+          }
+        },
+        {
+          "id": "u3t3",
+          "name": "Métodos Especiales",
+          "order": 3,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "Python tiene métodos especiales (dunder methods) que permiten definir comportamiento personalizado para operaciones integradas. Son los métodos que empiezan y terminan con __.",
+            "development": "Los métodos más comunes son __init__, __str__, __repr__, __eq__, __len__, __getitem__, __setitem__. Permiten que tus objetos se comporten como tipos nativos de Python.",
+            "key_concepts": [
+              "__init__: inicialización",
+              "__str__: representación legible",
+              "__repr__: representación para desarrolladores",
+              "__eq__: comparación de igualdad",
+              "__len__: longitud",
+              "__getitem__ y __setitem__: acceso como lista/dict",
+              "__add__, __sub__: operadores aritméticos"
+            ],
+            "examples": [
+              {
+                "title": "__str__ y __repr__",
+                "code": "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n    \n    def __str__(self):\n        return f\"{self.nombre} ({self.edad} años)\"  # Para usuarios\n    \n    def __repr__(self):\n        return f\"Persona('{self.nombre}', {self.edad})\"  # Para debugging\n\np = Persona(\"Ana\", 25)\nprint(p)        # Ana (25 años)\nprint(repr(p))   # Persona('Ana', 25)"
+              },
+              {
+                "title": "__eq__ para comparación",
+                "code": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __eq__(self, other):\n        if not isinstance(other, Punto):\n            return False\n        return self.x == other.x and self.y == other.y\n\np1 = Punto(3, 4)\np2 = Punto(3, 4)\np3 = Punto(5, 6)\n\nprint(p1 == p2)  # True\nprint(p1 == p3)  # False"
+              },
+              {
+                "title": "__len__ y __getitem__",
+                "code": "class MiLista:\n    def __init__(self, elementos):\n        self.elementos = elementos\n    \n    def __len__(self):\n        return len(self.elementos)\n    \n    def __getitem__(self, indice):\n        return self.elementos[indice]\n    \n    def __setitem__(self, indice, valor):\n        self.elementos[indice] = valor\n\nlista = MiLista([10, 20, 30])\nprint(len(lista))    # 3\nprint(lista[0])     # 10\nlista[1] = 99\nprint(lista[1])     # 99"
+              },
+              {
+                "title": "__add__ para concatenación",
+                "code": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nv3 = v1 + v2\nprint(v3)  # (4, 6)"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Implementar métodos especiales",
+              "description": "Juntos implementaremos __str__, __eq__, __len__ en clases como Estudiante, Producto, Libro.",
+              "duration_minutes": 20,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Clase con múltiples métodos especiales",
+              "description": "Crea una clase que implemente al menos 5 métodos especiales diferentes (__str__, __eq__, __len__, __getitem__, __add__). Demuestra su uso.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Fracción con operaciones",
+              "description": "Fracción con __add__, __sub__, __mul__, __truediv__. Implementa aritmética de fracciones.",
+              "solution": "class Fraccion:\n    def __init__(self, numerador, denominador):\n        self.numerador = numerador\n        self.denominador = denominador\n    \n    def __add__(self, other):\n        nuevo_num = self.numerador * other.denominador + other.numerador * self.denominador\n        nuevo_den = self.denominador * other.denominador\n        return Fraccion(nuevo_num, nuevo_den)\n    \n    def __str__(self):\n        return f\"{self.numerador}/{self.denominador}\""
+            },
+            {
+              "title": "Ejercicio 2: Contenedor personalizado",
+              "description": "Caja con __len__, __contains__, __iter__. Permite iterar sobre elementos.",
+              "solution": "class Caja:\n    def __init__(self):\n        self.items = []\n    \n    def agregar(self, item):\n        self.items.append(item)\n    \n    def __len__(self):\n        return len(self.items)\n    \n    def __contains__(self, item):\n        return item in self.items\n    \n    def __iter__(self):\n        return iter(self.items)"
+            },
+            {
+              "title": "Ejercicio 3: Matriz con acceso",
+              "description": "Matriz con __getitem__ y __setitem__ para acceso como matriz[fila][columna].",
+              "solution": "class Matriz:\n    def __init__(self, filas, columnas):\n        self.filas = filas\n        self.columnas = columnas\n        self.datos = [[0] * columnas for _ in range(filas)]\n    \n    def __getitem__(self, fila):\n        return self.datos[fila]\n    \n    def __setitem__(self, fila, valores):\n        self.datos[fila] = valores"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 13: Sistema de monedas",
+            "description": "Crea sistema con clases Moneda y Billetera. Moneda: valor, nombre. Implementa __eq__, __add__, __str__, __repr__. Billetera: lista de monedas, __len__, __getitem__, __add__ (para combinar billeteras). Crea programa de prueba.",
+            "deliverable": "Sistema con métodos especiales",
+            "due_days": 5,
+            "points": 10
+          }
+        },
+        {
+          "id": "u3t4",
+          "name": "Organización del Proyecto",
+          "order": 4,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "A medida que el proyecto crece, es importante organizar el código en módulos y paquetes. Esto mejora mantenibilidad, reutilización y colaboración.",
+            "development": "Un módulo es un archivo .py. Un paquete es un directorio con __init__.py. Los imports pueden ser relativos o absolutos. La estructura del proyecto debe seguir convenciones.",
+            "key_concepts": [
+              "Módulos en Python",
+              "Paquetes y __init__.py",
+              "Imports absolutos y relativos",
+              "Estructura de proyecto",
+              "__main__ y ejecución como script",
+              "Convenciones de nombres"
+            ],
+            "examples": [
+              {
+                "title": "Estructura de proyecto",
+                "code": "mi_proyecto/\n├── main.py              # Punto de entrada\n├── config.py            # Configuración\n├── models/              # Paquete de modelos\n│   ├── __init__.py\n│   ├── usuario.py\n│   └── producto.py\n├── utils/               # Paquete de utilidades\n│   ├── __init__.py\n│   └── helpers.py\n└── tests/               # Pruebas\n    └── test_models.py"
+              },
+              {
+                "title": "Imports",
+                "code": "# Import absoluto\nfrom models.usuario import Usuario\nfrom utils.helpers import formatear_fecha\n\n# Import relativo (dentro de paquete)\nfrom .usuario import Usuario\nfrom ..utils.helpers import formatear_fecha\n\n# Import con alias\nimport numpy as np\nfrom models.usuario import Usuario as User"
+              },
+              {
+                "title": "__main__",
+                "code": "# En archivo modelo.py\nclass Modelo:\n    pass\n\ndef helper():\n    pass\n\nif __name__ == \"__main__\":\n    # Código que solo se ejecuta si se corre directamente\n    m = Modelo()\n    helper()\n    print(\"Ejecutando modelo.py directamente\")"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Organizar proyecto existente",
+              "description": "Tomaremos un proyecto monolítico y lo organizaremos en módulos y paquetes. Discutiremos la estructura ideal.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Refactorizar organización",
+              "description": "Toma un proyecto o código que hayas creado y reorganízalo en módulos y paquetes. Usa imports apropiados y __main__ donde sea necesario.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Crear paquete de utilidades",
+              "description": "Crea paquete utils con módulos: string_utils.py, math_utils.py, date_utils.py. Cada uno con funciones útiles. Importa desde main.py.",
+              "solution": "# utils/__init__.py\nfrom .string_utils import *\nfrom .math_utils import *\nfrom .date_utils import *\n\n# utils/string_utils.py\ndef capitalizar(texto):\n    return texto.capitalize()\n\n# utils/math_utils.py\ndef es_primo(n):\n    pass\n\n# utils/date_utils.py\ndef formatear_fecha(fecha):\n    pass"
+            },
+            {
+              "title": "Ejercicio 2: Organizar sistema de ventas",
+              "description": "Organiza sistema de ventas en paquetes: models/, services/, utils/. Mueve clases apropiadamente.",
+              "solution": "# proyecto/\n# ├── main.py\n# ├── models/\n# │   ├── __init__.py\n# │   ├── producto.py\n# │   └── orden.py\n# ├── services/\n# │   ├── __init__.py\n# │   └── ventas.py\n# └── utils/\n#     ├── __init__.py\n#     └── validators.py"
+            },
+            {
+              "title": "Ejercicio 3: Imports relativos",
+              "description": "Crea paquete con 3 módulos que se importen entre sí usando imports relativos. Demuestra el uso.",
+              "solution": "# paquete/\n# ├── __init__.py\n# ├── modulo_a.py\n# ├── modulo_b.py\n# └── modulo_c.py\n\n# modulo_a.py\nfrom .modulo_b import funcion_b\n\ndef funcion_a():\n    funcion_b()"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 14: Proyecto organizado",
+            "description": "Toma el sistema más complejo que hayas creado y reorganízalo completamente en paquetes y módulos. Debe tener: 1) estructura clara con al menos 3 paquetes, 2) imports apropiados, 3) __init__.py en cada paquete, 4) __main__ en punto de entrada, 5) documentación de estructura. Incluye README explicando la organización.",
+            "deliverable": "Proyecto reorganizado con README",
+            "due_days": 6,
+            "points": 12
+          }
+        },
+        {
+          "id": "u3t5",
+          "name": "Pruebas y Depuración",
+          "order": 5,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "Las pruebas unitarias verifican que el código funcione correctamente. La depuración es el proceso de encontrar y corregir errores. Ambas son habilidades esenciales para desarrollo de software.",
+            "development": "Python tiene módulo unittest para pruebas. Las pruebas verifican unidades individuales de código (funciones, métodos, clases). La depuración se puede hacer con print(), pdb (debugger), o IDEs.",
+            "key_concepts": [
+              "Pruebas unitarias",
+              "Módulo unittest",
+              "assert y aserciones",
+              "Test cases y test suites",
+              "Depuración con print()",
+              "Depuración con pdb"
+            ],
+            "examples": [
+              {
+                "title": "Prueba básica con unittest",
+                "code": "import unittest\n\nclass Calculadora:\n    def sumar(self, a, b):\n        return a + b\n    \n    def restar(self, a, b):\n        return a - b\n\nclass TestCalculadora(unittest.TestCase):\n    def setUp(self):\n        self.calc = Calculadora()\n    \n    def test_sumar(self):\n        self.assertEqual(self.calc.sumar(2, 3), 5)\n        self.assertEqual(self.calc.sumar(-1, 1), 0)\n    \n    def test_restar(self):\n        self.assertEqual(self.calc.restar(5, 3), 2)\n\nif __name__ == '__main__':\n    unittest.main()"
+              },
+              {
+                "title": "Aserciones comunes",
+                "code": "# Aserciones en unittest\nself.assertEqual(a, b)        # a == b\nself.assertNotEqual(a, b)     # a != b\nself.assertTrue(x)            # x es True\nself.assertFalse(x)           # x es False\nself.assertIsNone(x)          # x es None\nself.assertIsNotNone(x)       # x no es None\nself.assertIn(a, lista)       # a en lista\nself.assertRaises(TypeError, func, args)"
+              },
+              {
+                "title": "Depuración con pdb",
+                "code": "import pdb\n\ndef funcion_compleja(x, y):\n    pdb.set_trace()  # Punto de interrupción\n    resultado = x * y + 10\n    return resultado\n\n# Comandos pdb:\n# n (next): siguiente línea\n# s (step): entrar en función\n# c (continue): continuar\n# p variable: imprimir variable\n# q (quit): salir"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Escribir pruebas",
+              "description": "Juntos escribiremos pruebas para una clase que hayamos creado. Discutiremos qué casos probar y cómo estructurar las pruebas.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Pruebas para tu código",
+              "description": "Escribe pruebas unitarias para al menos una clase que hayas creado. Cubre casos normales, casos borde y casos de error.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Pruebas para Validador",
+              "description": "Escribe pruebas para ValidadorEmail con casos: válido, inválido, sin @, sin punto, etc.",
+              "solution": "import unittest\n\nclass ValidadorEmail:\n    @staticmethod\n    def es_valido(email):\n        return \"@\" in email and \".\" in email\n\nclass TestValidadorEmail(unittest.TestCase):\n    def test_email_valido(self):\n        self.assertTrue(ValidadorEmail.es_valido(\"user@example.com\"))\n    \n    def test_sin_arroba(self):\n        self.assertFalse(ValidadorEmail.es_valido(\"userexample.com\"))\n    \n    def test_sin_punto(self):\n        self.assertFalse(ValidadorEmail.es_valido(\"user@examplecom\"))"
+            },
+            {
+              "title": "Ejercicio 2: Pruebas para CuentaBancaria",
+              "description": "Pruebas para depósitos, retiros válidos, retiros inválidos (saldo insuficiente), retiros negativos.",
+              "solution": "class TestCuentaBancaria(unittest.TestCase):\n    def setUp(self):\n        self.cuenta = CuentaBancaria(\"Juan\", 1000)\n    \n    def test_depositar(self):\n        self.cuenta.depositar(500)\n        self.assertEqual(self.cuenta.saldo, 1500)\n    \n    def test_retirar_valido(self):\n        resultado = self.cuenta.retirar(500)\n        self.assertTrue(resultado)\n        self.assertEqual(self.cuenta.saldo, 500)\n    \n    def test_retirar_insuficiente(self):\n        resultado = self.cuenta.retirar(2000)\n        self.assertFalse(resultado)"
+            },
+            {
+              "title": "Ejercicio 3: Depurar código con errores",
+              "description": "Dado código con 3 bugs, usa depuración para encontrarlos y corregirlos. Documenta el proceso.",
+              "solution": "# Código con bugs:\ndef calcular_promedio(notas):\n    total = 0\n    for nota in notas:\n        total += nota\n    return total / len(notas)  # Bug: división por cero si lista vacía\n\n# Solución:\ndef calcular_promedio(notas):\n    if not notas:\n        return 0\n    total = sum(notas)\n    return total / len(notas)"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 15: Proyecto con pruebas",
+            "description": "Toma un sistema que hayas creado y escribe pruebas unitarias completas. Debe incluir: 1) al menos 2 clases con pruebas, 2) casos normales, borde y error, 3) uso de setUp, 4) al menos 10 tests en total. También depura y corrige al menos 2 bugs que encuentres. Documenta el proceso de depuración.",
+            "deliverable": "Código con pruebas y documentación de depuración",
+            "due_days": 7,
+            "points": 15
+          }
+        }
+      ],
+      "evaluation": {
+        "actitudinal": {
+          "points": 5,
+          "criteria": [
+            "Participación en prácticas de diseño (2 puntos)",
+            "Calidad de código y organización (1.5 puntos)",
+            "Esfuerzo en pruebas y depuración (1.5 puntos)"
+          ]
+        },
+        "parcial": {
+          "points": 15,
+          "topics": [
+            "Herencia y especialización (4 puntos)",
+            "Polimorfismo y sobrescritura (4 puntos)",
+            "Métodos especiales (4 puntos)",
+            "Organización y pruebas (3 puntos)"
+          ],
+          "format": "Problemas de código + análisis"
+        },
+        "tareas_actividades": {
+          "points": 50,
+          "breakdown": {
+            "tarea_11": 12,
+            "tarea_12": 10,
+            "tarea_13": 10,
+            "tarea_14": 12,
+            "tarea_15": 15,
+            "actividades_clase": 11
+          }
+        },
+        "examen_final": {
+          "points": 30,
+          "topics": [
+            "Todo el contenido de la unidad",
+            "Diseño de jerarquía de clases (10 puntos)",
+            "Implementación de métodos especiales (10 puntos)",
+            "Pruebas y depuración (10 puntos)"
+          ],
+          "format": "Proyecto con jerarquía + pruebas"
+        }
+      }
+    },
+    {
+      "id": "unit4",
+      "name": "Unidad 4 - Proyecto Integrador",
+      "order": 4,
+      "objectives": [
+        "Aplicar todos los conceptos de POO en un proyecto real",
+        "Diseñar sistema completo con múltiples clases y relaciones",
+        "Implementar encapsulación, herencia, polimorfismo",
+        "Organizar código en módulos y paquetes",
+        "Escribir documentación técnica y de usuario"
+      ],
+      "topics": [
+        {
+          "id": "u4t1",
+          "name": "Requisitos y Diseño del Proyecto",
+          "order": 1,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "El proyecto integrador es la culminación del curso. Aplicarás todos los conceptos aprendidos para crear un sistema completo de tu elección.",
+            "development": "Comenzaremos definiendo los requisitos del proyecto, luego diseñaremos la arquitectura usando diagramas UML simples, identificaremos clases, relaciones y responsabilidades.",
+            "key_concepts": [
+              "Requisitos funcionales y no funcionales",
+              "Historias de usuario",
+              "Diagrama de clases UML",
+              "Identificación de clases y relaciones",
+              "Diseño de interfaces",
+              "Planificación iterativa"
+            ],
+            "examples": [
+              {
+                "title": "Ejemplo de requisitos",
+                "code": "# Sistema de Biblioteca\n\n## Requisitos Funcionales\n1. El sistema debe permitir registrar libros\n2. Los usuarios pueden tomar prestados libros\n3. El sistema debe controlar fechas de devolución\n4. Debe generar reportes de libros prestados\n\n## Requisitos No Funcionales\n1. El sistema debe persistir datos en archivos\n2. Debe validar entradas de usuario\n3. Debe manejar errores gracefully"
+              },
+              {
+                "title": "Historia de usuario",
+                "code": "# Como bibliotecario\n# Quiero registrar un nuevo libro\n# Para que esté disponible para préstamo\n\nCriterios de aceptación:\n- Debo ingresar título, autor, ISBN\n- El sistema debe validar que el ISBN sea único\n- El libro debe aparecer en el catálogo"
+              },
+              {
+                "title": "Diagrama de clases (texto)",
+                "code": "# Biblioteca\n# ├─ Libro\n# │  ├─ titulo: str\n# │  ├─ autor: str\n# │  ├─ isbn: str\n# │  └─ prestado: bool\n# ├─ Usuario\n# │  ├─ nombre: str\n# │  ├─ id: str\n# │  └─ prestamos: list\n# └─ Prestamo\n#   ├─ libro: Libro\n#   ├─ usuario: Usuario\n#   ├─ fecha_prestamo: date\n#   └─ fecha_devolucion: date"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "discusion",
+              "title": "Brainstorming de proyectos",
+              "description": "En grupos, discutan ideas para el proyecto integrador. Cada grupo presenta 3 ideas con requisitos básicos.",
+              "duration_minutes": 20,
+              "points": 1
+            },
+            {
+              "type": "practica_individual",
+              "title": "Definir proyecto",
+              "description": "Define tu proyecto: nombre, propósito, requisitos funcionales (5-10), requisitos no funcionales (3-5), historias de usuario (3-5).",
+              "duration_minutes": 25,
+              "points": 2
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Especificar requisitos",
+              "description": "Para un sistema de tu elección, escribe 5 requisitos funcionales y 3 no funcionales con criterios de aceptación.",
+              "solution": "# Sistema de Inventario\n\nRF1: Registrar producto\n- Como administrador, quiero registrar productos\n- Criterios: código único, nombre, precio, stock\n\nRF2: Actualizar stock\n- Como administrador, quiero actualizar stock\n- Criterios: stock no puede ser negativo\n\nRNF1: Persistencia\n- Los datos deben guardarse en archivo JSON\n\nRNF2: Validación\n- Todas las entradas deben validarse"
+            },
+            {
+              "title": "Ejercicio 2: Diseñar diagrama de clases",
+              "description": "Diseña diagrama de clases para tu sistema. Identifica clases, atributos, métodos y relaciones.",
+              "solution": "# Sistema de Inventario\n\nClases:\n- Producto (id, nombre, precio, stock)\n- Categoria (id, nombre)\n- Inventario (lista productos)\n- Transaccion (producto, cantidad, tipo)\n\nRelaciones:\n- Producto pertenece a Categoria (asociación)\n- Inventario contiene Productos (composición)\n- Transaccion referencia Producto (asociación)"
+            },
+            {
+              "title": "Ejercicio 3: Historias de usuario",
+              "description": "Escribe 5 historias de usuario para tu sistema con criterios de aceptación.",
+              "solution": "# HU1: Registrar producto\nComo administrador\nQuiero registrar un nuevo producto\nPara que esté disponible en el inventario\n\nCriterios:\n- Debo ingresar código, nombre, precio, stock\n- Código debe ser único\n- Precio y stock deben ser positivos"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 16: Documentación de diseño",
+            "description": "Crea documento de diseño para tu proyecto: 1) nombre y descripción, 2) requisitos funcionales (5-10), 3) requisitos no funcionales (3-5), 4) historias de usuario (5), 5) diagrama de clases, 6) tecnologías a usar. Formato: Markdown o PDF.",
+            "deliverable": "Documento de diseño completo",
+            "due_days": 5,
+            "points": 10
+          }
+        },
+        {
+          "id": "u4t2",
+          "name": "Diagrama de Clases Sencillo",
+          "order": 2,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "El diagrama de clases es una representación visual de las clases, sus atributos, métodos y relaciones. Ayuda a comunicar el diseño y detectar problemas antes de implementar.",
+            "development": "Usaremos una notación simplificada de UML. Cada clase se representa como un rectángulo con tres secciones: nombre, atributos, métodos. Las relaciones se indican con flechas y etiquetas.",
+            "key_concepts": [
+              "Notación UML simplificada",
+              "Clases, atributos, métodos",
+              "Visibilidades (+ público, - privado, # protegido)",
+              "Relaciones: asociación, agregación, composición, herencia",
+              "Cardinalidad (1, 0..1, 0..*, 1..*)",
+              "Herramientas de diagramación"
+            ],
+            "examples": [
+              {
+                "title": "Notación de clase",
+                "code": "+-------------------+\n|     Persona       |\n+-------------------+\n| - nombre: str     |\n| - edad: int       |\n+-------------------+\n| + __init__(...)   |\n| + cumple_anios()  |\n| + mostrar_info()  |\n+-------------------+\n\n# + público\n# - privado\n# # protegido"
+              },
+              {
+                "title": "Relación de herencia",
+                "code": "       Animal\n         ^\n         |\n    +----------+\n    |  herencia |\n    +----------+\n         |\n    +----------+\n    |  Perro    |\n    +----------+"
+              },
+              {
+                "title": "Relación de composición",
+                "code": "    Auto ◆─── Motor\n        ♦  composición\n\n    Casa ◆─── Habitacion\n        ♦  composición"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Dibujar diagrama de clases",
+              "description": "Juntos dibujaremos el diagrama de clases para un sistema simple (ej: biblioteca, inventario). Usaremos pizarra o herramienta digital.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Diagrama para tu proyecto",
+              "description": "Dibuja el diagrama de clases completo para tu proyecto. Debe incluir todas las clases, atributos, métodos, relaciones y cardinalidades.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Diagrama de sistema escolar",
+              "description": "Dibuja diagrama para sistema con Estudiante, Curso, Profesor, Nota, Inscripcion.",
+              "solution": "# Diagrama:\n# Estudiante ◆─── Inscripcion ◆─── Curso\n# Profesor ◆─── Curso\n# Curso ◆─── Nota"
+            },
+            {
+              "title": "Ejercicio 2: Identificar relaciones",
+              "description": "Dado un diagrama, identifica qué tipo de relación es cada una (asociación, agregación, composición, herencia).",
+              "solution": "# Analizar flechas y diamond\n# ♦ diamante negro = composición\n# ◆ diamante vacío = agregación\n# → flecha simple = asociación\n# ↑ flecha triangular = herencia"
+            },
+            {
+              "title": "Ejercicio 3: Validar diagrama",
+              "description": "Revisa tu diagrama: ¿faltan clases? ¿Relaciones incorrectas? ¿Cardinalidades apropiadas? Ajusta según sea necesario.",
+              "solution": "# Checklist:\n# - ¿Todas las clases necesarias?\n# - ¿Relaciones correctas?\n# - ¿Cardinalidades lógicas?\n# - ¿Atributos y métodos completos?"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 17: Diagrama formal",
+            "description": "Crea el diagrama de clases formal de tu proyecto usando herramienta (draw.io, Lucidchart, o similar). Exporta como imagen y PDF. Incluye leyenda explicando símbolos usados.",
+            "deliverable": "Diagrama en imagen + PDF + leyenda",
+            "due_days": 4,
+            "points": 8
+          }
+        },
+        {
+          "id": "u4t3",
+          "name": "Implementación Incremental",
+          "order": 3,
+          "duration_minutes": 180,
+          "content": {
+            "introduction": "Implementaremos el proyecto en fases incrementales. Cada fase agrega funcionalidad completa y probada antes de pasar a la siguiente.",
+            "development": "Dividiremos el proyecto en milestones: 1) estructura básica, 2) modelos, 3) lógica de negocio, 4) interfaz (CLI), 5) persistencia, 6) pruebas. Cada fase debe completarse antes de la siguiente.",
+            "key_concepts": [
+              "Desarrollo incremental",
+              "Milestones y sprints",
+              "Versión MVP (Minimum Viable Product)",
+              "Integración continua mental",
+              "Refactorización entre fases",
+              "Validación en cada fase"
+            ],
+            "examples": [
+              {
+                "title": "Plan de fases",
+                "code": "# Fase 1: Estructura (Semana 1)\n# - Crear paquetes y módulos\n# - Definir clases vacías\n# - Configurar proyecto\n\n# Fase 2: Modelos (Semana 2)\n# - Implementar atributos\n# - Implementar constructores\n# - Implementar métodos básicos\n\n# Fase 3: Lógica (Semana 3)\n# - Implementar métodos complejos\n# - Implementar relaciones\n# - Validaciones\n\n# Fase 4: Interfaz (Semana 4)\n# - Menú principal\n# - Interacción con usuario\n# - Manejo de errores"
+              },
+              {
+                "title": "Ejemplo de implementación incremental",
+                "code": "# Fase 1: Clase vacía\nclass Producto:\n    pass\n\n# Fase 2: Atributos y constructor\nclass Producto:\n    def __init__(self, id, nombre, precio):\n        self.id = id\n        self.nombre = nombre\n        self.precio = precio\n\n# Fase 3: Métodos\nclass Producto:\n    # ... constructor ...\n    def aplicar_descuento(self, porcentaje):\n        self.precio *= (1 - porcentaje / 100)\n\n# Fase 4: Integración\ninventario = Inventario()\ninventario.agregar(Producto(1, \"Laptop\", 999))"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "planificacion",
+              "title": "Planificar fases del proyecto",
+              "description": "Planifica tu proyecto en 4-6 fases. Define qué hace cada fase, qué entregables tiene, y cuánto tiempo tomará.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Implementar fase 1 y 2",
+              "description": "Implementa las primeras 2 fases de tu proyecto: estructura básica y modelos. Asegúrate de que compile y funcione.",
+              "duration_minutes": 40,
+              "points": 4
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Definir MVP",
+              "description": "Define el MVP de tu proyecto: funcionalidad mínima que debe tener para ser usable.",
+              "solution": "# MVP Sistema Biblioteca:\n# - Registrar libros\n# - Registrar usuarios\n# - Prestar libros\n# - Devolver libros\n# - Ver catálogo\n\n# NO incluido en MVP:\n# - Reportes\n# - Búsqueda avanzada\n# - Reservas"
+            },
+            {
+              "title": "Ejercicio 2: Priorizar features",
+              "description": "Lista todas las features de tu proyecto y priorízalas: Must Have, Should Have, Could Have, Won't Have.",
+              "solution": "# Must Have (fases 1-3):\n# - CRUD productos\n# - Validaciones\n\n# Should Have (fase 4):\n# - Búsqueda\n# - Reportes\n\n# Could Have (fase 5):\n# - Exportar a CSV\n# - Gráficos"
+            },
+            {
+              "title": "Ejercicio 3: Implementar feature",
+              "description": "Implementa una feature completa de tu proyecto con pruebas. Asegúrate de que pase todas las pruebas.",
+              "solution": "# Feature: Registrar producto\n# 1. Implementar método agregar_producto\n# 2. Validar código único\n# 3. Validar precio positivo\n# 4. Escribir pruebas\n# 5. Correr pruebas\n# 6. Ajustar si falla"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 18: Implementación parcial",
+            "description": "Implementa las primeras 3 fases de tu proyecto: estructura, modelos, y lógica básica. Debe incluir: 1) estructura de paquetes, 2) todas las clases con atributos, 3) constructores, 4) métodos básicos, 5) al menos 5 pruebas por clase. Documenta cada fase.",
+            "deliverable": "Código implementado + documentación de fases",
+            "due_days": 10,
+            "points": 20
+          }
+        },
+        {
+          "id": "u4t4",
+          "name": "Validación y Pruebas",
+          "order": 4,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "La validación asegura que el sistema cumpla con los requisitos. Las pruebas verifican que el código funcione correctamente. Ambas son esenciales para un proyecto de calidad.",
+            "development": "Validaremos cada requisito con criterios de aceptación. Escribiremos pruebas unitarias, de integración y de usuario. Documentaremos resultados y corregiremos defectos.",
+            "key_concepts": [
+              "Validación de requisitos",
+              "Criterios de aceptación",
+              "Pruebas unitarias",
+              "Pruebas de integración",
+              "Pruebas de usuario",
+              "Corrección de bugs"
+            ],
+            "examples": [
+              {
+                "title": "Matriz de trazabilidad",
+                "code": "# Requisito -> Prueba\n\nRF1: Registrar producto\n  -> Test: test_registrar_producto_valido\n  -> Test: test_codigo_duplicado_falla\n  -> Test: test_precio_negativo_falla\n\nRF2: Actualizar stock\n  -> Test: test_actualizar_stock_valido\n  -> Test: test_stock_negativo_falla"
+              },
+              {
+                "title": "Prueba de integración",
+                "code": "class TestIntegracion(unittest.TestCase):\n    def test_flujo_completo(self):\n        # Crear inventario\n        inv = Inventario()\n        \n        # Agregar producto\n        prod = Producto(\"P001\", \"Laptop\", 999)\n        inv.agregar(prod)\n        \n        # Verificar que esté agregado\n        self.assertIn(prod, inv.productos)\n        \n        # Actualizar stock\n        prod.actualizar_stock(10)\n        self.assertEqual(prod.stock, 10)"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Validar requisitos",
+              "description": "Juntos validaremos un requisito: definiremos criterios de aceptación, escribiremos pruebas, y verificaremos que pase.",
+              "duration_minutes": 25,
+              "points": 2
+            },
+            {
+              "type": "practica_individual",
+              "title": "Pruebas de integración",
+              "description": "Escribe pruebas de integración para tu proyecto: flujos completos que involucran múltiples clases trabajando juntas.",
+              "duration_minutes": 25,
+              "points": 3
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Matriz de trazabilidad",
+              "description": "Crea matriz que conecte cada requisito con sus pruebas correspondientes.",
+              "solution": "# Matriz:\n# RF1 -> test_rf1_1, test_rf1_2, test_rf1_3\n# RF2 -> test_rf2_1, test_rf2_2\n# RF3 -> test_rf3_1"
+            },
+            {
+              "title": "Ejercicio 2: Prueba de escenario",
+              "description": "Escribe prueba para un escenario completo de usuario (ej: usuario registra producto, actualiza stock, genera reporte).",
+              "solution": "def test_escenario_completo(self):\n    # Escenario: flujo de venta\n    cliente = Cliente(\"Juan\")\n    producto = Producto(\"Laptop\", 999, 5)\n    \n    orden = Orden(cliente)\n    orden.agregar_item(producto, 2)\n    \n    self.assertEqual(orden.total, 1998)\n    self.assertEqual(producto.stock, 3)"
+            },
+            {
+              "title": "Ejercicio 3: Corregir bug",
+              "description": "Encuentra y corrige un bug en tu código. Documenta el bug, la causa, y la solución.",
+              "solution": "# Bug: stock puede ser negativo\n# Causa: no hay validación en actualizar_stock\n# Solución: agregar validación\n\ndef actualizar_stock(self, cantidad):\n    if self.stock + cantidad < 0:\n        raise ValueError(\"Stock no puede ser negativo\")\n    self.stock += cantidad"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 19: Pruebas completas",
+            "description": "Escribe pruebas completas para tu proyecto: 1) matriz de trazabilidad, 2) pruebas unitarias (al menos 5 por clase), 3) pruebas de integración (al menos 3), 4) pruebas de escenario (al menos 2), 5) corrección de al menos 3 bugs con documentación. Ejecuta todas las pruebas y documenta resultados.",
+            "deliverable": "Suite de pruebas + documentación de bugs",
+            "due_days": 7,
+            "points": 15
+          }
+        },
+        {
+          "id": "u4t5",
+          "name": "Documentación y Presentación",
+          "order": 5,
+          "duration_minutes": 90,
+          "content": {
+            "introduction": "La documentación es tan importante como el código. Incluye documentación técnica (para desarrolladores) y documentación de usuario (para usuarios finales).",
+            "development": "Documentaremos el código con docstrings, crearemos README con instrucciones de instalación y uso, y prepararemos una presentación del proyecto.",
+            "key_concepts": [
+              "Docstrings en Python",
+              "README.md",
+              "Documentación de usuario",
+              "Documentación técnica",
+              "Guía de instalación",
+              "Presentación del proyecto"
+            ],
+            "examples": [
+              {
+                "title": "Docstring de clase",
+                "code": "class Producto:\n    \"\"\"Representa un producto en el inventario.\n    \n    Attributes:\n        id (str): Identificador único del producto.\n        nombre (str): Nombre del producto.\n        precio (float): Precio unitario.\n        stock (int): Cantidad disponible.\n    \n    Methods:\n        aplicar_descuento(porcentaje): Aplica descuento al precio.\n        disponible(): Retorna True si hay stock.\n    \"\"\"\n    def __init__(self, id, nombre, precio, stock=0):\n        self.id = id\n        self.nombre = nombre\n        self.precio = precio\n        self.stock = stock"
+              },
+              {
+                "title": "README.md",
+                "code": "# Sistema de Inventario\n\n## Descripción\nSistema para gestión de inventario de productos.\n\n## Instalación\n```bash\ngit clone <repo>\ncd inventario\npip install -r requirements.txt\n```\n\n## Uso\n```bash\npython main.py\n```\n\n## Funcionalidades\n- Registrar productos\n- Actualizar stock\n- Generar reportes\n\n## Autor\nTu nombre"
+              }
+            ]
+          },
+          "activities": [
+            {
+              "type": "practica_guiada",
+              "title": "Escribir docstrings",
+              "description": "Juntos agregaremos docstrings a una clase. Discutiremos qué información incluir y cómo estructurarla.",
+              "duration_minutes": 20,
+              "points": 1
+            },
+            {
+              "type": "practica_individual",
+              "title": "Documentar proyecto",
+              "description": "Documenta tu proyecto completamente: 1) docstrings en todas las clases y métodos, 2) README.md completo, 3) guía de usuario, 4) guía técnica.",
+              "duration_minutes": 30,
+              "points": 4
+            }
+          ],
+          "exercises": [
+            {
+              "title": "Ejercicio 1: Docstring de método",
+              "description": "Escribe docstring completo para un método complejo de tu proyecto.",
+              "solution": "def aplicar_descuento(self, porcentaje):\n    \"\"\"Aplica un descuento al precio del producto.\n    \n    Args:\n        porcentaje (float): Porcentaje de descuento (0-100).\n    \n    Raises:\n        ValueError: Si porcentaje no está entre 0 y 100.\n    \n    Returns:\n        float: Nuevo precio con descuento aplicado.\n    \n    Example:\n        >>> prod = Producto(\"P001\", \"Laptop\", 1000)\n        >>> prod.aplicar_descuento(10)\n        900.0\n    \"\"\""
+            },
+            {
+              "title": "Ejercicio 2: Guía de usuario",
+              "description": "Escribe guía de usuario para tu proyecto: cómo instalar, cómo usar cada feature, ejemplos.",
+              "solution": "# Guía de Usuario\n\n## Instalación\n1. Descargar código\n2. Instalar dependencias\n3. Configurar archivo config\n\n## Uso\n\n### Registrar producto\n1. Seleccionar opción 1\n2. Ingresar datos\n3. Confirmar\n\n### Ver reporte\n1. Seleccionar opción 4\n2. Ver listado\n3. Exportar si desea"
+            },
+            {
+              "title": "Ejercicio 3: Presentación",
+              "description": "Prepara presentación de 10-15 slides sobre tu proyecto: introducción, requisitos, diseño, implementación, demostración, conclusiones.",
+              "solution": "# Estructura de presentación:\n1. Título y autor\n2. Introducción (qué es el proyecto)\n3. Requisitos (qué hace)\n4. Diseño (cómo está organizado)\n5. Implementación (cómo funciona)\n6. Demostración (ejemplos de uso)\n7. Pruebas (cómo se validó)\n8. Conclusiones (qué se aprendió)\n9. Futuro (qué se podría agregar)"
+            }
+          ],
+          "homework": {
+            "title": "Tarea 20: Proyecto final completo",
+            "description": "Entrega final del proyecto integrador: 1) código completo y funcional, 2) documentación técnica (docstrings, comentarios), 3) README.md, 4) guía de usuario, 5) guía de instalación, 6) suite de pruebas, 7) presentación (slides), 8) video demostrativo (opcional pero recomendado). El proyecto debe aplicar todos los conceptos del curso: encapsulación, herencia, polimorfismo, composición, organización, pruebas.",
+            "deliverable": "Proyecto completo con toda la documentación",
+            "due_days": 14,
+            "points": 30
+          }
+        }
+      ],
+      "evaluation": {
+        "actitudinal": {
+          "points": 5,
+          "criteria": [
+            "Planificación y organización del proyecto (2 puntos)",
+            "Calidad de código y documentación (2 puntos)",
+            "Presentación y comunicación (1 punto)"
+          ]
+        },
+        "parcial": {
+          "points": 15,
+          "topics": [
+            "Requisitos y diseño (5 puntos)",
+            "Implementación (5 puntos)",
+            "Pruebas y validación (5 puntos)"
+          ],
+          "format": "Revisión de avance del proyecto"
+        },
+        "tareas_actividades": {
+          "points": 50,
+          "breakdown": {
+            "tarea_16": 10,
+            "tarea_17": 8,
+            "tarea_18": 20,
+            "tarea_19": 15,
+            "tarea_20": 30,
+            "actividades_clase": 12
+          }
+        },
+        "examen_final": {
+          "points": 30,
+          "topics": [
+            "Proyecto completo integrador",
+            "Aplicación de todos los conceptos de POO (10 puntos)",
+            "Calidad de código y pruebas (10 puntos)",
+            "Documentación y presentación (10 puntos)"
+          ],
+          "format": "Defensa del proyecto + demostración"
+        }
+      }
+    }
+  ]
+}
