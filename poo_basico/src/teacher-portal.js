@@ -39,9 +39,21 @@ async function refreshLessons(){
  const lessons=lr.data||[], members=mr.data||[]
  $('#lessonList').innerHTML=lessons.map(l=>'<div class="item">'+esc(l.title)+' · '+(l.is_published?'Publicada':'Borrador')+' <button class="btn" data-pub="'+l.id+'">'+(l.is_published?'Retirar':'Publicar')+'</button></div>').join('')||'<p class="muted">Sin lecciones.</p>'
  document.querySelectorAll('[data-pub]').forEach(b=>b.onclick=async()=>{const l=lessons.find(x=>x.id===b.dataset.pub);const r=await supabase.from('learning_lessons').update({is_published:!l.is_published}).eq('id',l.id);if(r.error)say(r.error.message,'error');else await refreshLessons()})
- let p=[]
- if(lessons.length){const r=await supabase.from('lesson_progress').select('lesson_id,student_id,status').in('lesson_id',lessons.map(l=>l.id));if(r.error)throw r.error;p=r.data||[]}
- $('#progressList').innerHTML=members.length?members.map(m=>'<div class="item"><strong>'+esc(m.student_name||'Estudiante')+'</strong><small>'+esc(classes.find(c=>c.id===m.class_id)?.name||'')+'</small><p>'+p.filter(x=>x.student_id===m.student_id&&x.status==='completed').length+' lecciones completadas</p></div>').join(''):'<p class="muted">Aún no hay alumnos inscritos.</p>'
+ let p=[], attempts=[]
+ if(lessons.length){
+  const [pr,ar]=await Promise.all([
+   supabase.from('lesson_progress').select('lesson_id,student_id,status,updated_at').in('lesson_id',lessons.map(l=>l.id)),
+   supabase.from('exercise_attempts').select('lesson_id,student_id,client_reported_score,passed,created_at').in('lesson_id',lessons.map(l=>l.id)).order('created_at',{ascending:false})
+  ])
+  if(pr.error)throw pr.error;if(ar.error)throw ar.error;p=pr.data||[];attempts=ar.data||[]
+ }
+ $('#progressList').innerHTML=members.length?members.map(m=>{
+  const mp=p.filter(x=>x.student_id===m.student_id), ma=attempts.filter(x=>x.student_id===m.student_id)
+  const done=mp.filter(x=>x.status==='completed').length
+  const scored=ma.find(x=>x.client_reported_score!==null&&x.client_reported_score!==undefined)
+  const latest=ma[0]
+  return '<div class="item"><strong>'+esc(m.student_name||'Estudiante')+'</strong><small>'+esc(classes.find(c=>c.id===m.class_id)?.name||'')+' · Inscrito '+new Date(m.joined_at).toLocaleDateString('es-GT')+'</small><p>'+done+' lecciones completadas · '+ma.length+' intentos de práctica</p><small>'+ (latest?'Último intento: '+new Date(latest.created_at).toLocaleString('es-GT')+(scored?' · Última puntuación registrada: '+scored.client_reported_score+'%':''):'Sin intentos registrados') +'</small></div>'
+ }).join(''):'<p class="muted">Aún no hay alumnos inscritos.</p>'
 }
 
 $('#loginForm').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;try{const r=await supabase.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(r.error)throw r.error;user=r.data.user;await refresh()}catch(err){say(err.message||'No se pudo iniciar sesión.','error')}finally{b.disabled=false}}
