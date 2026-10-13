@@ -60,7 +60,8 @@ function getSession(lesson){
   return db.sessions.find(s=>{const saved=parseNotes(s.notes);return saved?.lessonKey===key||s.lessonKey===key||(s.courseId===programmingCourseId()&&(s.title===title||String(s.title||'').endsWith('· '+title)))})
 }
 function lessonKey(l){return 'prog-u'+l.unit+'-'+l.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
-function asText(value){return Array.isArray(value)?value.map((item,i)=>(i+1)+'. '+item).join('\\n'):String(value??'')}\nfunction contentFor(lesson){
+function asText(value){return Array.isArray(value)?value.map((item,i)=>(i+1)+'. '+item).join('\\n'):String(value??'')}
+function contentFor(lesson){
  const s=getSession(lesson), saved=parseNotes(s?.notes)
  if(saved)return {...lesson,...saved}
  return {...lesson}
