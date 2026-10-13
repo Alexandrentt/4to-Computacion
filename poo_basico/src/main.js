@@ -222,9 +222,34 @@ function bind() {
     render()
     msg("Sesión cerrada")
   }
-  if ($("#login")) $("#login").onclick = () => {
-    // TODO: Implementar modal de login
-    msg("Función de login pendiente de implementar")
+  if ($("#login")) $("#login").onclick = async () => {
+    const register = window.confirm("¿Quieres crear una cuenta nueva?\\nAceptar: crear cuenta\\nCancelar: iniciar sesión")
+    const email = window.prompt("Correo electrónico:")
+    if (!email) return
+    const password = window.prompt("Contraseña (mínimo 6 caracteres):")
+    if (!password) return
+
+    let result
+    if (register) {
+      const fullName = window.prompt("Nombre para mostrar:") || ""
+      result = await signUp(email.trim(), password, fullName.trim())
+    } else {
+      result = await signIn(email.trim(), password)
+    }
+
+    if (result.error) {
+      msg("No se pudo autenticar: " + result.error.message)
+      return
+    }
+
+    if (register && result.data && !result.data.session) {
+      msg("Cuenta creada. Revisa tu correo para confirmar el registro.")
+      return
+    }
+
+    currentUser = result.data?.user || null
+    render()
+    msg(currentUser ? "Sesión iniciada" : "Revisa tu correo para continuar")
   }
   if ($("#export2")) $("#export2").onclick = exportData
   if ($("#import2")) $("#import2").onclick = () => $("#importFile").click()
@@ -370,12 +395,17 @@ setPage("home")
 
 // Escuchar cambios de autenticación
 onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN') {
-    currentUser = session.user
-    console.log('Usuario autenticado:', currentUser.email)
-    // Aquí cargaríamos datos de Supabase
+  if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
+    currentUser = session?.user || null
+    if (page === "settings") render()
   } else if (event === 'SIGNED_OUT') {
     currentUser = null
-    console.log('Usuario desconectado')
+    if (page === "settings") render()
   }
 })
+
+// Restaurar la sesión guardada por Supabase al abrir la aplicación.
+getCurrentUser().then(user => {
+  currentUser = user
+  if (page === "settings") render()
+}).catch(error => console.error("No se pudo restaurar la sesión:", error))
