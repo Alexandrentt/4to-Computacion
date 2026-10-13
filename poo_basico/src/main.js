@@ -278,10 +278,6 @@ function bind() {
   })
   if ($("#saveSettings")) $("#saveSettings").onclick = () => {
     db.settings = {
-      year: $("#year").value,
-      start: $("#start").value,
-      end: $("#end").value,
-      block: $("#block").value,
       ...db.settings,
       year: $("#year").value,
       start: $("#start").value,
