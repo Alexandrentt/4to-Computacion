@@ -6,6 +6,7 @@ Aplicación web para planificar clases, organizar cursos/unidades/temas y sincro
 
 - ✅ **Planificación de sesiones** con objetivo, fecha y duración opcionales
 - ✅ **Contenido detallado por clase** en `contenido.html`: explicación, código de ejemplo, práctica guiada, ejercicios, materiales, tarea y criterios de evaluación
+- ✅ **Recorrido interactivo del código línea por línea**: selecciona instrucciones, lee qué hacen y avanza/retrocede con preguntas de predicción; el recorrido explica el código sin ejecutar código arbitrario
 - ✅ **Secuencia inicial de 29 clases de Python** para Programación I / Laboratorio 1, basada en la lista de reproducción compartida
 - ✅ **Gestión de cursos, unidades y temas** curriculares (edición incluida)
 - ✅ **Biblioteca de recursos** con enlaces a Drive, OneDrive, YouTube
