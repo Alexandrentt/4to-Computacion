@@ -15,14 +15,21 @@ export const systemsUnits = [
     'GPUs: Procesadores gráficos y de AI',
     'Qué es un algoritmo y cómo funciona'
   ]],
-  ['Unidad 2 · Redes e Internet', [
+  ['Unidad 2 · Redes, Internet, archivos y datos', [
     'Qué es una dirección IP y cómo funciona',
     'Qué es el DNS y cómo comprar tu dominio',
     'Cómo funciona el modelo cliente servidor',
     'Redes locales: router, Wi-Fi y Ethernet',
-    'Seguridad, privacidad y buenas prácticas en Internet'
+    'Seguridad, privacidad y buenas prácticas en Internet',
+    'Qué son las bases de datos',
+    'Cómo funciona el formato .JPG',
+    'Videos: contenedores, codecs y protocolos',
+    'Cómo Funciona un .zip',
+    'Extensiones, tipos MIME y asociaciones de archivos',
+    'Compresión, copias de seguridad y recuperación de archivos',
+    'Almacenamiento HDD, SSD, USB y tarjetas de memoria'
   ]],
-  ['Unidad 3 · Sistemas operativos, arranque y controladores', [
+  ['Unidad 3 · Sistemas operativos, controladores y almacenamiento', [
     'Diferencias entre Windows, Linux y MacOS',
     'Permisos de archivos rwx en Linux',
     'Cómo los archivos saben lo que son',
@@ -33,16 +40,7 @@ export const systemsUnits = [
     'Gestores de arranque y selección de sistema operativo',
     'Compatibilidad de hardware, arquitectura de 32 y 64 bits'
   ]],
-  ['Unidad 4 · Archivos, datos y formatos digitales', [
-    'Qué son las bases de datos',
-    'Cómo funciona el formato .JPG',
-    'Videos: contenedores, codecs y protocolos',
-    'Cómo Funciona un .zip',
-    'Extensiones, tipos MIME y asociaciones de archivos',
-    'Compresión, copias de seguridad y recuperación de archivos',
-    'Almacenamiento HDD, SSD, USB y tarjetas de memoria'
-  ]],
-  ['Unidad 5 · Instalación, configuración y virtualización', [
+  ['Unidad 4 · Instalación, configuración y virtualización', [
     'Requisitos de instalación y compatibilidad del equipo',
     'Descarga segura de imágenes ISO y verificación de origen',
     'Creación de USB de instalación y medios de arranque',
@@ -61,30 +59,28 @@ export const systemsUnits = [
 ]
 
 export const maintenanceUnits = [
-  ['Unidad 1 · Entender los fundamentos de la electricidad', [
+  ['Unidad 1 · Fundamentos de electricidad y seguridad', [
     'Fundamentos de Electricidad y Electrónica Práctica',
     'Compra de Componentes Electrónicos en tu Ciudad',
     'Fundamentos de Electricidad y Cargas Eléctricas',
     'Voltaje, Corriente y Potencia Eléctrica: Conceptos Fundamentales',
     'Cálculo de Potencia Eléctrica en Circuitos Domésticos',
     'Campos de Aplicación de la Electricidad: Ingeniería, Electrónica y Computación',
-    'Ley de Ohm: Concepto y Aplicación en Circuitos Eléctricos'
+    'Ley de Ohm: Concepto y Aplicación en Circuitos Eléctricos',
+    'Seguridad eléctrica: tensión, corriente, cortocircuitos y desconexión segura',
+    'Electricidad estática y protección ESD al manipular componentes de computadora'
   ]],
-  ['Unidad 2 · Medir voltaje, corriente y resistencia', [
+  ['Unidad 2 · Multímetro, mediciones y circuitos básicos', [
     'Uso básico y compra de multímetros para principiantes',
     'Circuitos Eléctricos: Serie y Paralelo',
     'Fuentes de Poder: Baterías y Cargadores en Circuitos Electrónicos',
     'Concepto de Tierra en Circuitos Eléctricos y Electrónicos',
-    'Seguridad eléctrica: tensión, corriente, cortocircuitos y desconexión segura',
-    'Electricidad estática y protección ESD al manipular componentes de computadora'
-  ]],
-  ['Unidad 3 · Construir circuitos básicos', [
     'Prácticas con Resistencias y Ley de Ohm en Circuitos Básicos',
     'Uso de Protoboard para Circuitos Electrónicos Básicos',
     'Construcción de un Circuito Básico con LED y Botón',
     'Lectura de diagramas, identificación de polaridad y comprobación de continuidad'
   ]],
-  ['Unidad 4 · Resistencias y componentes electrónicos', [
+  ['Unidad 3 · Resistencias y componentes electrónicos', [
     'Código de Colores y Medición de Resistencias en Circuitos Eléctricos',
     'Funcionamiento y aplicaciones de potenciómetros en dispositivos electrónicos',
     'Funcionamiento de Fotoceldas: Medición de Resistencia a la Luz',
@@ -94,7 +90,7 @@ export const maintenanceUnits = [
     'Diodos, LED, capacitores, transistores y sensores: identificación básica',
     'Lectura de valores, tolerancias y hojas de datos de componentes'
   ]],
-  ['Unidad 5 · Mantenimiento y reparación de computadoras', [
+  ['Unidad 4 · Mantenimiento, diagnóstico y reparación de computadoras', [
     'Seguridad del taller, herramientas y registro de ingreso del equipo',
     'Identificación de placa base, CPU, RAM, almacenamiento y fuente de poder',
     'Cómo funciona una fuente de poder ATX y cómo interpretar sus especificaciones',
