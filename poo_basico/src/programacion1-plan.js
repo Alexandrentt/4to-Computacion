@@ -1,4 +1,4 @@
-export const PLAYLIST_ID = 'PLyvsggKtwbLW1j0d5yaCkRF9Axpdlhsxz`
+export const PLAYLIST_ID = 'PLyvsggKtwbLW1j0d5yaCkRF9Axpdlhsxz'
 export const PLAYLIST_URL = `https://www.youtube.com/playlist?list=` + PLAYLIST_ID
 
 export const starterCourses = [
