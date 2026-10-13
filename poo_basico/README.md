@@ -1,6 +1,6 @@
 # Aula Planner v2 - Planificador Docente
 
-Aplicación web para planificar clases, organizar cursos/unidades/temas, guardar recursos y hacer seguimiento manual de tareas de Classroom. Funciona con **Vite** y puede usarse solo con almacenamiento local o sincronizar en la nube con **Supabase**.
+Aplicación web para planificar clases, organizar cursos/unidades/temas y sincronizar cursos y tareas con **Google Classroom** mediante autorización OAuth. Funciona con **Vite** y puede guardar datos localmente o sincronizarlos con **Supabase**.
 
 ## 🚀 Características
 
@@ -9,7 +9,7 @@ Aplicación web para planificar clases, organizar cursos/unidades/temas, guardar
 - ✅ **Secuencia inicial de 29 clases de Python** para Programación I / Laboratorio 1, basada en la lista de reproducción compartida
 - ✅ **Gestión de cursos, unidades y temas** curriculares (edición incluida)
 - ✅ **Biblioteca de recursos** con enlaces a Drive, OneDrive, YouTube
-- ✅ **Seguimiento de tareas** con estado manual y enlace a Classroom
+- ✅ **Integración con Google Classroom API**: autorización OAuth, consulta de cursos, vinculación con cursos locales y publicación de tareas
 - ✅ **Exportación/Importación** de datos en JSON para respaldos
 - ✅ **Interfaz responsiva** (móvil y escritorio)
 - ✅ **Autenticación y sincronización** opcional con Supabase
@@ -17,7 +17,7 @@ Aplicación web para planificar clases, organizar cursos/unidades/temas, guardar
 
 ## 📦 Requisitos
 
-- Node.js 18 o superior
+- Node.js 24.x
 - (Opcional) Cuenta de [Supabase](https://supabase.com)
 
 > La aplicación se sirve con Vite; no se abre directamente el `index.html` desde el sistema de archivos.
@@ -35,9 +35,22 @@ Para activar la nube, crea un archivo `.env.local` en la raíz con:
 ```env
 VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
 VITE_SUPABASE_ANON_KEY=tu-publishable-key
+VITE_GOOGLE_CLIENT_ID=tu-cliente-oauth.apps.googleusercontent.com
 ```
 
-`.env.local` no se versiona (está en `.gitignore`). Si no existe o está vacío, la aplicación arranca en **modo local**: todo se guarda en `localStorage` y la sección de nube queda desactivada.
+`.env.local` no se versiona (está en `.gitignore`). `VITE_GOOGLE_CLIENT_ID` es el ID público del cliente OAuth web; nunca pongas un `client_secret` en variables `VITE_*` ni en el frontend. En Vercel añade las mismas variables en **Project Settings → Environment Variables** y vuelve a desplegar.
+
+## 🎓 Configurar Google Classroom real
+
+1. Abre [Google Cloud Console](https://console.cloud.google.com/) y crea o selecciona un proyecto.
+2. En **APIs & Services → Library**, habilita **Google Classroom API**.
+3. Configura **Google Auth Platform** (pantalla de consentimiento). Añade tu cuenta como usuario de prueba mientras la aplicación esté en modo *Testing*.
+4. Crea un **OAuth Client ID → Web application**. Añade como **Authorized JavaScript origins** el origen local (por ejemplo `http://localhost:5173`) y el dominio exacto de producción de Vercel. No añadas rutas en este campo.
+5. Copia el **Client ID** (no el secreto) a `VITE_GOOGLE_CLIENT_ID` en `.env.local` y en las variables de entorno de Vercel; vuelve a desplegar.
+6. En Aula Planner entra en **Configuración → Conectar con Google Classroom** y acepta los permisos solicitados.
+7. Vincula cada curso local con el curso real correspondiente. En **Tareas y Classroom**, usa **Publicar** para crear la tarea en el curso seleccionado.
+
+La primera versión solicita permisos para leer los cursos activos y crear/consultar tareas. El acceso OAuth queda en memoria del navegador y se debe autorizar de nuevo tras recargar o cuando expire. Solo se publican tareas cuando pulsas el botón explícitamente. La cuenta debe tener permisos de docente en el curso de Classroom. Si Google muestra un aviso de aplicación no verificada, no intentes eludirlo: completa la configuración y verificación de consentimiento que corresponda al tipo de cuenta.
 
 ## ▶️ Uso
 
@@ -66,6 +79,7 @@ poo_basico/
 ├── contenido.html               # Editor de contenido detallado por clase
 ├── src/
 │   ├── main.js                  # Punto de entrada y UI
+│   ├── classroom/googleClassroom.js # OAuth y Google Classroom API
 │   ├── config/supabase.js       # Cliente de Supabase (opcional)
 │   ├── auth/auth.js             # Autenticación
 │   └── db/cloudSync.js          # Sincronización con Supabase
@@ -86,7 +100,7 @@ poo_basico/
 
 ## 📝 Pendientes
 
-- [ ] Integración real con Classroom API (hoy es manual)
+- [ ] Validar el flujo OAuth en el dominio de producción y probar lectura/publicación con una cuenta docente
 - [ ] Pruebas automatizadas y migración a TypeScript
 - [ ] Vista imprimible de la planificación
 - [ ] Modo offline / PWA
