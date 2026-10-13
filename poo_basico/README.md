@@ -5,6 +5,8 @@ Aplicación web para planificar clases, organizar cursos/unidades/temas, guardar
 ## 🚀 Características
 
 - ✅ **Planificación de sesiones** con objetivo, fecha y duración opcionales
+- ✅ **Contenido detallado por clase** en `contenido.html`: explicación, código de ejemplo, práctica guiada, ejercicios, materiales, tarea y criterios de evaluación
+- ✅ **Secuencia inicial de 29 clases de Python** para Programación I / Laboratorio 1, basada en la lista de reproducción compartida
 - ✅ **Gestión de cursos, unidades y temas** curriculares (edición incluida)
 - ✅ **Biblioteca de recursos** con enlaces a Drive, OneDrive, YouTube
 - ✅ **Seguimiento de tareas** con estado manual y enlace a Classroom
@@ -61,6 +63,7 @@ Con la sesión iniciada, en **Configuración** puedes elegir explícitamente **C
 ```
 poo_basico/
 ├── index.html                   # SPA (HTML + estilos)
+├── contenido.html               # Editor de contenido detallado por clase
 ├── src/
 │   ├── main.js                  # Punto de entrada y UI
 │   ├── config/supabase.js       # Cliente de Supabase (opcional)
