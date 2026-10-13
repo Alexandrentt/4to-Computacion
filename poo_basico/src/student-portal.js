@@ -1,4 +1,5 @@
 import { supabase } from './config/supabase.js'
+import { runPython } from './python-lab.js'
 
 const $ = s => document.querySelector(s)
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
@@ -38,10 +39,11 @@ function signedOut() {
 function lessonHtml(content) {
   if (typeof content === 'string') return content.split('\n').map(t => '<p>' + esc(t) + '</p>').join('')
   const blocks = Array.isArray(content?.blocks) ? content.blocks : []
-  if (blocks.length) return blocks.map(b => {
+  if (blocks.length) return blocks.map((b, i) => {
     if (b.type === 'code') return '<div class="content-block"><pre>' + esc(b.code || b.text || '') + '</pre></div>'
     if (b.type === 'heading') return '<div class="content-block"><h3>' + esc(b.text || '') + '</h3></div>'
-    if (b.type === 'list' && Array.isArray(b.items)) return '<div class="content-block"><ul>' + b.items.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul></div>'
+    if (b.type === 'list' && Array.isArray(b.items)) return '<div class="content-block"><ul>' + b.items.map(item => '<li>' + esc(item) + '</li>').join('') + '</ul></div>'
+    if (b.type === 'python_exercise') return '<section class="content-block" style="border:1px solid #d7deeb;border-radius:12px;padding:14px"><div class="eyebrow">Práctica Python</div><h3>' + esc(b.title || 'Ejercicio') + '</h3><p>' + esc(b.prompt || '') + '</p><label style="display:block;font-size:13px;font-weight:700" for="pythonCode' + i + '">Tu código</label><textarea id="pythonCode' + i + '" data-python-code="' + i + '" style="width:100%;min-height:150px;box-sizing:border-box;font:13px/1.5 ui-monospace,monospace;padding:10px;border:1px solid #ccd5e5;border-radius:8px">' + esc(b.starter_code || 'print("Hola, mundo")') + '</textarea><div class="btnrow" style="margin-top:8px"><button type="button" class="btn primary" data-run-python="' + i + '">Ejecutar Python</button></div><pre data-python-output="' + i + '" style="white-space:pre-wrap;background:#172239;color:#fff;padding:12px;border-radius:8px;min-height:30px">La salida aparecerá aquí.</pre></section>'
     return '<div class="content-block"><p>' + esc(b.text || '') + '</p></div>'
   }).join('')
   if (typeof content?.text === 'string') return content.text.split('\n').map(t => '<p>' + esc(t) + '</p>').join('')
@@ -94,6 +96,42 @@ function openLesson(id) {
     '<div class="notice">Tu avance se guarda en tu cuenta.</div><div class="btnrow"><button id="progressBtn" class="btn">Marcar en progreso</button><button id="doneBtn" class="btn primary">' + (statusFor(id) === 'completed' ? 'Completada ✓' : 'Marcar completada') + '</button></div>'
   $('#progressBtn').onclick = () => saveProgress(l, 'in_progress')
   $('#doneBtn').onclick = () => saveProgress(l, 'completed')
+  document.querySelectorAll('[data-run-python]').forEach(button => {
+    button.onclick = async () => {
+      const index = Number(button.dataset.runPython)
+      const block = Array.isArray(l.content?.blocks) ? l.content.blocks[index] : null
+      const editor = document.querySelector('[data-python-code="' + index + '"]')
+      const outputEl = document.querySelector('[data-python-output="' + index + '"]')
+      if (!block || !editor || !outputEl) return
+      button.disabled = true
+      outputEl.textContent = 'Preparando Python en el navegador… (la primera carga puede tardar)'
+      const started = performance.now()
+      try {
+        const result = await runPython(editor.value)
+        const output = result.output.trimEnd()
+        outputEl.textContent = output || '(El programa terminó sin imprimir salida.)'
+        const expected = String(block.expected_output ?? '').trim()
+        const checked = expected.length > 0 && output.trim() === expected
+        const elapsed = Math.round(performance.now() - started)
+        const { error } = await supabase.from('exercise_attempts').insert({
+          lesson_id: l.id,
+          student_id: user.id,
+          exercise_key: String(block.key || 'python-' + index).slice(0, 120),
+          answer: { code: editor.value, output },
+          client_reported_score: expected ? (checked ? 100 : 0) : null,
+          passed: expected ? checked : null,
+          duration_ms: elapsed
+        })
+        if (error) console.warn('No se pudo guardar el intento:', error.message)
+        if (expected) outputEl.textContent += '\n\n' + (checked ? '✓ Salida correcta.' : 'Aún no coincide con la salida esperada.')
+        else outputEl.textContent += '\n\nEjecución completada. Tu docente revisará la práctica.'
+      } catch (error) {
+        outputEl.textContent = error.message || 'No se pudo ejecutar Python.'
+      } finally {
+        button.disabled = false
+      }
+    }
+  })
 }
 async function saveProgress(l, status) {
   const old = progress.get(l.id), now = new Date().toISOString()
