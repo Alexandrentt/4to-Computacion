@@ -102,7 +102,7 @@ function explainPythonLine(rawLine, index, lines){
 }
 function renderCodeLab(){
  const field=$('#lessonForm')?.elements?.code
- const lines=(field?.value||'').split('\\n')
+ const lines=(field?.value||'').split('\n')
  if(codeStep>=lines.length)codeStep=Math.max(0,lines.length-1)
  if(codeStep<0)codeStep=0
  const list=$('#codeLines'), detail=$('#codeExplanation')
@@ -156,7 +156,7 @@ function renderEditor(){
  $('#lessonForm').onsubmit=saveCurrent
  codeStep=0
  renderCodeLab()
- $('#lessonForm').elements.code.addEventListener('input',()=>{const total=$('#lessonForm').elements.code.value.split('\\n').length;if(codeStep>=total)codeStep=total-1;renderCodeLab()})
+ $('#lessonForm').elements.code.addEventListener('input',()=>{const total=$('#lessonForm').elements.code.value.split('\n').length;if(codeStep>=total)codeStep=total-1;renderCodeLab()})
  $('#prev').onclick=()=>{if(selected>0){selected--;renderList();renderEditor()}}
  $('#next').onclick=()=>{if(selected<programmingLessons.length-1){selected++;renderList();renderEditor()}}
 }
