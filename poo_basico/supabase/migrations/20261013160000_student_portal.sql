@@ -154,13 +154,17 @@ create policy learning_classes_student_select on public.learning_classes
   for select to authenticated using (private.is_class_member(id));
 create policy learning_classes_teacher_insert on public.learning_classes
   for insert to authenticated with check (
-    teacher_id = (select auth.uid()) and exists (
-      select 1 from public.teacher_profiles tp where tp.user_id = (select auth.uid())
-    )
+    teacher_id = (select auth.uid())
+    and exists (select 1 from public.teacher_profiles tp where tp.user_id = (select auth.uid()))
+    and exists (select 1 from public.courses c where c.id = course_id and c.user_id = (select auth.uid()))
   );
 create policy learning_classes_teacher_update on public.learning_classes
   for update to authenticated using (private.is_class_teacher(id))
-  with check (private.is_class_teacher(id));
+  with check (
+    teacher_id = (select auth.uid())
+    and private.is_class_teacher(id)
+    and exists (select 1 from public.courses c where c.id = course_id and c.user_id = (select auth.uid()))
+  );
 
 -- Los códigos nunca son legibles directamente por alumnos o clientes.
 create policy invite_codes_teacher_select on public.class_invite_codes
