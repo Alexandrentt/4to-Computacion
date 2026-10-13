@@ -103,19 +103,54 @@ alter table public.class_join_attempts enable row level security;
 -- El docente no puede autoasignarse el rol: no hay políticas INSERT/UPDATE/DELETE
 -- para teacher_profiles. El alta inicial se realiza desde una sesión administrativa.
 
+-- Funciones auxiliares de autorización para evitar recursión entre políticas RLS.
+-- Viven en un esquema no expuesto por la API; verifican siempre la identidad autenticada.
+create schema if not exists private;
+revoke all on schema private from public, anon;
+grant usage on schema private to authenticated;
+
+create or replace function private.is_class_teacher(p_class_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $
+  select exists (
+    select 1 from public.learning_classes c
+    where c.id = p_class_id and c.teacher_id = (select auth.uid())
+  );
+$;
+
+create or replace function private.is_class_member(p_class_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $
+  select exists (
+    select 1 from public.class_memberships m
+    where m.class_id = p_class_id and m.student_id = (select auth.uid()) and m.status = 'active'
+  );
+$;
+
+create or replace function private.is_lesson_teacher(p_lesson_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $
+  select exists (
+    select 1 from public.learning_lessons l
+    join public.learning_classes c on c.id = l.class_id
+    where l.id = p_lesson_id and c.teacher_id = (select auth.uid())
+  );
+$;
+
+revoke all on function private.is_class_teacher(uuid) from public, anon;
+revoke all on function private.is_class_member(uuid) from public, anon;
+revoke all on function private.is_lesson_teacher(uuid) from public, anon;
+grant execute on function private.is_class_teacher(uuid) to authenticated;
+grant execute on function private.is_class_member(uuid) to authenticated;
+grant execute on function private.is_lesson_teacher(uuid) to authenticated;
+
 create policy teacher_profiles_select_self on public.teacher_profiles
   for select to authenticated using (user_id = (select auth.uid()));
 
 create policy learning_classes_teacher_select on public.learning_classes
-  for select to authenticated using (teacher_id = (select auth.uid()));
+  for select to authenticated using (private.is_class_teacher(id));
 create policy learning_classes_student_select on public.learning_classes
-  for select to authenticated using (
-    exists (
-      select 1 from public.class_memberships m
-      where m.class_id = learning_classes.id
-        and m.student_id = (select auth.uid()) and m.status = 'active'
-    )
-  );
+  for select to authenticated using (private.is_class_member(id));
 create policy learning_classes_teacher_insert on public.learning_classes
   for insert to authenticated with check (
     teacher_id = (select auth.uid()) and exists (
@@ -123,62 +158,49 @@ create policy learning_classes_teacher_insert on public.learning_classes
     )
   );
 create policy learning_classes_teacher_update on public.learning_classes
-  for update to authenticated using (teacher_id = (select auth.uid()))
-  with check (teacher_id = (select auth.uid()));
+  for update to authenticated using (private.is_class_teacher(id))
+  with check (private.is_class_teacher(id));
 
 -- Los códigos nunca son legibles directamente por alumnos o clientes.
 create policy invite_codes_teacher_select on public.class_invite_codes
   for select to authenticated using (
-    exists (select 1 from public.learning_classes c
-      where c.id = class_invite_codes.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy invite_codes_teacher_insert on public.class_invite_codes
   for insert to authenticated with check (
-    exists (select 1 from public.learning_classes c
-      where c.id = class_invite_codes.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy invite_codes_teacher_update on public.class_invite_codes
   for update to authenticated using (
-    exists (select 1 from public.learning_classes c
-      where c.id = class_invite_codes.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   ) with check (
-    exists (select 1 from public.learning_classes c
-      where c.id = class_invite_codes.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 
 create policy memberships_teacher_select on public.class_memberships
   for select to authenticated using (
-    exists (select 1 from public.learning_classes c
-      where c.id = class_memberships.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy memberships_student_select_self on public.class_memberships
   for select to authenticated using (student_id = (select auth.uid()));
 
 create policy lessons_teacher_select on public.learning_lessons
   for select to authenticated using (
-    exists (select 1 from public.learning_classes c
-      where c.id = learning_lessons.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy lessons_teacher_insert on public.learning_lessons
   for insert to authenticated with check (
-    exists (select 1 from public.learning_classes c
-      where c.id = learning_lessons.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy lessons_teacher_update on public.learning_lessons
   for update to authenticated using (
-    exists (select 1 from public.learning_classes c
-      where c.id = learning_lessons.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   ) with check (
-    exists (select 1 from public.learning_classes c
-      where c.id = learning_lessons.class_id and c.teacher_id = (select auth.uid()))
+    private.is_class_teacher(class_id)
   );
 create policy lessons_student_read_published on public.learning_lessons
   for select to authenticated using (
-    is_published and exists (
-      select 1 from public.class_memberships m
-      where m.class_id = learning_lessons.class_id
-        and m.student_id = (select auth.uid()) and m.status = 'active'
-    )
+    is_published and private.is_class_member(class_id)
   );
 
 create policy progress_student_select_own on public.lesson_progress
@@ -204,11 +226,7 @@ create policy progress_student_update_own on public.lesson_progress
   );
 create policy progress_teacher_select on public.lesson_progress
   for select to authenticated using (
-    exists (
-      select 1 from public.learning_lessons l
-      join public.learning_classes c on c.id = l.class_id
-      where l.id = lesson_progress.lesson_id and c.teacher_id = (select auth.uid())
-    )
+    private.is_lesson_teacher(lesson_id)
   );
 
 create policy attempts_student_select_own on public.exercise_attempts
@@ -224,11 +242,7 @@ create policy attempts_student_insert_own on public.exercise_attempts
   );
 create policy attempts_teacher_select on public.exercise_attempts
   for select to authenticated using (
-    exists (
-      select 1 from public.learning_lessons l
-      join public.learning_classes c on c.id = l.class_id
-      where l.id = exercise_attempts.lesson_id and c.teacher_id = (select auth.uid())
-    )
+    private.is_lesson_teacher(lesson_id)
   );
 
 -- La inscripción solo puede ejecutarse con una sesión autenticada y correo confirmado.
@@ -379,3 +393,15 @@ grant execute on function public.create_class_invite(uuid, text, integer, timest
 -- No se conceden escrituras directas en tablas sensibles; RPCs aplican controles de autorización.
 revoke all on public.class_join_attempts from anon, authenticated;
 grant select, insert, update on public.class_join_attempts to service_role;
+
+-- Exposición explícita a la Data API; RLS sigue controlando cada fila.
+revoke all on public.teacher_profiles, public.learning_classes, public.class_invite_codes,
+  public.class_memberships, public.learning_lessons, public.lesson_progress,
+  public.exercise_attempts from anon;
+grant select on public.teacher_profiles to authenticated;
+grant select, insert, update on public.learning_classes to authenticated;
+grant select, insert, update on public.class_invite_codes to authenticated;
+grant select on public.class_memberships to authenticated;
+grant select, insert, update on public.learning_lessons to authenticated;
+grant select, insert, update on public.lesson_progress to authenticated;
+grant select, insert on public.exercise_attempts to authenticated;
