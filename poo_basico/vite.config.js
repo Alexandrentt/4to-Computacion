@@ -13,7 +13,8 @@ export default defineConfig({
       input: {
         main: resolve(process.cwd(), 'index.html'),
         contenido: resolve(process.cwd(), 'contenido.html'),
-        alumnos: resolve(process.cwd(), 'alumnos.html')
+        alumnos: resolve(process.cwd(), 'alumnos.html'),
+        docente: resolve(process.cwd(), 'docente-portal.html')
       }
     }
   }
