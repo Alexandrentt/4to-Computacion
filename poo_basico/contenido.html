@@ -147,7 +147,7 @@ function seedPlan(){
   const i=programmingLessons.indexOf(l), key=lessonKey(l), num=String(i+1).padStart(2,'0')
   const notes=JSON.stringify({...l,lessonContentVersion:1,lessonKey:key})
   const development=l.explanation+'\n\nEjemplo de código:\n'+l.code
-  const activities='Práctica guiada:\n'+l.guided+'\n\nEjercicios:\n'+l.exercises
+  const activities='Práctica guiada:\n'+l.guided+'\n\nEjercicios:\n'+asText(l.exercises)
   const closure='Tarea:\n'+l.homework
   const session={id:'session-'+key,lessonKey:key,title:'Clase '+num+' · '+l.title,courseId:programmingCourseId(),objective:l.objective,introduction:l.prior,development,activities,closure,evidence:'Código ejecutable, resultados correctos, casos de prueba y explicación breve del procedimiento.',materialUrl:l.material||PLAYLIST_URL+'&index='+l.videoIndex,notes,date:'',duration:'',status:'Borrador'}
   db.sessions.push(session)
