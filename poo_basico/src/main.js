@@ -63,6 +63,7 @@ const starterCourses = [
 
 // Estado de la aplicación
 let currentUser = null
+let isRegistering = false
 let db = {
   courses: starterCourses,
   sessions: [],
@@ -237,19 +238,54 @@ function bind() {
       await saveToSupabase(currentUser.id)
     }
   }
-  if ($("#login")) $("#login").onclick = async () => {
-    const register = window.confirm("¿Quieres crear una cuenta nueva?\\nAceptar: crear cuenta\\nCancelar: iniciar sesión")
-    const email = window.prompt("Correo electrónico:")
-    if (!email) return
-    const password = window.prompt("Contraseña (mínimo 6 caracteres):")
-    if (!password) return
+  if ($("#login")) $("#login").onclick = () => {
+    isRegistering = false
+    $("#authTitle").textContent = "Iniciar sesión"
+    $("#authNameField").style.display = "none"
+    $("#authSubmit").textContent = "Iniciar sesión"
+    $("#authToggle").textContent = "¿No tienes cuenta? Regístrate"
+    $("#authEmail").value = ""
+    $("#authPassword").value = ""
+    $("#authName").value = ""
+    $("#authModal").classList.add("show")
+  }
+  if ($("#authClose")) $("#authClose").onclick = closeAuthModal
+  if ($("#authCancel")) $("#authCancel").onclick = closeAuthModal
+  if ($("#authToggle")) $("#authToggle").onclick = () => {
+    isRegistering = !isRegistering
+    if (isRegistering) {
+      $("#authTitle").textContent = "Crear cuenta"
+      $("#authNameField").style.display = "block"
+      $("#authSubmit").textContent = "Registrarse"
+      $("#authToggle").textContent = "¿Ya tienes cuenta? Inicia sesión"
+    } else {
+      $("#authTitle").textContent = "Iniciar sesión"
+      $("#authNameField").style.display = "none"
+      $("#authSubmit").textContent = "Iniciar sesión"
+      $("#authToggle").textContent = "¿No tienes cuenta? Regístrate"
+    }
+  }
+  if ($("#authForm")) $("#authForm").onsubmit = async (e) => {
+    e.preventDefault()
+    const email = $("#authEmail").value.trim()
+    const password = $("#authPassword").value
+    const fullName = $("#authName").value.trim()
+
+    if (!email || !password) {
+      msg("Por favor completa todos los campos")
+      return
+    }
+
+    if (password.length < 6) {
+      msg("La contraseña debe tener al menos 6 caracteres")
+      return
+    }
 
     let result
-    if (register) {
-      const fullName = window.prompt("Nombre para mostrar:") || ""
-      result = await signUp(email.trim(), password, fullName.trim())
+    if (isRegistering) {
+      result = await signUp(email, password, fullName)
     } else {
-      result = await signIn(email.trim(), password)
+      result = await signIn(email, password)
     }
 
     if (result.error) {
@@ -257,12 +293,14 @@ function bind() {
       return
     }
 
-    if (register && result.data && !result.data.session) {
+    if (isRegistering && result.data && !result.data.session) {
       msg("Cuenta creada. Revisa tu correo para confirmar el registro.")
+      closeAuthModal()
       return
     }
 
     currentUser = result.data?.user || null
+    closeAuthModal()
     if (currentUser) {
       msg("Sesión iniciada. Cargando datos...")
       await loadFromSupabase(currentUser.id)
@@ -271,6 +309,13 @@ function bind() {
     }
     render()
   }
+  $("#authModal").onclick = (e) => {
+    if (e.target === $("#authModal")) closeAuthModal()
+  }
+
+function closeAuthModal() {
+  $("#authModal").classList.remove("show")
+}
   if ($("#export2")) $("#export2").onclick = exportData
   if ($("#import2")) $("#import2").onclick = () => $("#importFile").click()
 }
