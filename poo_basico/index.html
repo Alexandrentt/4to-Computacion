@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172239">
+  <title>Aula | Planificador docente</title>
+  <style>
+    :root {
+      --bg: #f4f6fa;
+      --paper: #fff;
+      --ink: #192235;
+      --muted: #667187;
+      --line: #e2e7f0;
+      --brand: #354f9a;
+      --nav: #172239;
+      --soft: #eaf0ff;
+      --green: #187753;
+      --amber: #97620a
+    }
+    * {
+      box-sizing: border-box
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif
+    }
+    button, input, select, textarea {
+      font: inherit
+    }
+    button {
+      cursor: pointer
+    }
+    .shell {
+      display: grid;
+      grid-template-columns: 245px 1fr;
+      min-height: 100vh
+    }
+    .side {
+      background: var(--nav);
+      color: white;
+      padding: 25px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px
+    }
+    .brand {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      padding: 0 8px
+    }
+    .logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: #e1e8ff;
+      color: #2e4388;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 20px
+    }
+    .brand small {
+      display: block;
+      color: #acbad4
+    }
+    .nav {
+      display: grid;
+      gap: 6px
+    }
+    .nav button {
+      border: 0;
+      text-align: left;
+      color: #cbd4e6;
+      background: transparent;
+      padding: 12px;
+      border-radius: 9px
+    }
+    .nav button.active, .nav button:hover {
+      background: #2c3d5c;
+      color: white
+    }
+    .side-note {
+      margin-top: auto;
+      background: #202f4b;
+      border: 1px solid #354665;
+      border-radius: 12px;
+      padding: 14px;
+      color: #cbd4e6;
+      font-size: 12px
+    }
+    .main {
+      min-width: 0
+    }
+    .top {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      gap: 12px
+    }
+    .top small {
+      display: block;
+      color: var(--muted)
+    }
+    .top-actions {
+      display: flex;
+      gap: 8px
+    }
+    .content {
+      max-width: 1350px;
+      margin: auto;
+      padding: 28px
+    }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 23px
+    }
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--brand);
+      font-weight: 800
+    }
+    .head h1 {
+      font-size: 29px;
+      letter-spacing: -.04em;
+      margin: 5px 0
+    }
+    .sub {
+      color: var(--muted);
+      max-width: 740px
+    }
+    .btn {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 13px;
+      font-weight: 650;
+      color: var(--ink);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px
+    }
+    .btn.primary {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand)
+    }
+    .btn.small {
+      font-size: 12px;
+      padding: 5px 8px
+    }
+    .btn.danger {
+      color: #a43140
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+      margin-bottom: 19px
+    }
+    .stat {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px
+    }
+    .stat strong {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--brand);
+      margin: 4px 0
+    }
+    .stat small {
+      color: var(--muted);
+      font-size: 12px
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 19px
+    }
+    .panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 19px
+    }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px
+    }
+    .panel h2 {
+      margin: 0 0 8px 0;
+      font-size: 18px
+    }
+    .notice {
+      background: var(--soft);
+      border: 1px solid #d6e4ff;
+      border-radius: 9px;
+      padding: 12px 16px;
+      font-size: 13px;
+      margin-bottom: 16px
+    }
+    .notice.warn {
+      background: #fff8e6;
+      border-color: #ffe6a0
+    }
+    .list {
+      display: grid;
+      gap: 8px
+    }
+    .listrow {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: center
+    }
+    .listrow div:first-child {
+      background: var(--brand);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 14px
+    }
+    .grid-courses {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 13px
+    }
+    .course {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer
+    }
+    .course:hover {
+      border-color: var(--brand)
+    }
+    .course h3 {
+      margin: 6px 0 4px 0;
+      font-size: 15px
+    }
+    .course p {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: var(--muted)
+    }
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 650;
+      background: var(--line);
+      color: var(--muted)
+    }
+    .tag.blue {
+      background: #e1e8ff;
+      color: #2e4388
+    }
+    .tag.green {
+      background: #d4f4e4;
+      color: #0f5c40
+    }
+    .tag.amber {
+      background: #fff4d6;
+      color: #7a5008
+    }
+    .tag.purple {
+      background: #f0e6ff;
+      color: #5c2e88
+    }
+    .tag.red {
+      background: #ffe6e6;
+      color: #882e2e
+    }
+    details.unit {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-bottom: 8px
+    }
+    details.unit summary {
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px
+    }
+    .unitbody {
+      padding: 0 14px 14px 14px
+    }
+    .topic {
+      padding: 8px 10px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      margin-bottom: 6px;
+      font-size: 13px
+    }
+    .topic small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 3px
+    }
+    .filterbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+    .filterbar select, .filterbar input {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 14px
+    }
+    .filterbar select {
+      flex: 0 0 240px
+    }
+    .filterbar input {
+      flex: 1
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden
+    }
+    th {
+      background: var(--bg);
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+    td {
+      padding: 12px 14px;
+      border-top: 1px solid var(--line);
+      font-size: 13px
+    }
+    td small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 3px
+    }
+    .cell-select {
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 12px
+    }
+    .empty {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted)
+    }
+    .field {
+      margin-bottom: 14px
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 650;
+      margin-bottom: 5px;
+      color: var(--muted)
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 14px;
+      box-sizing: border-box
+    }
+    .field textarea {
+      min-height: 80px;
+      resize: vertical
+    }
+    .formgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+    .span2 {
+      grid-column: span 2
+    }
+    .modalback {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      display: none;
+      place-items: center;
+      z-index: 100
+    }
+    .modalback.show {
+      display: grid
+    }
+    .modal {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .2)
+    }
+    .modalhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line)
+    }
+    .modalhead h2 {
+      margin: 0;
+      font-size: 18px
+    }
+    .modalhead button {
+      border: 0;
+      background: transparent;
+      font-size: 24px;
+      color: var(--muted);
+      padding: 0 8px
+    }
+    .modal #fields {
+      padding: 20px
+    }
+    .modalfoot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--line)
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--nav);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 9px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s
+    }
+    .toast.show {
+      opacity: 1
+    }
+    .hidden {
+      display: none !important
+    }
+    @media (max-width: 950px) {
+      .shell {
+        grid-template-columns: 205px 1fr
+      }
+      .stats {
+        grid-template-columns: repeat(2, 1fr)
+      }
+      .columns {
+        grid-template-columns: 1fr
+      }
+      .content {
+        padding: 20px
+      }
+    }
+    @media (max-width: 650px) {
+      .shell {
+        display: block
+      }
+      .side {
+        padding: 12px;
+        gap: 10px
+      }
+      .nav {
+        grid-template-columns: repeat(3, 1fr)
+      }
+      .nav button {
+        font-size: 12px;
+        text-align: center;
+        padding: 9px 5px
+      }
+      .side-note {
+        display: none
+      }
+      .top {
+        height: auto;
+        min-height: 65px;
+        padding: 12px
+      }
+      .top-actions .export {
+        display: none
+      }
+      .content {
+        padding: 15px 12px
+      }
+      .head {
+        display: block
+      }
+      .head > .btn {
+        margin-top: 12px
+      }
+      .grid-courses {
+        grid-template-columns: 1fr
+      }
+      .formgrid {
+        grid-template-columns: 1fr
+      }
+      .span2 {
+        grid-column: auto
+      }
+      .stats {
+        gap: 8px
+      }
+      .stat {
+        padding: 12px
+      }
+      .stat strong {
+        font-size: 25px
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <b>Aula</b>
+          <small>Planificador docente</small>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="active" data-page="home">▦ Resumen</button>
+        <button data-page="courses">▤ Cursos</button>
+        <button data-page="sessions">▣ Sesiones</button>
+        <button data-page="resources">↗ Recursos</button>
+        <button data-page="tasks">☑ Classroom</button>
+        <button data-page="settings">⚙ Ajustes</button>
+      </nav>
+      <div class="side-note">
+        <b style="color: white">Horario pendiente</b>
+        <br>
+        Las fechas y duraciones se pueden dejar vacías hasta confirmar el horario.
+      </div>
+    </aside>
+    <main class="main">
+      <header class="top">
+        <div>
+          <small>Espacio docente / <span id="crumb">Resumen</span></small>
+          <b id="topTitle">Panel general</b>
+        </div>
+        <div class="top-actions">
+          <button class="btn export" id="export">⇩ Respaldo</button>
+          <button class="btn primary" id="quick">＋ Sesión</button>
+        </div>
+      </header>
+      <div class="content" id="view"></div>
+    </main>
+  </div>
+
+  <div class="modalback" id="back">
+    <section class="modal" role="dialog" aria-modal="true">
+      <div class="modalhead">
+        <h2 id="mtitle">Nuevo registro</h2>
+        <button class="btn" id="close">×</button>
+      </div>
+      <form id="form">
+        <div id="fields"></div>
+        <div class="modalfoot">
+          <button type="button" class="btn danger hidden" id="delete">Eliminar</button>
+          <div style="margin-left: auto; display: flex; gap: 8px">
+            <button type="button" class="btn" id="cancel">Cancelar</button>
+            <button class="btn primary" type="submit">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <input id="importFile" class="hidden" type="file" accept=".json,application/json">
+
+  <script>
+    const starter = [
+      {id:"prog",name:"Programación I / Laboratorio 1",grade:"4.º Bachillerato",color:"blue",desc:"De algoritmos y PSeInt a Python estructurado y modular.",units:[
+        ["Unidad 1 · Pensamiento algorítmico",["Pensamiento computacional y resolución de problemas","Entradas, procesos y salidas","Algoritmos y pseudocódigo","Diagramas de flujo","Uso de PSeInt","Variables y operaciones en pseudocódigo","Práctica integradora de lógica"]],
+        ["Unidad 2 · Fundamentos de Python",["Preparación del entorno Python","Primer programa, print y comentarios","Variables, tipos y conversiones","Operadores aritméticos, relacionales y lógicos","Entrada de datos","Condicionales simples y múltiples","Problemas de decisión en Python y PSeInt"]],
+        ["Unidad 3 · Control y colecciones",["Ciclo while","Ciclo for y rangos","Contadores, acumuladores y validación","Cadenas de texto","Listas y recorridos","Listas anidadas y matrices","Reto con ciclos y colecciones"]],
+        ["Unidad 4 · Programación modular",["Descomposición en funciones","Parámetros y retorno","Alcance de variables","Módulos e importaciones","Validación y errores","Archivos de texto según el ritmo","Proyecto estructurado y documentado"]]]},
+      {id:"sistemas",name:"Sistemas e Instalación de Software",grade:"4.º Bachillerato",color:"green",desc:"Instalación, configuración y recuperación segura de sistemas.",units:[
+        ["Unidad 1 · Fundamentos y preparación",["Hardware, firmware y software","Sistemas operativos y licencias","BIOS/UEFI y arranque","Particiones y sistemas de archivos","Requisitos y compatibilidad","Medios de instalación","Lista de comprobación previa"]],
+        ["Unidad 2 · Instalación de sistemas",["Respaldos y autorización","Instalación en máquina virtual o equipo de práctica","Particionado y riesgos","Configuración inicial","Instalación limpia frente a actualización","Verificación del arranque","Informe de instalación"]],
+        ["Unidad 3 · Configuración",["Controladores","Actualizaciones","Instalación de aplicaciones","Usuarios, grupos y permisos","Licencias y software legítimo","Configuración básica de red","Herramientas de diagnóstico"]],
+        ["Unidad 4 · Recuperación",["Copias de seguridad","Restauración de archivos","Recuperación del sistema","Máquinas virtuales y snapshots","Errores frecuentes de arranque","Bitácora de recuperación","Informe técnico final"]]]},
+      {id:"mantenimiento",name:"Mantenimiento y Reparación de Computadoras",grade:"5.º Bachillerato",color:"amber",desc:"Prevención, diagnóstico sistemático y reparación documentada.",units:[
+        ["Unidad 1 · Seguridad y componentes",["Seguridad del taller y registro del equipo","Electricidad estática y ESD","Herramientas y organización","Placa base, CPU, RAM y discos","Fuente de poder y refrigeración","Inspección visual","Rutina preventiva"]],
+        ["Unidad 2 · Diagnóstico",["Síntoma, hipótesis, prueba y resultado","Equipo no enciende","POST e indicadores de error","Memoria RAM y almacenamiento","Temperatura y ventilación","Software frente a hardware","Árbol de diagnóstico"]],
+        ["Unidad 3 · Mantenimiento correctivo",["Limpieza interna segura","Montaje y desmontaje supervisado","Compatibilidad de componentes","Sustitución de piezas","Pruebas posteriores","Inventario y repuestos","Evaluación práctica"]],
+        ["Unidad 4 · Casos integrales",["Árbol de decisión para averías","Caso de equipo que no arranca","Caso de lentitud o temperatura","Estimación de costos","Informe técnico","Recepción y entrega simulada","Caso final documentado"]]]},
+      {id:"lab2",name:"Laboratorio 2",grade:"5.º Bachillerato",color:"blue",desc:"Diseño de software con clases, objetos y relaciones.",units:[
+        ["Unidad 1 · Clases y objetos",["Repaso de funciones y módulos","Clases y objetos","Atributos y métodos","Constructores","Estado y comportamiento","Modelado de entidades","Práctica de objetos"]],
+        ["Unidad 2 · Diseño de objetos",["Encapsulación","Validación del estado","Composición","Relaciones entre clases","Responsabilidades y cohesión","Modelo de dominio","Implementación y pruebas"]],
+        ["Unidad 3 · Reutilización",["Herencia y especialización","Sobrescritura de métodos","Polimorfismo","Composición frente a herencia","Organización por archivos","Pruebas y depuración","Ejercicio integrador"]],
+        ["Unidad 4 · Proyecto integrador",["Problema y requisitos","Diseño de clases","Implementación incremental","Validación de entradas","Pruebas normales y límites","Documentación técnica","Demostración y retrospectiva"]]]}
+    ];
+    const KEY = "aula-docente-4to-v2";
+    let db = {courses:starter,sessions:[],resources:[],tasks:[],settings:{year:"",start:"",end:"",block:"",schedule:"Pendiente de confirmar"}};
+    let page = "home",editing = null,kind = null,filterCourse = "all";
+    const $ = s=>document.querySelector(s);
+    const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    function load(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.courses))db=x}catch(e){}}
+    function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+    function msg(t){$("#toast").textContent=t;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),2200)}
+    function cname(id){return db.courses.find(c=>c.id===id)?.name||"Curso no asignado"}
+    function datefmt(d){return d?new Date(d+"T12:00:00").toLocaleDateString("es-GT",{day:"numeric",month:"short",year:"numeric"}):"Sin fecha"}
+    function courseOptions(id){return db.courses.map(c=>'<option value="'+c.id+'" '+(c.id===id?'selected':'')+'>'+esc(c.name)+'</option>').join("")}
+    function setPage(p){page=p;document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));let names={home:"Resumen",courses:"Plan de estudios",sessions:"Sesiones",resources:"Recursos",tasks:"Tareas y Classroom",settings:"Configuración"};$("#crumb").textContent=names[p];$("#topTitle").textContent=names[p];render()}
+    function head(eyebrow,title,sub,button=""){return '<div class="head"><div><div class="eyebrow">'+eyebrow+'</div><h1>'+title+'</h1><div class="sub">'+sub+'</div></div>'+button+'</div>'}
+    function render(){let v=$("#view");if(page==="home")v.innerHTML=home();if(page==="courses")v.innerHTML=coursesPage();if(page==="sessions")v.innerHTML=tablePage("sessions");if(page==="resources")v.innerHTML=tablePage("resources");if(page==="tasks")v.innerHTML=tablePage("tasks");if(page==="settings")v.innerHTML=settingsPage();bind()}
+    function home(){return head("Ciclo lectivo · "+esc(db.settings.year||"Por configurar"),"Tu planificación, en un solo lugar.","Organiza los cuatro cursos, prepara sesiones, guarda recursos y registra el seguimiento de Classroom.",'<button class="btn primary" data-new="sessions">＋ Planificar sesión</button>')+'<div class="stats"><div class="stat"><small>Cursos activos</small><strong>'+db.courses.length+'</strong><small>4.º y 5.º Bachillerato</small></div><div class="stat"><small>Sesiones</small><strong>'+db.sessions.length+'</strong><small>'+db.sessions.filter(x=>x.date).length+' con fecha</small></div><div class="stat"><small>Recursos</small><strong>'+db.resources.length+'</strong><small>Enlaces externos</small></div><div class="stat"><small>Tareas</small><strong>'+db.tasks.length+'</strong><small>'+db.tasks.filter(x=>x.status==="Revisada").length+' revisadas</small></div></div>'+'<div class="columns"><section class="panel"><div class="panel-head"><h2>Tus cursos</h2><button class="btn small" data-page="courses">Ver plan →</button></div><div class="grid-courses">'+db.courses.map(c=>'<div class="course" data-course="'+c.id+'"><span class="tag '+c.color+'">'+esc(c.grade)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.desc)+'</p><span class="tag">'+c.units.length+' unidades · '+db.sessions.filter(s=>s.courseId===c.id).length+' sesiones</span></div>').join("")+'</div></section><section><div class="panel"><div class="panel-head"><h2>Horario y ciclo</h2><span class="tag amber">'+esc(db.settings.schedule)+'</span></div><div class="notice warn">No se asignan fechas ni duración fija hasta confirmar el horario del establecimiento.</div><div class="list"><div class="listrow"><div>01</div><div><strong>Finales de enero</strong><small>Inicio previsto</small></div></div><div class="listrow"><div>04</div><div><strong>Cuatro unidades por curso</strong><small>Secuencia curricular inicial</small></div></div><div class="listrow"><div>10</div><div><strong>Mediados de octubre</strong><small>Cierre previsto, sujeto al calendario</small></div></div></div></div><div class="panel"><h2>Flujo de trabajo</h2><p class="sub">Planifica aquí → enlaza materiales → publica en Classroom → registra el estado manualmente.</p><p class="sub">Los archivos siguen en Drive o OneDrive; no se duplican.</p></div></section></div>'}
+    function coursesPage(){return head("Estructura curricular","Plan de estudios","Propuesta editable de cuatro unidades por curso; las fechas se asignarán después de confirmar el calendario.")+'<div class="notice">Plan inicial de referencia. Debe cotejarse con el programa oficial, el CNB y las indicaciones del centro educativo.</div>'+db.courses.map(c=>'<section class="panel"><div class="panel-head"><div><span class="tag '+c.color+'">'+esc(c.grade)+'</span><h2 style="margin-top:8px">'+esc(c.name)+'</h2><p class="sub">'+esc(c.desc)+'</p></div><button class="btn small" data-edit-course="'+c.id+'">Editar curso</button></div>'+c.units.map((u,i)=>'<details class="unit" '+(i===0?'open':'')+'><summary>'+esc(u[0])+' · '+u[1].length+' temas</summary><div class="unitbody">'+u[1].map((t,j)=>'<div class="topic">'+esc(t)+'<small>Unidad '+(i+1)+' · tema '+(j+1)+'</small></div>').join("")+'</div></details>').join("")+'</section>').join("")}
+    function tablePage(k){let conf={sessions:{title:"Sesiones",sub:"Fecha y duración opcionales; cada clase puede prepararse antes de confirmar el horario.",button:"＋ Nueva sesión"},resources:{title:"Recursos",sub:"Guarda enlaces de Drive, OneDrive, YouTube y documentos externos.",button:"＋ Añadir recurso"},tasks:{title:"Tareas y Classroom",sub:"Classroom gestiona entregas y notas oficiales; aquí llevas un seguimiento manual.",button:"＋ Registrar tarea"}}[k];let rows=db[k].filter(x=>filterCourse==="all"||x.courseId===filterCourse);let body=rows.length?rows.map(x=>{if(k==="sessions")return '<tr><td><strong>'+esc(x.title)+'</strong><small>'+esc(x.objective||"Sin objetivo")+'</small></td><td>'+esc(cname(x.courseId))+'</td><td>'+datefmt(x.date)+'<small>'+(x.duration?esc(x.duration)+" min":"Duración pendiente")+'</small></td><td><span class="tag">'+esc(x.status||"Borrador")+'</span></td><td><button class="btn small" data-edit="'+k+':'+x.id+'">Editar</button></td></tr>';if(k==="resources")return '<tr><td><strong>'+esc(x.title)+'</strong><small>'+esc(x.notes||"")+'</small></td><td>'+esc(cname(x.courseId))+'</td><td>'+esc(x.type||"Otro")+'</td><td>'+(x.url?'<a target="_blank" rel="noreferrer" href="'+esc(x.url)+'">Abrir ↗</a>':"—")+'</td><td><button class="btn small" data-edit="'+k+':'+x.id+'">Editar</button></td></tr>';return '<tr><td><strong>'+esc(x.title)+'</strong><small>'+esc(x.description||"")+'</small></td><td>'+esc(cname(x.courseId))+'</td><td>'+datefmt(x.dueDate)+'</td><td><select class="cell-select" data-status="'+x.id+'">'+["Pendiente","Publicada","En revisión","Revisada"].map(s=>'<option '+(s===(x.status||"Pendiente")?'selected':'')+'>'+s+'</option>').join("")+'</select></td><td>'+(x.url?'<a target="_blank" rel="noreferrer" href="'+esc(x.url)+'">Classroom ↗</a>':"Sin enlace")+'</td><td><button class="btn small" data-edit="'+k+':'+x.id+'">Editar</button></td></tr>'}).join(""):'<tr><td colspan="6"><div class="empty">Todavía no hay registros. Crea el primero con el botón de arriba.</div></td></tr>';return head(conf.title,conf.title,conf.sub,'<button class="btn primary" data-new="'+k+'">'+conf.button+'</button>')+'<div class="filterbar"><select id="courseFilter"><option value="all">Todos los cursos</option>'+db.courses.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join("")+'</select><input id="search" placeholder="Buscar..."></div>'+'<table><thead><tr><th>Título</th><th>Curso</th><th>'+(k==="sessions"?"Fecha":k==="resources"?"Tipo":"Fecha entrega")+'</th><th>'+(k==="sessions"?"Estado":k==="resources"?"Enlace":"Estado")+'</th><th>'+(k==="tasks"?"Classroom":k==="resources"?"Enlace":"")+'</th><th>Acciones</th></tr></thead><tbody id="rows">'+body+'</tbody></table>'}
+    function settingsPage(){return head("Preferencias","Configuración","Define el ciclo y la duración solo cuando tengas confirmación del centro.")+'<div class="columns"><section class="panel"><h2>Calendario lectivo</h2><div class="field"><label>Año o ciclo</label><input id="year" value="'+esc(db.settings.year)+'" placeholder="Ej. 2027"></div><div class="formgrid"><div class="field"><label>Inicio previsto</label><input id="start" type="date" value="'+esc(db.settings.start)+'"></div><div class="field"><label>Cierre previsto</label><input id="end" type="date" value="'+esc(db.settings.end)+'"></div></div><div class="field"><label>Duración del bloque (minutos, opcional)</label><input id="block" type="number" min="1" value="'+esc(db.settings.block)+'" placeholder="Dejar vacío hasta confirmar"></div><div class="field"><label>Estado del horario</label><select id="schedule"><option>Pendiente de confirmar</option><option '+(db.settings.schedule==="Confirmado"?'selected':'')+'>Confirmado</option></select></div><button class="btn primary" id="saveSettings">Guardar configuración</button></section><section class="panel"><h2>Respaldo de datos</h2><div class="notice warn">Los datos de esta versión se guardan en el navegador actual. No se sincronizan todavía entre dispositivos.</div><button class="btn" id="export2">⇩ Exportar JSON</button> <button class="btn" id="import2">⇧ Importar JSON</button><div style="height:16px"></div><h2>Integraciones</h2><p class="sub">Google Classroom: enlace y estado manual.</p><p class="sub">Drive / OneDrive: solo se guardan los enlaces.</p><p class="sub">Siguiente fase: autenticación y base de datos compartida.</p></section></div>'}
+    function bind(){document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page));document.querySelectorAll("[data-new]").forEach(b=>b.onclick=()=>openForm(b.dataset.new));document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{let [k,id]=b.dataset.edit.split(":");openForm(k,id)});document.querySelectorAll("[data-edit-course]").forEach(b=>b.onclick=()=>openForm("course",b.dataset.editCourse));document.querySelectorAll("[data-course]").forEach(b=>b.onclick=()=>setPage("courses"));let cf=$("#courseFilter");if(cf){cf.value=filterCourse;cf.onchange=()=>{filterCourse=cf.value;render()};$("#search").oninput=()=>document.querySelectorAll("#rows tr").forEach(r=>r.style.display=r.textContent.toLowerCase().includes($("#search").value.toLowerCase())?"":"none")}document.querySelectorAll("[data-status]").forEach(s=>s.onchange=()=>{let t=db.tasks.find(t=>t.id===s.dataset.status);if(t){t.status=s.value;save();msg("Seguimiento actualizado")}});if($("#saveSettings"))$("#saveSettings").onclick=()=>{db.settings={year:$("#year").value,start:$("#start").value,end:$("#end").value,block:$("#block").value,schedule:$("#schedule").value};save();render();msg("Configuración guardada")};if($("#export2"))$("#export2").onclick=exportData;if($("#import2"))$("#import2").onclick=()=>$("#importFile").click()}
+    function openForm(k,id=null){kind=k;editing=id;let title={course:"Editar curso",sessions:"Nueva sesión",resources:"Nuevo recurso",tasks:"Nueva tarea"}[k];$("#mtitle").textContent=title;let fields="";if(k==="course"){let c=db.courses.find(x=>x.id===id);fields='<div class="field"><label>Nombre del curso</label><input name="name" value="'+(c?esc(c.name):"")+'"></div><div class="field"><label>Grado</label><input name="grade" value="'+(c?esc(c.grade):"")+'"></div><div class="field"><label>Descripción</label><textarea name="desc">'+(c?esc(c.desc):"")+'</textarea></div><div class="field"><label>Color</label><select name="color">'+["blue","green","amber","purple","red"].map(x=>'<option '+(c&&c.color===x?'selected':'')+'>'+x+'</option>').join("")+'</select></div>'}else if(k==="sessions"){let s=db.sessions.find(x=>x.id===id);fields='<div class="field"><label>Título</label><input name="title" value="'+(s?esc(s.title):"")+'"></div><div class="field"><label>Curso</label><select name="courseId">'+courseOptions(s?s.courseId:"")+'</select></div><div class="field"><label>Objetivo</label><textarea name="objective">'+(s?esc(s.objective||""):"")+'</textarea></div><div class="formgrid"><div class="field"><label>Fecha (opcional)</label><input name="date" type="date" value="'+(s?esc(s.date||""):"")+'"></div><div class="field"><label>Duración min (opcional)</label><input name="duration" type="number" value="'+(s?esc(s.duration||""):"")+'"></div></div><div class="field"><label>Estado</label><select name="status">'+["Borrador","Preparada","Completada"].map(x=>'<option '+(s&&s.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select></div>'}else if(k==="resources"){let r=db.resources.find(x=>x.id===id);fields='<div class="field"><label>Título</label><input name="title" value="'+(r?esc(r.title):"")+'"></div><div class="field"><label>Curso</label><select name="courseId">'+courseOptions(r?r.courseId:"")+'</select></div><div class="field"><label>Tipo</label><select name="type">'+["Video","Documento","Drive","OneDrive","Otro"].map(x=>'<option '+(r&&r.type===x?'selected':'')+'>'+x+'</option>').join("")+'</select></div><div class="field"><label>URL</label><input name="url" value="'+(r?esc(r.url||""):"")+'"></div><div class="field"><label>Notas</label><textarea name="notes">'+(r?esc(r.notes||""):"")+'</textarea></div>'}else if(k==="tasks"){let t=db.tasks.find(x=>x.id===id);fields='<div class="field"><label>Título</label><input name="title" value="'+(t?esc(t.title):"")+'"></div><div class="field"><label>Curso</label><select name="courseId">'+courseOptions(t?t.courseId:"")+'</select></div><div class="field"><label>Descripción</label><textarea name="description">'+(t?esc(t.description||""):"")+'</textarea></div><div class="formgrid"><div class="field"><label>Fecha entrega</label><input name="dueDate" type="date" value="'+(t?esc(t.dueDate||""):"")+'"></div><div class="field"><label>Estado</label><select name="status">'+["Pendiente","Publicada","En revisión","Revisada"].map(x=>'<option '+(t&&t.status===x?'selected':'')+'>'+x+'</option>').join("")+'</select></div></div><div class="field"><label>URL de Classroom</label><input name="url" value="'+(t?esc(t.url||""):"")+'"></div>'}$("#fields").innerHTML=fields;$("#delete").classList.toggle("hidden",!id);$("#back").classList.add("show")}
+    $("#form").onsubmit=(e)=>{e.preventDefault();let fd=new FormData(e.target);let data=Object.fromEntries(fd);if(kind==="course"){if(editing){let c=db.courses.find(x=>x.id===editing);Object.assign(c,data)}else{data.id="c"+Date.now();data.units=[];db.courses.push(data)}}else{data.id=editing||kind.charAt(0)+Date.now();if(editing){let idx=db[kind].findIndex(x=>x.id===editing);db[kind][idx]=data}else{db[kind].push(data)}}closeModal();render();msg("Guardado")};
+    $("#delete").onclick=()=>{if(confirm("¿Eliminar este registro?")){if(kind==="course"){db.courses=db.courses.filter(x=>x.id!==editing)}else{db[kind]=db[kind].filter(x=>x.id!==editing)}closeModal();render();msg("Eliminado")}};
+    function closeModal(){$("#back").classList.remove("show");editing=null;kind=null}
+    $("#close").onclick=closeModal;$("#cancel").onclick=closeModal;$("#back").onclick=(e)=>{if(e.target===$("#back"))closeModal()};
+    function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="aula-respaldo-"+new Date().toISOString().split("T")[0]+".json";a.click();URL.revokeObjectURL(url);msg("Datos exportados")}
+    $("#importFile").onchange=(e)=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(x.courses&&Array.isArray(x.courses)){db=x;save();render();msg("Datos importados")}else{msg("Formato inválido")}}catch(e){msg("Error al importar")}};r.readAsText(f)};
+    load();$("#export").onclick=exportData;$("#quick").onclick=()=>openForm("sessions");setPage("home");
+  </script>
+</body>
+</html>
