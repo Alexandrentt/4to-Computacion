@@ -1,5 +1,6 @@
 import { getCurrentUser, onAuthStateChange, signOut, signIn, signUp } from './auth/auth.js'
 import { loadPlannerFromCloud, savePlannerToCloud } from './db/cloudSync.js'
+import { applySelectedCurriculum } from './selected-curriculum.js'
 import { isSupabaseConfigured } from './config/supabase.js'
 
 // Datos iniciales de cursos
@@ -461,6 +462,8 @@ function load() {
     let x = JSON.parse(localStorage.getItem(KEY))
     if (x && Array.isArray(x.courses)) db = x
   } catch (e) {}
+  applySelectedCurriculum(db)
+  save()
 }
 
 function save() {
@@ -477,7 +480,7 @@ async function loadFromSupabase(userId) {
       msg("Carga cancelada; tus datos locales no cambiaron")
       return
     }
-    db = cloudDb
+    db = applySelectedCurriculum(cloudDb)
     save()
     render()
     msg("Datos cargados desde Supabase")
